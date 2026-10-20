@@ -1,0 +1,4 @@
+Name:Rainbow Basic
+ManaCost:no cost
+Types:Basic Land Plains Island Swamp Mountain Forest
+Oracle:({T}: Add {W}, {U}, {B}, {R}, or {G}.)

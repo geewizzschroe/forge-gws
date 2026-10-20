@@ -1,0 +1,8 @@
+Name:Spike Life Cap
+ManaCost:no cost
+Types:Artifact
+R:Event$ GainLife | ActiveZones$ Command | ValidPlayer$ You | ReplaceWith$ CapGain | Description$ Your life total can't be raised above 40 by life gain.
+SVar:CapGain:DB$ ReplaceEffect | VarName$ LifeGained | VarValue$ X
+SVar:X:ReplaceCount$LifeGained/LimitMax.Room
+SVar:Room:Count$YourLifeTotal/NMinus.40
+Oracle:Your life total can't be raised above 40 by life gain.

@@ -1,0 +1,6 @@
+Name:Spike Basic Engine
+ManaCost:no cost
+Types:Artifact
+T:Mode$ Phase | Phase$ Upkeep | ValidPlayer$ You | TriggerZones$ Command | IsPresent$ Land.YouCtrl | PresentCompare$ LT10 | Execute$ TrigMake | TriggerDescription$ At the beginning of your upkeep, if you control fewer than ten lands, choose a basic land and conjure it onto the battlefield.
+SVar:TrigMake:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True
+Oracle:At the beginning of your upkeep, if you control fewer than ten lands, choose a basic land and conjure it onto the battlefield.

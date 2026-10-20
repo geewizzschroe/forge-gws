@@ -1,0 +1,5 @@
+Name:Spike Shiva Relic
+ManaCost:no cost
+Types:Artifact
+A:AB$ ChangeZone | Cost$ 0 | ActivationZone$ Command | Origin$ Command | Destination$ Battlefield | ValidTgts$ Card.IsCommander+YouOwn | TgtZone$ Command | Transformed$ True | SpellDescription$ Put your commander onto the battlefield transformed.
+Oracle:{0}: Put your commander onto the battlefield transformed.

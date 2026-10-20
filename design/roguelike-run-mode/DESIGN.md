@@ -1,0 +1,330 @@
+# Roguelike Run Mode: Design Document (working title)
+
+A Legends of Runeterra "Path of Champions"-style run mode for Forge, with a Slay the Spire-style node map, built around an always-available Commander and a landless, deterministic mana system.
+
+This document records every decision made so far, the evidence behind it, and a phased roadmap for building it. It was written at the end of a long design conversation so that a new session can pick the work up cold.
+
+**Evidence tags used throughout**
+
+| Tag | Meaning |
+|---|---|
+| **[code]** | Read directly in the source. Path and line numbers given. Not executed. |
+| **[run]** | Observed by actually running something (a headless simulation or the real desktop build). |
+| **[assumed]** | A design assumption or inference that has not been confirmed with the owner or with a test. |
+
+Anything without a tag is a decision made by the owner.
+
+---
+
+## 1. Pitch
+
+A run-based mode, played mainly on an Android phone. You pick a character, who is a Commander with a themed starter deck. You move across a branching node map. Enemy nodes are real Forge matches. After each match you pick one of three card rewards (each adds 2 copies to your deck) or one of three themed "buckets" of cards. Other nodes are shops, rests, card cuts and card upgrades. The run ends at a boss, who also has a Commander. You cannot edit your deck by hand. The deck only changes through the mode's own mechanics.
+
+What makes it different from other Forge modes:
+
+1. **Mana is not luck.** Decks contain no lands. Each turn you receive a land of your choice, up to a cap of 10.
+2. **The Commander is always available** in the command zone, and never changes during a run.
+3. **Cards are upgraded in place** for the rest of the run, per card name, and upgrades stack.
+4. **Life is a run resource** that carries between matches.
+5. **Account-wide meta-progression** unlocks starter decks and improves starting state.
+
+---
+
+## 2. Decisions
+
+### 2.1 Run structure
+
+- Pick a character (Commander) and a starter deck.
+- Pick from the available nodes to move forward on a board-style map.
+- Node types named so far: **Enemy**, **Boss**, **Shop**, **Rest** (restore health), **Cut a card**, **Upgrade a card**.
+- Selecting an Enemy node means playing a match against it.
+- After a match: pick **1 of 3 cards** (adds **2 copies**) **or 1 of 3 buckets** (3 randomly selected cards from a themed pool, e.g. "Goblins!", "Big Sorceries", "Green Staples").
+- Continue from the node just played. Repeat until the only available node is the Boss.
+- Beating the Boss gives a big reward and either moves to a new, harder "floor" or ends the run. **Deferred.**
+- There is no manual deck editing anywhere in the mode.
+
+### 2.2 Failure
+
+- If you lose a match you retry that match.
+- You get **one retry per run**. A second loss ends the run.
+- [assumed] A retry restores the life total you had entering that match, against the same enemy.
+
+### 2.3 Commander and decks
+
+- The Commander is **always accessible** in the command zone and **does not change** during a run.
+- Starter decks are centred on the Commander's colour identity, **not as a hard rule**. Off-identity splashes are allowed.
+- Boss fights also use Commanders.
+- **Deck-shape restrictions are essentially nonexistent**: no singleton rule, no fixed size.
+- Worked example: **Jill, Shiva's Dominant** (Final Fantasy set, mono-blue). Her enter trigger bounces any one other nonland permanent. Her starter deck pairs blue with white flicker/bounce effects and good enter-the-battlefield (ETB) payoffs. Jill gets a mono-blue starter deck, then two blue+X starter decks that **unlock through progress**.
+
+### 2.3.1 Card counts and upgrades
+
+- The deck is a set of **card names with counts**. Rewards add copies.
+- **Upgrades are per card name, not per copy.** They last for the rest of the run, including copies picked up later.
+- Upgrades are **additive**. Numbers and abilities stack.
+  - Example: your deck has 2x Savannah Lions with `[+1/+1]`. You take a reward of 2x Savannah Lions with `[haste]`. You now have 4x Savannah Lions, every one with both upgrades.
+- A reward card may be offered **with a randomly attached upgrade**.
+- Upgrades unlocked in meta-progression apply **at the start of a run**.
+- The "Upgrade a card" node modifies a card's features for the rest of the run.
+
+### 2.4 Relics and the Commander
+
+- Relics are acquired from **shops and bosses**.
+- The Commander (or its game logic) can be upgraded through relics or level-up progression. The "big cool" example: being able to play Jill as her **Shiva** side directly.
+- The Commander itself does not change identity. Upgrades modify it.
+
+### 2.5 Health
+
+- Life **carries over** between matches.
+- **Run max life starts at 20.** It can be raised by meta-progression ("levelling up" the character between runs).
+- **In-match max life is double the run max** (40 at the start). Lifegain above that is wasted.
+- After a match, run life = `min(end-of-match life, run max)`. Lifegain therefore acts like armour for that match only.
+
+### 2.5.1 Mana model (the landless rule)
+
+This is a **built-in rule of the mode**, part of its background logic. It is **not** a relic and **not** a card. It must take **no UI space**.
+
+- **Decks contain no lands.** This applies to both sides, including boss decks.
+- **At the beginning of each player's upkeep, if that player controls fewer than 10 lands, that player chooses a basic land type and a basic land of that type is conjured onto the battlefield.**
+- **10 lands is the maximum in all cases**, regardless of source (the per-turn land, ramp spells, forced entries).
+- Land-search ramp spells are **re-implemented in spirit** to conjure a basic instead of searching.
+- Mana therefore escalates at a fixed pace (1, 2, 3 ... 10) with no luck, as in other digital card games.
+- Splashing becomes a per-turn decision rather than a deck-construction one.
+
+*Superseded earlier ideas*: a single "Rainbow Basic" land (rejected: forces a colour pick on every tap), and implementing the rule as a command-zone relic (rejected: takes UI space, and the AI takes the first option; see 4.7).
+
+### 2.6 Meta-progression
+
+- Unlocks that affect starter decks and starting state are **account-wide**. Things acquired during a run (relics, card upgrades, added cards) belong to the run only.
+- "Levelling up" the character between runs is a possible path (raising run max life, unlocking upgrades and starters). **Spitballed, not designed.**
+
+### 2.7 UI constraint
+
+Rules and mechanics changes must **not take up space in the UI**. The command zone row on the match screen shows every card in that zone, so card-based rule changes are not acceptable (see 4.8).
+
+---
+
+## 3. Open design questions
+
+None of these blocks Phase 1 (engine rules). They need answers before the phases that depend on them.
+
+| # | Question | Needed by |
+|---|---|---|
+| D1 | **Floors.** After a boss: new, harder floor, or end the run? | Phase 2 |
+| D2 | **Currency.** Shops need one. Where does it come from (enemy nodes?) and what do things cost? | Phase 2 |
+| D3 | **Relic presentation.** Relics are player-facing items. How are they shown, and are modifier-style relics also kept out of the command zone? | Phase 1.6 / 3 |
+| D4 | **What can an upgrade be?** The engine supports power/toughness, keywords, abilities, mana cost, colours, types (see 4.4). Which are in scope and how are they randomised on rewards? | Phase 1.4 / 2 |
+| D5 | **Duplicate-keyword rule.** Haste twice: no effect? Stacking keywords (Ward, Annihilator)? | Phase 1.4 |
+| D6 | **Land choice timing.** Upkeep (before the draw, as specified) or precombat main (after seeing the draw)? | Phase 1.1 |
+| D7 | **Decking.** With small decks a library running out is a real loss condition (4.9). Keep, soften, or disable? | Phase 1.5 |
+| D8 | **Node types beyond the six named**: elites, events? Map shape, number of nodes per floor, scaling. | Phase 2 |
+| D9 | **Meta-progression shape.** Levels, experience, what unlocks when. | Phase 4 |
+| D10 | **Ramp cap behaviour.** A "put a land onto the battlefield" spell at 10 lands: does nothing? (The global cap rule blocks the entry; it has been tested for forced entries only.) | Phase 1.2 |
+| D11 | **Landfall and domain cards.** Keep as free value or exclude from pools? (Landfall now triggers every turn; with chosen basics, domain counts only types actually chosen.) | Phase 2 |
+| D12 | **UI host** (see 6.1). | Phase 0 |
+| D13 | **Retry details** (see 2.2 assumption). | Phase 2 |
+
+---
+
+## 4. Findings (evidence)
+
+### 4.1 How Forge modes are built (closest precedent: Planar Conquest)
+
+- **[code]** Planar Conquest is a complete Commander-based campaign: about 3,060 lines of model code (`forge-gui/src/main/java/forge/gamemodes/planarconquest/`) plus about 3,690 lines of mobile screens (`forge-gui-mobile/src/forge/screens/planarconquest/`).
+- **[code]** `ConquestController.startBattle` is the template for launching a match: build a `RegisteredPlayer` per side, call `assignCommander()`, set starting life, create `GameRules(GameType.PlanarConquest)`, then `hostedMatch.startMatch(rules, variants, starter, humanStart, gui)`. Results come back through `showGameOutcome` / `finishEvent`.
+- **[code]** A mode touches about ten files outside its own package: `GameType.java`, `DeckFormat.java`, `FDeckEditor.java`, `NewGameMenu.java`, `HomeScreen.java`, `LoadGameMenu.java`, `ViewWinLose.java`, `FModel.java`, `DeckImportController.java`, plus achievements classes.
+- **[code]** Adventure's `DuelScene` (834 lines) launches matches but is wired to overworld sprites: `initDuels(PlayerSprite, EnemySprite)` (lines 793-797). Enemy deck, boss flags, intro text, effects and games-per-match all come from the `EnemySprite`.
+- **[assumed]** Conquest's map appears to be a grid of locations per plane (`ConquestMultiverseScreen`, `ConquestLocation`), not a branching graph. Only identifiers and fragments were read, not the drawing logic.
+
+### 4.2 Reusable pieces in Adventure
+
+- **[code]** `RewardScene` (`forge-gui-mobile/.../adventure/scene/RewardScene.java`, 747 lines) has a pick-from-shown-rewards type: `Type.RewardChoice` with `ChooseRewardButton` and `remainingSelections` (around lines 582-612, 685).
+- **[code]** `RewardData` (`adventure/data/RewardData.java`) can filter by subtype, card type, colours, rarity, mana cost, keywords and card text, so themed buckets ("Goblins!") are expressible as data.
+- **[code]** `ShopScene` and `InnScene` exist. Adventure shops spend gold.
+- **[code]** `EffectData` (`adventure/data/EffectData.java`) is a relic-like mechanism: starting life, starting hand size, cards started on the battlefield or in the command zone, and effects on the opponent. 130 of Adventure's 200 items carry effects: 75 start a scripted card on the battlefield, 26 start one in the command zone, 43 modify life. They are backed by 68 hand-written card scripts in `forge-gui/res/adventure/common/custom_cards/`. Chandra's Tome is an example with activated abilities used from the command zone.
+- **[code]** Adventure's New Game offers Commander precon starters and a "Pile" starter mode (`NewGameScene`, `AdventureModes`).
+- **[code]** Adventure writes shards back after a duel by reading the finished game (`DuelScene.GameEnd`, `getHumanControllers()`). It does **not** write life back. It passes its saved life in as starting life (`DuelScene.java:400`).
+- **[code]** Realm of Legends ships 985 complete `[Commander]` + `[Main]` deck files, one per legendary creature (`forge-gui/res/adventure/Realm of Legends/decks/legends/`). They are full Commander-sized decks (the sample opened was 84 lines) and would need trimming to serve as starters. They are usable as boss decks.
+
+### 4.3 Engine facts
+
+- **[code]** `Match.startGame(Game, Runnable startGameHook)` (`forge-game/.../Match.java:80`) takes a public hook. It runs inside `PhaseHandler.setupFirstTurn` (`PhaseHandler.java:1014-1027`) after the opening hands are dealt.
+- **[code]** `RegisteredPlayer` has: `startingLife` (default 20), `startingHand` (7), `extraCardsOnBattlefield`, `extraCardsInCommandZone`, `commanders`, `assignCommander()`. `forCommander(deck)` sets 40 life; `forVariants` adds 20 for Commander.
+- **[code]** There is **no deck legality gate** in `Match`, `Game` or `GameRules`. The only deck-size reference in `Match.java:297` substitutes Wastes for a missing deck. Legality is checked in lobbies and mode code (`GameLobby`, quest/conquest/adventure screens).
+- **[run]** A Commander-variant match with 40-card, 4-of-style decks and no singleton rule runs to completion. The AI casts both commanders repeatedly from the command zone (Jill 1-2 times, Krenko 5-7 times per game).
+- **[run]** The final life total of the winner is readable after the match (13, 19, 20 in seeded runs). The loser is removed from `game.getPlayers()`, so read loser data via `game.getRegisteredPlayers()`.
+- **[code]** Forge itself places an immutable **"Commander Effect"** card in the command zone in Commander games. **[run]** Seen in the hero's command zone at game end.
+- **[run]** In 20 seeded games, 15 hero losses were by life reaching zero and 1 by being **milled** (library empty, at 4 life). Decking is a real loss condition at these deck sizes.
+
+### 4.4 Persistent card changes ("upgrades")
+
+- **[code]** The engine keeps a list of `PerpetualInterface` records on each `Card` (`Card.java:4715-4745`): `PerpetualPTBoost`, `PerpetualNewPT`, `PerpetualKeywords`, `PerpetualAbilities` (traits, triggers, statics), `PerpetualColors`, `PerpetualTypes`, `PerpetualManaCost`, `PerpetualIncorporate`. `setPerpetual(oldCard)` re-applies them when a card changes zone.
+- **[code]** Application is `card.addPerpetual(record); record.applyEffect(card);`.
+- **[run]** Applied in the start-of-game hook to every copy of "Savannah Lions" (base 2/1) in every zone: two `PerpetualPTBoost(+1,+1)` and `PerpetualKeywords("Haste")`. All four entered as 4/3 haste, and **kept the upgrades after a bounce and after an exile-and-return**. A control card was unchanged.
+- Not tested: the ability, mana-cost, colour and type record kinds; upgrades on tokens or copies of upgraded cards.
+- **[code]** Decks (`CardPool`) store counts per `PaperCard` with no identity for individual copies, which is why per-name upgrades are the natural shape.
+
+### 4.5 Life cap
+
+- **[code]** The engine has no maximum-life concept. `Player.gainLife(int, Card, SpellAbility)` (`Player.java:444`) is a single choke point, and set-life effects route through it (`Player.java:420`).
+- **[run]** A scripted replacement effect on a command-zone card capped life at 40 correctly: +30 from 20 gave 40, +10 more stayed 40, a 15-life loss gave 25, +5 gave 30. An uncapped opponent reached 50.
+- Not tested: real lifelink, and set-life effects, through the cap.
+
+### 4.6 Relics and the Commander
+
+- **[run]** A scripted command-zone relic ability put the commander onto the battlefield as its back face (Jill to Shiva, Warden of Ice, a 4/5 Saga creature). The ability was resolved directly in code, so activation through normal play was not tested.
+- **[code]** Shiva's chapter III exiles it and returns it **front face up**. "Play Shiva directly" is therefore a temporary form that reverts to Jill and would re-trigger Jill's enter ability.
+- **[code]** Jill (`Jill, Shiva's Dominant`, `{2}{U}`, 2/2): "When Jill enters, return up to one other target nonland permanent to its owner's hand." The trigger is `Origin$ Any`, so it fires on a cast from the command zone and on a flicker.
+
+### 4.7 The mana rule: spike results
+
+All headless, AI vs AI, Commander variant, 20 starting life.
+
+- **[run] Rainbow Basic (superseded).** A custom card typed `Basic Land Plains Island Swamp Mountain Forest` gets five automatic mana abilities. A command-zone trigger conjured one at each precombat main phase while under 10 lands. The no-ramp side had **1, 2, 3 ... 10 lands at its combat step, then stayed at 10, identically in all 6 seeds**. The new land is usable the turn it arrives. Landfall fired for every conjured land. The AI kept every landless 7-card hand and cast 26-34 spells per game.
+- **[run] Rewritten ramp spell.** `MakeCard | Zone$ Battlefield | Tapped$ True | Conjure$ True` worked as a "Rampant Growth".
+- **[code] `MakeCard` AI.** `ApiType.MakeCard` maps to `AlwaysPlayAi` (`SpellApiToAi.java:124`), which does not override `chooseCardName`, so the default takes the **first** option in the list.
+- **[run] Relic route with a choice list.** An upkeep trigger with `Choices$ Plains,Island,Swamp,Mountain,Forest` worked mechanically, but the AI always chose Plains. A mono-red boss **cast zero spells in 3 of 3 games**, and the log warned 39 times about the default logic. Fixing this needs Java, so a script-only version cannot give bosses a sensible choice.
+- **[run] Built-in route (emulated).** An event handler at the start of upkeep created the chosen basic directly, with a simple colour-need heuristic for the AI (colour symbols remaining in hand and library, divided by 1 + lands of that colour already out). The boss chose Mountains all ten times. The hero chose a Plains/Islands mix (for example P, I, P, P, I, P, I, P, I, I). Games ran 20-26 turns with 24-34 casts per side and no extra card in the command zone. This is the design adopted.
+- **[run] Universal cap.** A replacement effect (`Event$ Moved | Destination$ Battlefield | ValidCard$ Land.YouCtrl | CheckSVar ... GE10 | Prevent$ True | Layer$ CantHappen`) blocked forced land entries: 14 Islands forced onto the capped player left exactly 10 lands; an uncapped player reached 14. In the final engine this becomes Java.
+- **[code]** The AI has colour-aware basic-land choice code in `AiController` (around lines 619, 670, 1562) for its own land searches, which could inform the heuristic. It is not wired to `MakeCard`.
+- **[code]** Commander colour-identity restriction on mana applies only to abilities written as `ColorIdentity` mana (`AbilityManaPart.java`), not to ordinary any-colour or basic-land mana.
+
+### 4.8 UI
+
+- **[code]** The mobile match screen's command-zone row (`VPlayerPanel.CommandZoneDisplay`) shows **every card in the command zone**, including effect cards. A search for a hidden/ignored flag found only `isImmutable()` and `isEmblem()`, used for card-detail text. **Not looked at on screen.**
+
+### 4.9 Impact of the landless model on the card pool
+
+Rough text-pattern counts over 34,088 card scripts (`forge-gui/res/cardsfolder`). They include digital "A-" rebalanced duplicates, so treat them as approximate. Landcycling was not counted.
+
+| Category | Approx. count |
+|---|---|
+| Cards that are lands (removed from decks; special abilities lost) | 1,174 |
+| Search the library for a land and put it onto the battlefield (ramp) | 244 |
+| Search the library for a land to hand | 143 |
+| Landfall / land-enters triggers | 248 |
+| Count basic land types (domain-style) | 72 |
+
+### 4.10 Platform and delivery (Android)
+
+- **[run]** A debug-signed APK of this fork builds in the sandbox. Profile `android-dev-build` installs as package `forge.app.dev`, labelled "Forge (dev)", beside the official app (different package and signature). The official snapshot workflow only runs for the Card-Forge repository and needs its secrets.
+- **[code]** For snapshot-versioned builds (this fork is `2.0.16-SNAPSHOT`), the resource download URL is Card-Forge's daily-snapshots release (`AssetsDownloader.java`, `ForgeConstants.GITHUB_SNAPSHOT_URL`). Data files in `forge-gui/res/` do **not** reach a phone through the dev APK unless the updater URL is changed and an `assets.zip` is hosted, or the data is embedded in the app build.
+- **[code]** A resource update deletes the whole `res/` folder and re-extracts it (`GuiDownloadZipService.extract`). The user-data folder (`data/` under the app's obb directory on Android) is separate and is not deleted. Account-wide meta-progression should live there.
+- **[code]** The in-app updater will offer Card-Forge's official snapshot to a fork build.
+- Mobile code is shared between Android and the desktop dev build (`forge-gui-mobile`, `forge-gui-mobile-dev`).
+
+---
+
+## 5. Architecture proposal
+
+> This section is a **proposal** for review, not a record of decisions. Class names are suggestions.
+
+### 5.1 Engine rules (forge-game / forge-ai / forge-gui)
+
+| ID | Rule | Suggested home | Notes |
+|---|---|---|---|
+| R1 | Landless mana escalation | New per-match rule flag (on `GameRules` or `RegisteredPlayer`); turn-based action in `PhaseHandler.onPhaseBegin()` `case UPKEEP:` (`PhaseHandler.java:257`), beside the existing turn-based actions (untap, draw) | Uses a chooser interface: human prompt via the player controller, AI via a heuristic. Honours R2. |
+| R2 | Global land cap of 10 | Engine check on any land entering the battlefield for flagged players | Must hold for conjures, ramp, forced entries. Tested in script form only. |
+| R3 | In-match life cap and starting life | Fields on `RegisteredPlayer`, enforced in `Player.gainLife` | Run mode converts end life to run life. |
+| R4 | Per-name upgrades | New `RegisteredPlayer` field (name to list of upgrade records), applied at game start via the existing hook | Reuses the engine's perpetual records. |
+| R5 | Deck normaliser | Mode-level: strip lands from any deck at match start | Applies to starter and boss decks. |
+| R6 | Basic-land chooser for `MakeCard` | New AI class for `MakeCard` (or a script-param logic), sharing R1's heuristic | Needed so converted ramp spells work for the AI. |
+
+### 5.2 Run model and content (forge-gui)
+
+- **RunState**: seed, node graph and position, deck as name-to-count, upgrades as name-to-list, relics, run life, run max life, retries left, gold, floor.
+- **MetaProfile** (account-wide): unlocked starter decks and upgrades, level/experience, starting-life bonuses. Stored under the user-data folder.
+- **Content files**: starter decks (`.dck` with a `[Commander]` section, plus a small metadata file with the unlock condition), bucket definitions in `RewardData` syntax, an upgrade pool, a relic pool, a boss pool.
+- **Run flow logic**: node graph generator, reward generator (cards, buckets, attached upgrades), shop, rest, cut and upgrade nodes, retry handling, boss and floor handling.
+- **Match launcher** following `ConquestController.startBattle`, then converting the match result to run changes.
+
+### 5.3 UI
+
+New screens: run start (character and starter pick), node map, reward pick, shop, rest, cut, upgrade, run summary and meta screen. Hosted either as Conquest-style classic screens or as Adventure scenes (see 6.1).
+
+---
+
+## 6. Roadmap
+
+### 6.1 Phase 0: decisions and the remaining spikes
+
+- **Decide the UI host** (D12). **Classic screens** (Conquest-style): clean separation, reached from Classic mode. **Adventure scenes**: native feel on the phone and reuse of `RewardScene`, `ShopScene`, `InnScene` and `EffectData`, but `DuelScene` must first be decoupled from `EnemySprite`. The owner plays Adventure exclusively. A short spike (launch `DuelScene`, or a minimal launcher, with no overworld sprites) settles the cost.
+- Answer D6 (land choice timing) and D7 (decking). They change Phase 1.
+- Not a blocker: D1-D5, D8-D11, D13.
+
+### 6.2 Phase 1: engine rules (headless tests, no UI)
+
+1. **R1 + R2**: built-in mana escalation and the 10-land cap, with a chooser interface.
+2. **R6**: `MakeCard` AI for basics, and convert a handful of the standard ramp pattern as a proof (a bulk conversion of the roughly 244 is a later task).
+3. **R3**: starting life, in-match life cap, end-of-match life read-back (including loser data from registered players).
+4. **R4**: upgrade records applied at game start, plus a serialisable upgrade description.
+5. **R5**: land stripper for starter and boss decks. Settle D7.
+6. **Relic mechanism** (D3): decide whether relics stay card-based or become a Java modifier system.
+
+**Exit criteria**: new TestNG tests for each rule pass (use the existing `AITest` pattern in `forge-gui-desktop/src/test/java/forge/ai/`); an AI-vs-AI soak over many seeds shows lands going 1 to 10, the cap holding, sensible colour choices, and no exceptions; the existing test suite for the touched modules still passes.
+
+### 6.3 Phase 2: run model and content (headless)
+
+RunState, node graph generator, reward generator (cards, buckets, attached upgrades), shop, rest, cut, upgrade, retry logic, save/load. Include a **headless run simulator** (AI plays both sides) so whole runs can be smoke-tested and tuned. Needs D1, D2, D4, D5, D8, D13.
+
+### 6.4 Phase 3: UI
+
+Screens listed in 5.3 in the chosen host. Test with the desktop dev build under a virtual display (see 7).
+
+### 6.5 Phase 4: meta-progression
+
+MetaProfile, unlock rules, level-up effects (run max life, unlocked starter decks and upgrades). Needs D9.
+
+### 6.6 Phase 5: Android build and delivery
+
+Build the side-by-side `forge.app.dev` APK. Decide how mode data reaches the phone (embedded in the build, or a hosted resource bundle with the updater URL changed, see 4.10). Disable or redirect the in-app updater prompt. On-device checks.
+
+### 6.7 Phase 6: content and balance
+
+More Commanders and starter decks (including Jill's two unlockable blue+X decks), bosses (starting from the legends decks), bucket, upgrade and relic pools, bulk ramp-card conversion, and balance tuning with the run simulator.
+
+---
+
+## 7. Test strategy and tooling
+
+All of this was used successfully in the design sessions.
+
+- **Headless engine tests.** `forge-gui-desktop/src/test/java/forge/ai/AITest.java` shows how to initialise the card database and build games. `forge-gui-desktop/src/main/java/forge/view/SimulateMatch.java` (`forge sim`) is the canonical AI-vs-AI runner.
+- **Spike pattern** (`spikes/`): a standalone program compiled against `forge-gui-desktop/target/forge-gui-desktop-*-jar-with-dependencies.jar`, run from the `forge-gui` directory with `-Djava.awt.headless=true -Duser.home=<scratch>`.
+- **Real UI, headless.** Run the desktop dev jar (`forge-gui-mobile-dev`) under `Xvfb`, drive it with Java's `java.awt.Robot` (`ui-harness/Click.java`), take screenshots with ImageMagick `import`. In Adventure, **F9** opens the console. `teleport to poi <name>` is a quick way to load map content.
+- **Final check** has to happen on a real device.
+
+---
+
+## 8. Risks
+
+| Risk | Detail |
+|---|---|
+| AI quality | Boss and hero AI with landless decks, custom colour choice, and upgraded cards is only lightly tested. The AI kept all landless hands and cast many spells, but play strength and balance were not evaluated. |
+| Small decks | Decking (4.3) and long games. |
+| Command-zone UI | Any card-based rule or relic occupies UI. Unresolved for relics (D3). |
+| Data delivery | The updater points at Card-Forge (4.10). |
+| Scope | Conquest, a comparable mode, is about 6,700 lines. A lean first version should be a fraction of that, but this is a guess. |
+| Fork drift | Upstream Forge changes the same files regularly. |
+| Human prompt and upgrade display | The human land-choice prompt, and how upgrades are shown on cards outside matches, have not been prototyped. |
+
+---
+
+## 9. Decision log and supersessions
+
+1. Rainbow Basic land, tapped for any colour. **Replaced** by a per-turn chosen basic (a colour pick on every tap was judged tedious).
+2. Mana rule as a command-zone relic. **Replaced** by a built-in rule (UI space, AI first-option problem, "feels hacky").
+3. Land cap as a relic effect. **Replaced** by an engine cap, 10 in all cases.
+4. Upgrades per copy. **Replaced** by per name, additive.
+5. A "play Shiva directly" relic is a design aspiration; Shiva reverts at chapter III (4.6).
+
+---
+
+## 10. Notes for the implementing session
+
+- **Repository and branch**: `geewizzschroe/forge-gws`, development branch `claude/android-apk-forked-game-051b3w`. Do not open a pull request unless asked.
+- **Build** (sandbox, JDK 21, Maven 3.9): run a full `mvn install -Dmaven.test.skip=true` first. Single-module builds with `-pl` fail unless dependencies are included, so use `-am`. Android APK: download the custom Android Maven plugin from Card-Forge's releases into `~/.m2`, install the Android SDK platform 35 and build-tools 35.0.0, then `mvn -P android-dev-build verify -pl forge-gui-android -am -Dandroid.sdk.path=<sdk> -Dandroid.buildToolsVersion=35.0.0 -Dmaven.test.skip=true`.
+- **Gotchas**: Java ignores `$HOME`, so pass `-Duser.home`. `GuiDesktop.getAssetsDir()` returns `""` for non-"git" version strings, so run from the `forge-gui` directory. Do not `pkill -f` a pattern that appears in your own command line.
+- **Do not break Adventure.** The mode should add to `GameType`, menus and a new package, not change Adventure behaviour.
+- The spike files are throwaway references, not production code. They are not part of any Maven module.
+- Keep the evidence tags in this document up to date as claims get verified.

@@ -1,0 +1,5 @@
+Name:Spike Rampant Growth
+ManaCost:1 G
+Types:Sorcery
+A:SP$ MakeCard | Name$ Rainbow Basic | Zone$ Battlefield | Tapped$ True | Conjure$ True | SpellDescription$ Conjure a Rainbow Basic onto the battlefield tapped.
+Oracle:Conjure a Rainbow Basic onto the battlefield tapped.

@@ -1,0 +1,5 @@
+Name:Spike Rampant Choice
+ManaCost:1 G
+Types:Sorcery
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True | SpellDescription$ Choose a basic land and conjure it onto the battlefield tapped.
+Oracle:Choose a basic land and conjure it onto the battlefield tapped.
