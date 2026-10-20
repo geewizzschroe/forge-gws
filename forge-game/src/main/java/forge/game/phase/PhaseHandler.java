@@ -294,6 +294,10 @@ public class PhaseHandler implements java.io.Serializable, IHasForgeLog {
                         playerTurn.rollToVisitAttractions();
                     }
 
+                    if (nMainsThisTurn == 1 && game.getRules().isConjureBasicLandEachTurn()) {
+                        BasicLandEscalation.conjureChosenBasicLand(playerTurn);
+                    }
+
                     break;
 
                 case COMBAT_BEGIN:

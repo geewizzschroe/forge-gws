@@ -1517,6 +1517,11 @@ public class PlayerControllerAi extends PlayerController {
     }
 
     @Override
+    public String chooseBasicLandToConjure(List<String> basicLandNames) {
+        return AiBasicLandChoice.choose(player, basicLandNames);
+    }
+
+    @Override
     public String chooseCardName(SpellAbility sa, List<ICardFace> faces, String message) {
         return SpellApiToAi.Converter.get(sa).chooseCardName(player, sa, faces);
     }
