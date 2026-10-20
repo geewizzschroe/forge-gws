@@ -4,7 +4,7 @@ A Legends of Runeterra "Path of Champions"-style run mode for Forge, with a Slay
 
 This document records every decision made so far, the evidence behind it, and a phased roadmap for building it. It was written at the end of a long design conversation so that a new session can pick the work up cold.
 
-**Second revision.** Records the owner's answers to D3, D5, D6, D7, D10 and D12 (section 3.1) and what they imply (3.3, 4, 5, 6, 9).
+**Revisions.** Second: records the owner's answers to D3, D5, D6, D7, D10 and D12. Third: N4 (how new screens and content reach the phone) is decided; see 2.10. Open items are in section 3.
 
 **Evidence tags used throughout**
 
@@ -115,6 +115,21 @@ The mode is hosted **inside Adventure mode** and entered from the Adventure menu
 
 A player who must draw from an empty library still loses. **Kept for now.** Deck power and size will be tuned as starter decks and boss decks are built.
 
+### 2.10 Delivery of screens and content (N4)
+
+New layout files and mode content are **bundled inside the app** and **copied into the resource folder on every launch**, so the existing loaders find them where they expect. If the updater wipes the resource folder, the next launch copies them back. The owner and the first design pass independently leaned this way.
+
+Options considered: (1) read the files directly from inside the app with new loading code; (2) **chosen**; (3) host a separate resource bundle and change the updater address; (4) build the screens in code instead of layout files (solves layouts only).
+
+Details:
+
+- The source of truth stays in the repo's resource tree. New files go in their own folder so they cannot collide with official files. On the desktop dev build they are read straight from the repo, with no copying.
+- **[assumed]** The Android build bundles that folder into the app's internal assets. A startup step copies it into the resource folder after the updater has finished and before any screen loads. **[code]** The updater hands control onward when it finishes and restarts the app after an update (`AssetsDownloader.checkForUpdates`, called from `Forge.java:284`), so the copy has a natural place to run. The exact spot is not yet confirmed.
+- Saves and meta-progression live in the user-data folder, which the updater does not touch (4.10).
+- Changing content means rebuilding and reinstalling the app. There is no release process.
+- Fallback if the copy step proves awkward: read the bundled files directly with libGDX's internal file access (option 1).
+- **Not tested on a device.** Whether reinstalling a rebuilt app triggers the resource re-download depends on the version string; probably not when it is unchanged.
+
 ---
 
 ## 3. Open design questions
@@ -127,6 +142,7 @@ A player who must draw from an empty library still loses. **Kept for now.** Deck
 - **D7. Decking.** Kept for now (2.9).
 - **D10. Ramp at the cap.** Creates that many Treasures (2.5.1).
 - **D12. UI host.** Adventure, entered from the Adventure menu (2.8).
+- **N4. Delivery.** Bundle in the app, copy into the resource folder on every launch (2.10).
 
 ### 3.2 Still open
 
@@ -145,7 +161,7 @@ None of these blocks Phase 1 (engine rules).
 - **N1. Relic-inventory card.** The engine's card text is normally static. How is the text generated and kept current as relics are gained? Do the relics' effects live on that card, or in engine code with the card only displaying them? Untested. (Phase 1 item 6)
 - **N2. Treasure fallback scope.** Ramp spells only, or any land that cannot enter at the cap? Partial case (more lands than room) is assumed: as many lands as fit, the rest as Treasures. (Phase 1 item 2)
 - **N3. Skipped or extra main phases.** If a player skips their precombat main phase, do they miss that turn's land? No extra land for extra main phases is assumed. [assumed] (Phase 1 item 1)
-- **N4. Adventure layout delivery.** Adventure screens load their layout JSON from the resource folder, which the updater replaces from Card-Forge's server (4.8, 4.10). Do we build the new screens and the menu entry in code, embed the layouts in the app, or change the updater? **Blocks Phase 3 and 5. Decide in Phase 0.**
+- **N4. Delivery.** Resolved, see 3.1 and 2.10.
 - **N5. Which keywords stack.** Assumed: the engine's normal rules decide (for example Ward and Flanking stack; haste and vigilance do not). Needs tests. (Phase 1 item 4)
 
 ---
@@ -218,7 +234,7 @@ All headless, AI vs AI, Commander variant, 20 starting life.
 ### 4.8 UI
 
 - **[code]** The mobile match screen's command-zone row (`VPlayerPanel.CommandZoneDisplay`) shows **every card in the command zone**, including effect cards. A search for a hidden/ignored flag found only `isImmutable()` and `isEmblem()`, used for card-detail text. **Not looked at on screen.**
-- **[code]** Adventure screens (`UIScene`) build their layout from a JSON file loaded through `Config.getFile` (`UIScene.java:224`), that is, from the resource folder. The Adventure start menu wires its buttons by name from `start_menu.json` (`StartScene.java:45-54`; it includes a "Switch" button to Classic mode). A new screen or menu entry therefore needs either a layout file in the resource folder or code that builds the layout (N4).
+- **[code]** Adventure screens (`UIScene`) build their layout from a JSON file loaded through `Config.getFile` (`UIScene.java:224`), that is, from the resource folder. The Adventure start menu wires its buttons by name from `start_menu.json` (`StartScene.java:45-54`; it includes a "Switch" button to Classic mode). A new screen or menu entry therefore needs either a layout file in the resource folder or code that builds the layout (resolved: 2.10).
 
 ### 4.9 Impact of the landless model on the card pool
 
@@ -269,7 +285,7 @@ Rough text-pattern counts over 34,088 card scripts (`forge-gui/res/cardsfolder`)
 
 ### 5.3 UI
 
-New Adventure scenes (decided, 2.8): run start (character and starter pick), node map, reward pick, shop, rest, cut, upgrade, run summary and meta screen, plus an entry on the Adventure menu. Reuse `RewardScene` (pick-one rewards), `ShopScene` and `InnScene`. How layouts reach the device: see N4.
+New Adventure scenes (decided, 2.8): run start (character and starter pick), node map, reward pick, shop, rest, cut, upgrade, run summary and meta screen, plus an entry on the Adventure menu. Reuse `RewardScene` (pick-one rewards), `ShopScene` and `InnScene`. How layouts and content reach the device: see 2.10.
 
 ---
 
@@ -280,7 +296,7 @@ New Adventure scenes (decided, 2.8): run start (character and starter pick), nod
 The UI host is decided (2.8). Remaining Phase 0 work:
 
 - **Match-launcher spike.** Launch `DuelScene`, or a minimal equivalent, without overworld sprites (4.1). If this proves expensive, revisit 2.8.
-- **Layout and data delivery (N4).** Decide how new screens, the menu entry and mode content reach a fork build despite the updater (4.10). This blocks Phase 3 and 5.
+- **Delivery step spike (2.10).** Confirm where the copy-on-launch step runs relative to the updater. The desktop build cannot exercise the Android updater path, so this needs the Android build. Phase 3 can proceed meanwhile on desktop, where the files are read from the repo.
 - Answer N1-N3 and N5 as convenient. They shape Phase 1, but none blocks its start.
 - Still open and not blocking: D1, D2, D4, D8, D9, D11, D13.
 
@@ -309,7 +325,7 @@ MetaProfile, unlock rules, level-up effects (run max life, unlocked starter deck
 
 ### 6.6 Phase 5: Android build and delivery
 
-Build the side-by-side `forge.app.dev` APK. Settle how mode data and screen layouts reach the phone (embedded in the build, built in code, or a hosted resource bundle with the updater URL changed; see 4.10 and N4). Disable or redirect the in-app updater prompt. On-device checks.
+Build the side-by-side `forge.app.dev` APK. Implement and verify the copy-on-launch delivery step (2.10): bundle the mode's files in the app and copy them into the resource folder after the updater finishes. Disable or redirect the in-app updater prompt. On-device checks.
 
 ### 6.7 Phase 6: content and balance
 
@@ -336,7 +352,7 @@ All of this was used successfully in the design sessions.
 | AI quality | Boss and hero AI with landless decks, custom colour choice, and upgraded cards is only lightly tested. The AI kept all landless hands and cast many spells, but play strength and balance were not evaluated. |
 | Small decks | Decking (4.3) and long games. |
 | Command-zone UI | Any card-based rule or relic occupies UI. Unresolved for relics (D3). |
-| Data and layout delivery | The updater points at Card-Forge (4.10); Adventure screens load layouts from `res/` (4.8, N4). |
+| Delivery step | Copy-on-launch (2.10) is untested on a device: its timing relative to the updater, and whether a rebuilt app triggers a resource re-download. |
 | Adventure coupling | Reusing `DuelScene` needs it decoupled from overworld sprites, which risks regressions in Adventure itself. |
 | Scope | Conquest, a comparable mode, is about 6,700 lines. A lean first version should be a fraction of that, but this is a guess. |
 | Fork drift | Upstream Forge changes the same files regularly. |
@@ -357,6 +373,7 @@ All of this was used successfully in the design sessions.
 9. Relics get one command-zone inventory card (D3), an exception to 2.7.
 10. Ramp at the cap creates Treasure tokens (D10).
 11. Duplicate keywords: stackable ones stack, one-time keywords do nothing extra (D5).
+12. Delivery: bundle in the app, copy into the resource folder on every launch (N4, 2.10).
 
 ---
 
