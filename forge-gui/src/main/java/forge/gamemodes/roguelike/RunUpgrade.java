@@ -30,7 +30,9 @@ public class RunUpgrade {
         if (power != 0 || toughness != 0) {
             parts.add((power >= 0 ? "+" : "") + power + "/" + (toughness >= 0 ? "+" : "") + toughness);
         }
-        parts.addAll(keywords);
+        for (String k : keywords) {
+            parts.add(k.replace(':', ' ')); // engine spelling "Ward:1" reads as "Ward 1"
+        }
         return String.join(", ", parts);
     }
 

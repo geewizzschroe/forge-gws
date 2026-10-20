@@ -1,8 +1,11 @@
 package forge.screens.roguelike;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import forge.StaticData;
 import forge.assets.FSkinFont;
+import forge.card.CardZoom;
 import forge.gamemodes.roguelike.MapNode;
 import forge.gamemodes.roguelike.Offer;
 import forge.gamemodes.roguelike.OfferKind;
@@ -12,6 +15,7 @@ import forge.gamemodes.roguelike.Run;
 import forge.gamemodes.roguelike.RunStatus;
 import forge.gamemodes.roguelike.RunText;
 import forge.gamemodes.roguelike.StarterDef;
+import forge.item.PaperCard;
 import forge.screens.FScreen;
 import forge.screens.home.NewGameMenu;
 import forge.toolbox.FButton;
@@ -93,6 +97,7 @@ public class RoguelikeScreen extends FScreen {
         Offer offer = run.getState().offer;
         if (offer != null) {
             List<OfferOption> options = offer.options;
+            addCardViewer(run, offer);
             for (int i = 0; i < options.size(); i++) {
                 final int index = i;
                 OfferOption o = options.get(i);
@@ -112,13 +117,37 @@ public class RoguelikeScreen extends FScreen {
             }
         } else if (run.getActiveEncounter() != null) {
             button("Fight: " + run.getActiveEncounter().name, e -> ctrl().startMatch());
+            List<PaperCard> bases = new ArrayList<>();
+            PaperCard enemyBase = run.getEncounterBase(run.getActiveEncounter());
+            if (enemyBase != null) {
+                bases.add(enemyBase);
+            }
+            PaperCard playerBase = run.getPlayerBase();
+            if (playerBase != null) {
+                bases.add(playerBase);
+            }
+            if (!bases.isEmpty()) {
+                button("Look at the Bases", e -> CardZoom.show(bases, 0, null));
+            }
         } else {
             for (MapNode n : run.getAvailableNodes()) {
                 button(RunText.node(run, n), e -> act(() -> run.enterNode(n.id)));
             }
         }
 
-        button("View deck and relics", e -> FOptionPane.showMessageDialog(RunText.deckList(run), "Your deck"));
+        button("Look at your deck", e -> {
+            List<PaperCard> deck = new ArrayList<>();
+            deck.add(card(run.getState().commander));
+            PaperCard base = run.getPlayerBase();
+            if (base != null) {
+                deck.add(base);
+            }
+            for (String name : run.getState().deck.keySet()) {
+                deck.add(card(name));
+            }
+            CardZoom.show(deck, 0, null);
+        });
+        button("Deck list, upgrades and relics", e -> FOptionPane.showMessageDialog(RunText.deckList(run), "Your deck"));
         button("Abandon run", e -> FOptionPane.showConfirmDialog("Abandon this run? It can't be resumed.",
                 "Abandon run", yes -> {
                     if (yes) {
@@ -127,6 +156,65 @@ public class RoguelikeScreen extends FScreen {
                     }
                 }));
         revalidate();
+    }
+
+    /**
+     * A "Look at the cards" button for an offer: swipe through every card on offer and take, buy, cut or
+     * upgrade the one shown.
+     */
+    private void addCardViewer(final Run run, final Offer offer) {
+        final List<PaperCard> cards = new ArrayList<>();
+        final List<Integer> owner = new ArrayList<>();
+        for (int i = 0; i < offer.options.size(); i++) {
+            OfferOption o = offer.options.get(i);
+            List<String> names = new ArrayList<>(o.cards.keySet());
+            if (o.cutCard != null) {
+                names.add(o.cutCard);
+            }
+            if (o.upgradeCard != null && o.cards.isEmpty()) {
+                names.add(o.upgradeCard);
+            }
+            for (String name : names) {
+                cards.add(card(name));
+                owner.add(i);
+            }
+        }
+        if (cards.isEmpty()) {
+            return;
+        }
+        final CardZoom.ActivateHandler handler = new CardZoom.ActivateHandler() {
+            @Override
+            public String getActivateAction(int index) {
+                OfferOption o = offer.options.get(owner.get(index));
+                return switch (offer.kind) {
+                    case SHOP -> o.bought || o.price > run.getState().gold ? null : "Buy for " + o.price + " gold";
+                    case CUT -> "Cut " + o.cutCard;
+                    case UPGRADE -> "Upgrade: " + o.upgrade.describe();
+                    default -> o.label != null ? "Take " + o.label : "Take " + RunText.option(run, o);
+                };
+            }
+
+            @Override
+            public void setSelectedIndex(int index) {
+            }
+
+            @Override
+            public void activate(int index) {
+                final int option = owner.get(index);
+                act(() -> {
+                    if (offer.kind == OfferKind.SHOP) {
+                        run.buy(option);
+                    } else {
+                        run.choose(option);
+                    }
+                });
+            }
+        };
+        button("Look at the cards", e -> CardZoom.show(cards, 0, handler));
+    }
+
+    private static PaperCard card(final String name) {
+        return StaticData.instance().getCommonCards().getCard(name);
     }
 
     /** Run a step of the run, save, and redraw. */

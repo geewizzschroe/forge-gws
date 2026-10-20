@@ -3,7 +3,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
 public class Click {
-    // usage: Click click x y | Click key NAME | Click type "text" | Click drag x1 y1 x2 y2
+    // usage: Click click x y | Click key NAME | Click type "text" | Click drag x1 y1 x2 y2 | Click swipe x1 y1 x2 y2
     static void tap(Robot r, int k, boolean shift) throws Exception {
         if (shift) r.keyPress(KeyEvent.VK_SHIFT);
         r.keyPress(k); Thread.sleep(25); r.keyRelease(k);
@@ -50,6 +50,19 @@ public class Click {
                 Thread.sleep(200);
                 r.mouseMove(Integer.parseInt(a[3]), Integer.parseInt(a[4]));
                 Thread.sleep(300);
+                r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            }
+            case "swipe" -> { // a quick fling, for gestures that need velocity
+                int x1 = Integer.parseInt(a[1]), y1 = Integer.parseInt(a[2]);
+                int x2 = Integer.parseInt(a[3]), y2 = Integer.parseInt(a[4]);
+                r.setAutoDelay(0);
+                r.mouseMove(x1, y1);
+                Thread.sleep(150);
+                r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                for (int i = 1; i <= 10; i++) {
+                    r.mouseMove(x1 + (x2 - x1) * i / 10, y1 + (y2 - y1) * i / 10);
+                    Thread.sleep(8);
+                }
                 r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             }
         }

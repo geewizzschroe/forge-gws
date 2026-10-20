@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 
 import forge.LobbyPlayer;
 import forge.StaticData;
+import forge.game.BaseCard;
 import forge.game.Game;
 import forge.game.player.Player;
 import forge.gamemodes.roguelike.RunMatchFactory.RunMatch;
@@ -130,6 +131,22 @@ public class Run {
             return null;
         }
         return content.getEncounter(node.encounterId);
+    }
+
+    /** The player's Base as it will be in the next match, relics included; null if there is none. */
+    public PaperCard getPlayerBase() {
+        List<RelicDef> relics = new ArrayList<>();
+        for (String id : state.relics) {
+            relics.add(content.getRelic(id));
+        }
+        StarterDef starter = content.getStarter(state.starterId);
+        List<String> script = BaseAssembler.assemble(starter.base == null ? null : content.getBase(starter.base), relics);
+        return script == null ? null : BaseCard.fromScript(script);
+    }
+
+    /** An enemy's Base, or null if it has none. */
+    public PaperCard getEncounterBase(final EncounterDef enc) {
+        return enc.base == null ? null : BaseCard.fromScript(content.getBase(enc.base));
     }
 
     public RunMatch createMatch(final LobbyPlayer hero, final LobbyPlayer enemy) {

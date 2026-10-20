@@ -9,7 +9,6 @@ import forge.StaticData;
 import forge.card.CardRules;
 import forge.deck.Deck;
 import forge.deck.DeckSection;
-import forge.game.BaseCard;
 import forge.game.BasicLandEscalation;
 import forge.game.GameRules;
 import forge.game.GameType;
@@ -48,16 +47,8 @@ public final class RunMatchFactory {
                 hero.addCardUpgrade(e.getKey(), u.toCardUpgrade());
             }
         }
-        List<RelicDef> relics = new ArrayList<>();
-        for (String id : state.relics) {
-            relics.add(content.getRelic(id));
-        }
-        StarterDef starter = content.getStarter(state.starterId);
-        List<String> heroBase = BaseAssembler.assemble(
-                starter.base == null ? null : content.getBase(starter.base), relics);
-        if (heroBase != null) {
-            hero.setBase(BaseCard.fromScript(heroBase));
-        }
+        Run run = new Run(content, state);
+        hero.setBase(run.getPlayerBase());
         hero.setPlayer(heroPlayer);
 
         RegisteredPlayer enemy = new RegisteredPlayer(deck(encounter.name, encounter.deck, encounter.commander));
@@ -66,9 +57,7 @@ public final class RunMatchFactory {
         }
         enemy.setStartingLife(encounter.life);
         enemy.setStartingHand(encounter.hand);
-        if (encounter.base != null) {
-            enemy.setBase(BaseCard.fromScript(content.getBase(encounter.base)));
-        }
+        enemy.setBase(run.getEncounterBase(encounter));
         enemy.setPlayer(enemyPlayer);
 
         List<RegisteredPlayer> players = new ArrayList<>();
