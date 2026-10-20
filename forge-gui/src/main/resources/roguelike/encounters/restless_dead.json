@@ -1,0 +1,18 @@
+{
+  "id": "restless_dead",
+  "name": "The Restless Dead",
+  "minRow": 2,
+  "base": "open_graves.txt",
+  "life": 20,
+  "hand": 7,
+  "deck": {
+    "Walking Corpse": 3,
+    "Vampire Bats": 2,
+    "Gravedigger": 3,
+    "Dusk Legion Zealot": 3,
+    "Murder": 2,
+    "Mind Rot": 2,
+    "Diregraf Ghoul": 3,
+    "Highborn Ghoul": 2
+  }
+}

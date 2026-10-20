@@ -1,0 +1,9 @@
+{
+  "id": "lucky_coin",
+  "name": "Lucky Coin",
+  "description": "At the beginning of your upkeep, scry 1.",
+  "script": [
+    "T:Mode$ Phase | Phase$ Upkeep | ValidPlayer$ You | TriggerZones$ Command | Execute$ lucky_coin_Scry | TriggerDescription$ Lucky Coin: At the beginning of your upkeep, scry 1.",
+    "SVar:lucky_coin_Scry:DB$ Scry | ScryNum$ 1"
+  ]
+}

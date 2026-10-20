@@ -1,0 +1,8 @@
+{
+  "id": "war_drum",
+  "name": "War Drum",
+  "description": "Your commander has haste.",
+  "script": [
+    "S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.IsCommander+YouCtrl | AddKeyword$ Haste | Description$ War Drum: Your commander has haste."
+  ]
+}

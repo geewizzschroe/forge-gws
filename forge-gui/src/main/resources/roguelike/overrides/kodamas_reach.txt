@@ -1,0 +1,6 @@
+Name:Kodama's Reach
+ManaCost:2 G
+Types:Sorcery Arcane
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True | SubAbility$ DBToHand | SpellDescription$ Conjure a basic land card of your choice onto the battlefield tapped and a basic land card of your choice into your hand.
+SVar:DBToHand:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Hand | Conjure$ True
+Oracle:Conjure a basic land card of your choice onto the battlefield tapped and a basic land card of your choice into your hand.

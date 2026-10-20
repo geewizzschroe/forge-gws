@@ -1,0 +1,7 @@
+Name:Sakura-Tribe Elder
+ManaCost:1 G
+Types:Creature Snake Shaman
+PT:1/1
+A:AB$ MakeCard | Cost$ Sac<1/CARDNAME> | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True | SpellDescription$ Conjure a basic land card of your choice onto the battlefield tapped.
+SVar:SacMeAfterBlock:TRUE
+Oracle:Sacrifice Sakura-Tribe Elder: Conjure a basic land card of your choice onto the battlefield tapped.

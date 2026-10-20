@@ -1,0 +1,7 @@
+Name:Goblin Warren
+ManaCost:no cost
+Types:Base
+S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.Goblin+YouCtrl | AddPower$ 1 | Description$ Goblins you control get +1/+0.
+T:Mode$ Phase | Phase$ BeginCombat | ValidPlayer$ You | TriggerZones$ Command | Execute$ TrigGoblin | TriggerDescription$ At the beginning of combat on your turn, create a 1/1 red Goblin creature token.
+SVar:TrigGoblin:DB$ Token | TokenScript$ r_1_1_goblin
+Oracle:Goblins you control get +1/+0.\nAt the beginning of combat on your turn, create a 1/1 red Goblin creature token.

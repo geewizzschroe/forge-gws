@@ -1,0 +1,20 @@
+{
+  "id": "boss_krenko",
+  "name": "Krenko's Warband",
+  "boss": true,
+  "commander": "Krenko, Mob Boss",
+  "base": "goblin_warren.txt",
+  "life": 30,
+  "hand": 7,
+  "deck": {
+    "Raging Goblin": 3,
+    "Goblin Piker": 3,
+    "Mogg Fanatic": 3,
+    "Goblin Raider": 3,
+    "Goblin Instigator": 3,
+    "Beetleback Chief": 2,
+    "Lightning Bolt": 3,
+    "Searing Spear": 3,
+    "Hill Giant": 2
+  }
+}

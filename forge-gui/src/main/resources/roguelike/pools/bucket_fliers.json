@@ -1,0 +1,6 @@
+{
+  "id": "bucket_fliers",
+  "name": "Wings!",
+  "bucket": true,
+  "cards": ["Wind Drake", "Air Elemental", "Cloudkin Seer", "Aethersnipe", "Phantom Monster", "Mahamoti Djinn", "Faerie Miscreant"]
+}

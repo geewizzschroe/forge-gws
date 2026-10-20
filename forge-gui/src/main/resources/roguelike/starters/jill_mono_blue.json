@@ -1,0 +1,22 @@
+{
+  "id": "jill_mono_blue",
+  "name": "Jill: Tides of Ice (sample)",
+  "commander": "Jill, Shiva's Dominant",
+  "base": "wayfarers_camp.txt",
+  "rewardPool": "blue_core",
+  "deck": {
+    "Man-o'-War": 3,
+    "Mulldrifter": 3,
+    "Cloudkin Seer": 3,
+    "Aethersnipe": 2,
+    "Wind Drake": 3,
+    "Phantom Monster": 2,
+    "Merfolk Looter": 2,
+    "Into the Roil": 2,
+    "Repulse": 2,
+    "Unsummon": 2,
+    "Counterspell": 2,
+    "Preordain": 2,
+    "Riftwing Cloudskate": 2
+  }
+}

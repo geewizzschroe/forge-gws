@@ -337,7 +337,7 @@ All engine switches default to off, so normal Forge games are unchanged. Tests l
 | Item | Status | Where | Tests |
 |---|---|---|---|
 | 1. R1 + R2 | Done [run] | `GameRules.setConjureBasicLandEachTurn` / `setMaxLandsPerPlayer`; `BasicLandEscalation`; turn action in `PhaseHandler` `case MAIN1`; cap check in `GameAction.changeZone` (a blocked land stays where it was); `PlayerController.chooseBasicLandToConjure` (human: pick-one prompt; AI: `AiBasicLandChoice`) | `BasicLandEscalationTest`, including one full AI-vs-AI game with landless decks |
-| 2. R6 | Done [run]; no ramp cards converted yet | `forge-ai/.../ability/MakeCardAi` (always plays; a choice made only of basic lands uses `AiBasicLandChoice`, anything else keeps the old first-option pick). Treasure fallback in `MakeCardEffect`: a land it puts onto the battlefield that the cap keeps out becomes a Treasure via `BasicLandEscalation.makeTreasures`, which runs the normal token ability (so token doublers and token triggers apply); tapped if the land would have entered tapped. The built-in per-turn land never conjures at the cap, so it never makes Treasures. | `BasicLandEscalationTest`: untapped, tapped, room-for-one, no cap |
+| 2. R6 | Done [run]; 10 ramp cards converted | `forge-ai/.../ability/MakeCardAi` (always plays; a choice made only of basic lands uses `AiBasicLandChoice`, anything else keeps the old first-option pick). Treasure fallback in `MakeCardEffect`: a land it puts onto the battlefield that the cap keeps out becomes a Treasure via `BasicLandEscalation.makeTreasures`, which runs the normal token ability (so token doublers and token triggers apply); tapped if the land would have entered tapped. The built-in per-turn land never conjures at the cap, so it never makes Treasures. Converted cards: `GameRules.addCardOverride(rules)` replaces a card's script for every copy in a match's decks while keeping its set (so its art); the mode's landless versions live in the content's `overrides/` (Rampant Growth, Cultivate, Kodama's Reach, Explosive Vegetation, Farseek, Nature's Lore, Three Visits, Wood Elves, Sakura-Tribe Elder, Harrow). Cards conjured by name mid-game are not overridden. | `BasicLandEscalationTest`: untapped, tapped, room-for-one, no cap; `RunPlaythroughTest.rampDecksNeverPassTheCap` (soak) |
 | 3. R3 | Done [run] | `RegisteredPlayer.setMaxLife` (0 = no limit), copied to `Player` at game start; `Player.gainLife` trims the gain after replacement effects, so doublers apply first and life-gain triggers see only life actually gained. The run mode sets it to 2× run max; the engine only knows "a cap". Starting life already existed. | `MaxLifeTest` |
 | 4. R4 | Done [run] for P/T and keywords | `CardUpgrade` record (power, toughness, keywords) in `forge-game`; `RegisteredPlayer.addCardUpgrade(name, upgrade)`; applied in `Match.prepareAllZones` after commanders are created, as perpetual effects | `CardUpgradeTest`: additive on every copy, opponent's copies untouched, survives zone changes, commander upgraded in the command zone, repeated keywords kept as separate instances |
 | 5. R5 | Done [run]; approach confirmed (decision 14) | `BasicLandEscalation.withoutLands(deck)`: copy of the deck without any card whose front face is a land (nonbasic lands included); spells with a land back face stay | `BasicLandEscalationTest` |
@@ -347,15 +347,47 @@ Notes from the build:
 - N5 is tested structurally only: two Flanking upgrades give two Flanking instances, and doubled Haste is still Haste. A combat test proving two Flanking instances both trigger is not written. [code]
 - N3 as built: the land comes only at the start of the turn's first precombat main phase. What happens when that phase is skipped is not tested. [code]
 - The upgrade record is a plain value (P/T numbers and keyword strings), so the run mode can save it as text; save format is Phase 2 work.
+- **Exit criteria met** [run]: the ramp soak (`-Droguelike.soakGames=N`, default 3) has green ramp decks reach exactly 10 lands and never more, with Treasures made at the cap, and no exceptions. The soak found one real bug, now fixed with a regression test: the AI's land picker crashed for a player with no commander once nothing left in hand or library needed a colour.
+- AI caveat [assumed, untested]: `MakeCardAi` always plays, so the AI may sacrifice Sakura-Tribe Elder right away rather than when it blocks.
 - Full suite: `xvfb-run -a mvn -B -pl forge-gui-desktop -am test`. Without a display, `forge.PanelTest` cannot start and the whole desktop test run is aborted before any test runs.
 
 ### 6.3 Phase 2: run model and content (headless)
 
 RunState, node graph generator, reward generator (cards, buckets, attached upgrades), shop, rest, cut, upgrade, retry logic, save/load. Include a **headless run simulator** (AI plays both sides) so whole runs can be smoke-tested and tuned. Needs D1, D2, D4, D5, D8, D13.
 
+#### 6.3.1 Phase 2 progress
+
+Built [run], in `forge-gui/src/main/java/forge/gamemodes/roguelike/`. Every open design question is a **placeholder setting** in `RunConfig` (marked PLACEHOLDER there), not a decision.
+
+- **Content** (`RoguelikeContent`): config, upgrade pool, starters, encounters, relics, card pools and buckets as JSON; Bases and card overrides as card scripts. It ships inside the app as classpath resources under `roguelike/` (with an `index.txt`, since bundled files can't be listed), so it reaches Android even though `res/` is replaced by downloaded assets. This is a simpler form of N4 option 2: the app reads its bundled copy directly. A `<user data>/roguelike/content/` folder, if present, is used instead, so content can be edited on a device. All content except `overrides/` is **sample content**.
+- **Run state** (`RunState`): seed, deck (name to count), upgrades (name to list), relics, life and max life, retries, gold, floor, map, current and active node, any open choice, and a log. Saved as JSON after every step; an open choice is saved too, so reloading can't reroll it. Randomness is derived from the seed and a step counter, so a run is reproducible.
+- **Map** (`RunMap`): rows of nodes joined by upward paths (Slay the Spire style), first row all enemies, every last-row node leading to one Boss. Encounters are assigned per node respecting each enemy's earliest row.
+- **Rules** (`Run`): enter a reachable node; Rest heals; Shop, Upgrade and Cut open a choice; Enemy and Boss nodes build a match (`RunMatchFactory`): landless rules, land cap, card overrides, run life as starting life, 2x run max as the in-match cap, upgrades, the commander, the player's Base with relic lines added (`BaseAssembler`, which also writes a "Relics:" list into the Base's rules text, one per line), and the enemy's deck, life, hand size, commander and Base. After a match: win sets run life to min(end life, run max) and gives gold and a reward (cards or buckets after enemies, a relic after the boss); a loss uses a retry (life restored to its value before the match) or ends the run. Beating the last floor's boss wins the run.
+- **Mode game type**: `GameType.Roguelike` (label "Roguelike Run"). Its achievements fall back to Constructed's.
+- **Tests**: `RoguelikeContentTest` (content loads, every card name known, overrides conjure instead of search, every Base plus all relics builds, index up to date, bundle equals folder), `RunMapTest` (200 seeds: well-formed, all nodes reachable and leading to the boss; same seed same map), `RunTest` (each node type, shop gold, relic max life, reachability, save and load), `RunPlaythroughTest` (everything from the run reaches the match; whole runs with the AI playing the hero end in a win or a loss; the ramp soak). Sample runs end in losses, as expected with unbalanced sample content.
+
+Placeholders and new questions raised by building it (all in `config.json`):
+- **N6. Cut node:** how many copies does it remove? Placeholder: all copies of the chosen name.
+- **N7. Card vs bucket rewards:** which is offered when? Placeholder: 30% of rewards are a choice of buckets (when buckets exist), otherwise a choice of single cards. Bucket contents are rolled and shown when offered.
+- **N8. Shop contents and prices** (part of D2): placeholder 3 relics at 60 gold and 3 cards (2 copies) at 30; gold is 25 per enemy and 100 per boss.
+- **N9. Rest:** placeholder heals 30% of run max life.
+- **N10. Upgrade node:** placeholder offers 3 random (creature name, upgrade) pairs, pick one; reward cards come upgraded 25% of the time. Upgrade pool: +1/+1, +1/+0, +0/+2, Haste, Vigilance, Trample, Lifelink, Ward 1.
+- **N11. Starter deck size:** the sample starter has 30 cards.
+- **N12. Quitting mid-match:** closing the app during a match lets you replay that match from the start with no penalty.
+- **D1** placeholder: one floor (the boss ends the run). **D8** placeholder: 7 rows, 4 columns, 3 paths from the start, node weights in the config.
+
 ### 6.4 Phase 3: UI
 
 The Adventure scenes listed in 5.3, plus the menu entry. Test with the desktop dev build under a virtual display (see 7). The harness has already driven Adventure's start menu, character creation, map and console.
+
+#### 6.4.1 Prototype screen
+
+To get the mode playable on a phone before the Adventure scenes exist, there is a **prototype** entry, "Roguelike Run", in Classic Mode's New Game menu. This does not change decision 8 (Adventure is the intended home); the prototype is a stopgap and can be removed.
+
+- `forge-gui-mobile/.../screens/roguelike/RoguelikeScreen`: one scrolling list of buttons for whatever the run needs next (pick a starter, pick a node, fight, pick a reward, shop, skip), a status line (life, gold, retries, floor, commander, deck size, relics), "View deck and relics" and "Abandon run". Text comes from `RunText` in `forge-gui`.
+- `RoguelikeController` (`forge-gui`): keeps the run, saves it to `<user data>/roguelike/run.json` after every step, and starts matches through the normal match screen (`HostedMatch`).
+- `RoguelikeWinLose`: the end-of-match screen shows only "Quit Match"; quitting applies the result to the run and returns to the run screen.
+- Checked on the desktop build of the mobile app under Xvfb [run]: the menu entry, starting a run, the node list, entering a fight, the match with both Bases and the commander in the command zone (enemy at 16 life with a 6-card hand), the per-turn land prompt, conceding, the retry (Retries 0, life restored, same fight offered again), and the deck view. Winning through the UI and the reward screen were not clicked through; the same code paths are covered by the headless tests.
 
 ### 6.5 Phase 4: meta-progression
 

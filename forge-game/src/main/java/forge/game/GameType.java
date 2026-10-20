@@ -29,6 +29,7 @@ public enum GameType {
     QuestDraft          (DeckFormat.Limited, true, true, true, "lblQuestDraft", ""),
     PlanarConquest      (DeckFormat.PlanarConquest, true, false, false, "lblPlanarConquest", ""),
     Adventure           (DeckFormat.Adventure, true, false, false, "lblAdventure", ""),
+    Roguelike           (DeckFormat.Constructed, true, false, false, "lblRoguelikeRun", ""),
     AdventureEvent      (DeckFormat.Limited, true, true, true, "lblAdventure", ""),
     Puzzle              (DeckFormat.Puzzle, false, false, false, "lblPuzzle", "lblPuzzleDesc"),
     Constructed         (DeckFormat.Constructed, false, true, true, "lblConstructed", ""),

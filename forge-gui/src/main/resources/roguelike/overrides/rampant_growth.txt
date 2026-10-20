@@ -1,0 +1,5 @@
+Name:Rampant Growth
+ManaCost:1 G
+Types:Sorcery
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True | SpellDescription$ Conjure a basic land card of your choice onto the battlefield tapped.
+Oracle:Conjure a basic land card of your choice onto the battlefield tapped.

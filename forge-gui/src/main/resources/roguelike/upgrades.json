@@ -1,0 +1,10 @@
+[
+  {"power": 1, "toughness": 1},
+  {"power": 1, "toughness": 0},
+  {"power": 0, "toughness": 2},
+  {"keywords": ["Haste"]},
+  {"keywords": ["Vigilance"]},
+  {"keywords": ["Trample"]},
+  {"keywords": ["Lifelink"]},
+  {"keywords": ["Ward:1"]}
+]

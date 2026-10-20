@@ -1,0 +1,5 @@
+Name:Farseek
+ManaCost:1 G
+Types:Sorcery
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain | Zone$ Battlefield | Tapped$ True | Conjure$ True | SpellDescription$ Conjure a Plains, Island, Swamp, or Mountain card of your choice onto the battlefield tapped.
+Oracle:Conjure a Plains, Island, Swamp, or Mountain card of your choice onto the battlefield tapped.

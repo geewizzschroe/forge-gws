@@ -1,0 +1,8 @@
+{
+  "id": "whetstone",
+  "name": "Whetstone",
+  "description": "Creatures you control get +1/+0.",
+  "script": [
+    "S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.YouCtrl | AddPower$ 1 | Description$ Whetstone: Creatures you control get +1/+0."
+  ]
+}
