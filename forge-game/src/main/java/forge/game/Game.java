@@ -355,6 +355,7 @@ public class Game {
             } else {
                 pl.setStartingLife(psc.getStartingLife());
             }
+            pl.setMaxLife(psc.getMaxLife());
             pl.setMaxHandSize(psc.getStartingHand());
             pl.setStartingHandSize(psc.getStartingHand());
 

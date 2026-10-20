@@ -311,6 +311,25 @@ The UI host is decided (2.8). Remaining Phase 0 work:
 
 **Exit criteria**: new TestNG tests for each rule pass (use the existing `AITest` pattern in `forge-gui-desktop/src/test/java/forge/ai/`); an AI-vs-AI soak over many seeds shows lands going 1 to 10, the cap holding, the Treasure fallback working, sensible colour choices, and no exceptions; the existing test suite for the touched modules still passes.
 
+#### 6.2.1 Phase 1 progress
+
+All engine switches default to off, so normal Forge games are unchanged. Tests live in `forge-gui-desktop/src/test/java/forge/game/`.
+
+| Item | Status | Where | Tests |
+|---|---|---|---|
+| 1. R1 + R2 | Done [run] | `GameRules.setConjureBasicLandEachTurn` / `setMaxLandsPerPlayer`; `BasicLandEscalation`; turn action in `PhaseHandler` `case MAIN1`; cap check in `GameAction.changeZone` (a blocked land stays where it was); `PlayerController.chooseBasicLandToConjure` (human: pick-one prompt; AI: `AiBasicLandChoice`) | `BasicLandEscalationTest`, including one full AI-vs-AI game with landless decks |
+| 2. R6 | AI part done [run]; Treasure fallback **not built** (waits on N2); no ramp cards converted yet | `forge-ai/.../ability/MakeCardAi` (always plays; a choice made only of basic lands uses `AiBasicLandChoice`, anything else keeps the old first-option pick) | `BasicLandEscalationTest` |
+| 3. R3 | Done [run] | `RegisteredPlayer.setMaxLife` (0 = no limit), copied to `Player` at game start; `Player.gainLife` trims the gain after replacement effects, so doublers apply first and life-gain triggers see only life actually gained. The run mode sets it to 2× run max; the engine only knows "a cap". Starting life already existed. | `MaxLifeTest` |
+| 4. R4 | Done [run] for P/T and keywords | `CardUpgrade` record (power, toughness, keywords) in `forge-game`; `RegisteredPlayer.addCardUpgrade(name, upgrade)`; applied in `Match.prepareAllZones` after commanders are created, as perpetual effects | `CardUpgradeTest`: additive on every copy, opponent's copies untouched, survives zone changes, commander upgraded in the command zone, repeated keywords kept as separate instances |
+| 5. R5 | Done [run] | `BasicLandEscalation.withoutLands(deck)`: copy of the deck without any card whose front face is a land (nonbasic lands included); spells with a land back face stay | `BasicLandEscalationTest` |
+| 6. R7 | Not started (waits on N1) | | |
+
+Notes from the build:
+- N5 is tested structurally only: two Flanking upgrades give two Flanking instances, and doubled Haste is still Haste. A combat test proving two Flanking instances both trigger is not written. [code]
+- N3 as built: the land comes only at the start of the turn's first precombat main phase. What happens when that phase is skipped is not tested. [code]
+- The upgrade record is a plain value (P/T numbers and keyword strings), so the run mode can save it as text; save format is Phase 2 work.
+- Full suite: `xvfb-run -a mvn -B -pl forge-gui-desktop -am test`. Without a display, `forge.PanelTest` cannot start and the whole desktop test run is aborted before any test runs.
+
 ### 6.3 Phase 2: run model and content (headless)
 
 RunState, node graph generator, reward generator (cards, buckets, attached upgrades), shop, rest, cut, upgrade, retry logic, save/load. Include a **headless run simulator** (AI plays both sides) so whole runs can be smoke-tested and tuned. Needs D1, D2, D4, D5, D8, D13.

@@ -18,11 +18,15 @@ import com.google.common.eventbus.Subscribe;
 import forge.ai.AITest;
 import forge.ai.LobbyPlayerAi;
 import forge.deck.Deck;
+import forge.deck.DeckSection;
+import forge.game.ability.AbilityFactory;
+import forge.game.ability.AbilityUtils;
 import forge.game.card.Card;
 import forge.game.event.GameEventTurnPhase;
 import forge.game.phase.PhaseType;
 import forge.game.player.Player;
 import forge.game.player.RegisteredPlayer;
+import forge.game.spellability.SpellAbility;
 import forge.game.zone.ZoneType;
 import forge.model.FModel;
 import forge.view.TimeLimitedCodeBlock;
@@ -100,6 +104,52 @@ public class BasicLandEscalationTest extends AITest {
         }
         assertNull(BasicLandEscalation.conjureChosenBasicLand(p));
         assertEquals(10, BasicLandEscalation.countLands(p));
+    }
+
+    @Test
+    public void aiConjureSpellPicksTheBasicItNeeds() {
+        Game game = initAndCreateGame();
+        Player p = game.getPlayers().get(1);
+        addCardToZone("Lightning Bolt", p, ZoneType.Hand);
+        addCardToZone("Lightning Bolt", p, ZoneType.Hand);
+        SpellAbility sa = AbilityFactory.getAbility(
+                "DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True",
+                addCard("Savannah Lions", p));
+        sa.setActivatingPlayer(p);
+        AbilityUtils.resolve(sa);
+        assertEquals(1, countInZone(p, "Mountain", ZoneType.Battlefield));
+        assertEquals(1, BasicLandEscalation.countLands(p));
+    }
+
+    @Test
+    public void aiConjureChoiceIsUnchangedWhenNotAllBasics() {
+        Game game = initAndCreateGame();
+        Player p = game.getPlayers().get(1);
+        addCardToZone("Mulldrifter", p, ZoneType.Hand);
+        SpellAbility sa = AbilityFactory.getAbility(
+                "DB$ MakeCard | Choices$ Shock,Island | Zone$ Hand | Conjure$ True", addCard("Savannah Lions", p));
+        sa.setActivatingPlayer(p);
+        AbilityUtils.resolve(sa);
+        assertEquals("non-land choices keep the old first-option pick", 1, countInZone(p, "Shock", ZoneType.Hand));
+    }
+
+    @Test
+    public void strippingRemovesLandsButKeepsSpellsWithALandBack() {
+        initAndCreateGame(); // loads the card database
+        Deck deck = new Deck("d");
+        deck.getMain().add(FModel.getMagicDb().getCommonCards().getCard("Savannah Lions"), 4);
+        deck.getMain().add(FModel.getMagicDb().getCommonCards().getCard("Plains"), 10);
+        deck.getMain().add(FModel.getMagicDb().getCommonCards().getCard("Mutavault"), 2);
+        deck.getMain().add(FModel.getMagicDb().getCommonCards().getCard("Dryad Arbor"), 1);
+        deck.getMain().add(FModel.getMagicDb().getCommonCards().getCard("Bala Ged Recovery"), 2); // spell // land
+        deck.getOrCreate(DeckSection.Sideboard).add(FModel.getMagicDb().getCommonCards().getCard("Island"), 3);
+        deck.getOrCreate(DeckSection.Sideboard).add(FModel.getMagicDb().getCommonCards().getCard("Shock"), 1);
+
+        Deck stripped = BasicLandEscalation.withoutLands(deck);
+        assertEquals(6, stripped.getMain().countAll());
+        assertEquals(4, stripped.getMain().count(FModel.getMagicDb().getCommonCards().getCard("Savannah Lions")));
+        assertEquals(1, stripped.get(DeckSection.Sideboard).countAll());
+        assertEquals("the original deck is untouched", 19, deck.getMain().countAll());
     }
 
     private Deck landlessDeck(String name, String... cards) {

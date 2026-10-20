@@ -321,6 +321,7 @@ public class Match {
             }
 
             player.initVariantsZones(psc);
+            CardUpgrade.applyAll(player, psc.getCardUpgrades());
 
             player.shuffle(null);
 

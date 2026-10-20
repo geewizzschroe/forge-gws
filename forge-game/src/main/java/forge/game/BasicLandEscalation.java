@@ -1,9 +1,12 @@
 package forge.game;
 
+import java.util.List;
 import java.util.Map;
 
 import forge.StaticData;
 import forge.card.MagicColor;
+import forge.deck.Deck;
+import forge.deck.DeckSection;
 import forge.game.ability.AbilityKey;
 import forge.game.card.Card;
 import forge.game.card.CardCollection;
@@ -24,6 +27,20 @@ import forge.item.PaperCard;
 public final class BasicLandEscalation {
 
     private BasicLandEscalation() {
+    }
+
+    /**
+     * A copy of the deck with every card whose front face is a land removed from the main deck and
+     * sideboard. Cards that are a spell on the front and a land on the back are kept.
+     */
+    public static Deck withoutLands(final Deck deck) {
+        Deck result = new Deck(deck);
+        for (DeckSection section : List.of(DeckSection.Main, DeckSection.Sideboard)) {
+            if (result.has(section)) {
+                result.get(section).removeIf(pc -> pc.getRules().getMainPart().getType().isLand());
+            }
+        }
+        return result;
     }
 
     public static int countLands(final Player player) {
