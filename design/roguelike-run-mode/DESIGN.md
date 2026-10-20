@@ -164,7 +164,7 @@ None of these blocks Phase 1 (engine rules).
 - **N4. Delivery.** Resolved, see 3.1 and 2.10.
 - **N5. Which keywords stack.** Assumed: the engine's normal rules decide (for example Ward and Flanking stack; haste and vigilance do not). Needs tests. (Phase 1 item 4)
 
-### 3.4 Proposed: Bases (user idea, not yet decided)
+### 3.4 Bases (user idea; core shape decided, details open)
 
 Each side of a match has a **Base**: a game object for the place its forces fight from. It is always present, even when the commander is not on the battlefield. It stays out of normal interaction, like an emblem, and doesn't need to be on the battlefield. It could hold the relics (replacing the relic-inventory card, R7) and have its own passive and activated abilities. Bases would be largely interchangeable early in a run, grow stronger as matches are won, and could be swapped at a special node. That makes the Base a second layer of character creation before the run, and another place for upgrades to land.
 
@@ -174,13 +174,14 @@ Engine fit [code, not run]:
 - Phase 1 item 4 already applies per-name upgrades to cards in the command zone (tested with a commander), so P/T and keyword upgrades would reach a Base the same way. Ability upgrades would need a new upgrade kind (perpetual abilities exist in the engine, 4.4).
 - The mobile command-zone display shows every command-zone card (`VPlayerPanel.CommandZoneDisplay`, no filtering), so one Base per side keeps the one-card rule (2.7).
 
-Open questions:
-- **B1.** Is the Base the relic carrier, so the relic-inventory card (R7) becomes the Base?
-- **B2.** What does a Base have of its own: stat modifiers (hand, life), passives, activated abilities, a mix?
-- **B3.** How does a Base grow: automatically with wins, by chosen upgrades, or both?
-- **B4.** At a swap node, what carries over to the new Base (relics, upgrades)?
-- **B5.** Do enemies and bosses have Bases too, and are theirs authored per encounter?
-- **B6.** Reuse the Vanguard avatar slot, or add a separate Base slot on `RegisteredPlayer`? (Implementation; the Vanguard path may bring variant-specific behaviour, not checked.)
+Answers so far:
+- **B1. Decided:** the Base carries the relics. It replaces the relic-inventory card (R7).
+- **B2. Decided:** at baseline a Base looks like a Vanguard avatar (life and hand size) and can have any ability. It is its own thing that obviously copies the avatar's shape, not the Vanguard avatars themselves, so nobody asks for specific avatars to be made selectable (each would need balancing). The only typing for now is the card type "Base". Some Bases should have a Hearthstone-style **Hero Power** (Hearthstone's adventures are another inspiration).
+- **B3. Open, post-MVP (minimum viable product):** how a Base grows.
+- **B4. Open:** what carries over on a swap. One idea: upgrading or swapping a Base resets its boosts, making it a give-and-take choice.
+- **B5. Decided:** enemies and bosses have Bases too, and long term every encounter gets its own. An enemy's Base is where its **gimmick** lives; enemies and bosses don't get relics, so Bases are what keep matches from feeling samey beyond the cards in their decks. Example: "A Troop of Dwarves" fights from a Mountain Pass or a Mountainhome, with generic life and hand size for its stage of the run and a bespoke gimmick such as "Whenever a Dwarf you control enters, create a Treasure token." Bosses could have gimmicks that work with their commanders, or a second gimmick.
+- **B6. Decided:** either way works, since Vanguard and this mode never meet. Built as a separate Base slot (see 6.2.1).
+- **B7. New, open:** how a Base's life number relates to the player's run life (life carries over between matches, 2.5). For enemies it can simply be their starting life.
 
 ---
 
@@ -340,7 +341,7 @@ All engine switches default to off, so normal Forge games are unchanged. Tests l
 | 3. R3 | Done [run] | `RegisteredPlayer.setMaxLife` (0 = no limit), copied to `Player` at game start; `Player.gainLife` trims the gain after replacement effects, so doublers apply first and life-gain triggers see only life actually gained. The run mode sets it to 2× run max; the engine only knows "a cap". Starting life already existed. | `MaxLifeTest` |
 | 4. R4 | Done [run] for P/T and keywords | `CardUpgrade` record (power, toughness, keywords) in `forge-game`; `RegisteredPlayer.addCardUpgrade(name, upgrade)`; applied in `Match.prepareAllZones` after commanders are created, as perpetual effects | `CardUpgradeTest`: additive on every copy, opponent's copies untouched, survives zone changes, commander upgraded in the command zone, repeated keywords kept as separate instances |
 | 5. R5 | Done [run]; approach confirmed (decision 14) | `BasicLandEscalation.withoutLands(deck)`: copy of the deck without any card whose front face is a land (nonbasic lands included); spells with a land back face stay | `BasicLandEscalationTest` |
-| 6. R7 | Not started (waits on N1) | | |
+| 6. R7 → Base | Base slot done [run]; relic loading not built (Phase 2) | New card type **Base** (`CardType.CoreType.Base`, classed like Vanguard as a command-zone game piece; label `lblBase` in every language file, in English). It is left out of "choose a card type" lists, so normal games are unchanged; it does appear as one more entry in the deck editor's type filter. `BaseCard.fromScript(lines)` builds a Base from card-script text (Bases are not in the card database). `RegisteredPlayer.setBase(...)` puts it in the command zone at game start. Plan for relics: the run mode assembles each match's Base script from the Base's own lines plus each relic's lines, so no extra engine piece is needed. | `BaseCardTest`: built from script with type line "Base"; Dwarf trigger works from the command zone; paid once-per-turn activated ability (Hero Power shape) works; a registered Base starts in the command zone |
 
 Notes from the build:
 - N5 is tested structurally only: two Flanking upgrades give two Flanking instances, and doubled Haste is still Haste. A combat test proving two Flanking instances both trigger is not written. [code]
@@ -407,12 +408,13 @@ All of this was used successfully in the design sessions.
 6. Land choice moved from upkeep to the start of the precombat main phase, after the draw (D6).
 7. Decking kept for now (D7).
 8. UI host: Adventure, entered from the Adventure menu (D12). Lightly held.
-9. Relics get one command-zone inventory card (D3), an exception to 2.7.
+9. Relics get one command-zone inventory card (D3), an exception to 2.7. *Superseded by 15: the Base is that card.*
 10. Ramp at the cap creates Treasure tokens (D10).
 11. Duplicate keywords: stackable ones stack, one-time keywords do nothing extra (D5).
 12. Delivery: bundle in the app, copy into the resource folder on every launch (N4, 2.10).
 13. Treasure fallback only on a failed ramp: a conjured land kept out by the cap becomes a Treasure, tapped if the land would have entered tapped. Other blocked lands just stay where they were (N2).
 14. Land stripping removes every card whose front face is a land, nonbasic lands included; spells with a land back face stay. Curating the mode's card pool handles the rest.
+15. Relics live on the player's Base (B1). Bases copy the Vanguard shape but are their own card type, "Base" (B2). Enemies and bosses have Bases that carry their gimmicks (B5).
 
 ---
 

@@ -44,6 +44,7 @@ public final class CardType implements Comparable<CardType>, CardTypeView {
     public enum CoreType implements ITranslatable {
         Kindred(false, "kindreds", "lblKindred"), // always printed first
         Artifact(true, "artifacts", "lblArtifact"),
+        Base(false, "bases", "lblBase"), // roguelike run mode: a Vanguard-like command-zone card
         Battle(true, "battles", "lblBattle"),
         Conspiracy(false, "conspiracies", "lblConspiracy"),
         Enchantment(true, "enchantments", "lblEnchantment"),
@@ -92,7 +93,7 @@ public final class CardType implements Comparable<CardType>, CardTypeView {
             case Scheme -> GamePieceType.SCHEME;
             case Dungeon -> GamePieceType.DUNGEON;
             case Stickers -> GamePieceType.STICKER_SHEET;
-            case Vanguard -> GamePieceType.AVATAR;
+            case Vanguard, Base -> GamePieceType.AVATAR;
             default -> GamePieceType.CARD;
             };
         }
@@ -912,8 +913,12 @@ public final class CardType implements Comparable<CardType>, CardTypeView {
         return CoreType.isValidEnum(cardType);
     }
 
+    /** Card types offered by "choose a card type" effects. Base belongs to the roguelike run mode only. */
+    private static final Set<String> choosableCardTypes = ImmutableSet.copyOf(
+            Sets.filter(CoreType.allCoreTypeNames, t -> !t.equals(CoreType.Base.name())));
+
     public static Set<String> getAllCardTypes() {
-        return CoreType.allCoreTypeNames;
+        return choosableCardTypes;
     }
 
     private static List<String> sortedSubTypes;

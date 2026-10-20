@@ -2984,6 +2984,13 @@ public class Player extends GameEntity implements Comparable<Player> {
             }
         }
 
+        // Base (roguelike run mode)
+        if (registeredPlayer.getBase() != null) {
+            Card c = Card.fromPaperCard(registeredPlayer.getBase(), this);
+            c.setCollectible(true);
+            com.add(c);
+        }
+
         // Schemes
         CardCollection sd = new CardCollection();
         for (IPaperCard cp : registeredPlayer.getSchemes()) {

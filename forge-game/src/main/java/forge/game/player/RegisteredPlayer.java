@@ -27,6 +27,7 @@ public class RegisteredPlayer {
 
     private int startingLife = 20;
     private int maxLife = 0;
+    private PaperCard base = null;
     private final Map<String, List<CardUpgrade>> cardUpgrades = new LinkedHashMap<>();
     private int startingHand = 7;
     private int manaShards = 0;
@@ -75,6 +76,14 @@ public class RegisteredPlayer {
     }
     public final void setMaxLife(int maxLife) {
         this.maxLife = maxLife;
+    }
+
+    /** The player's Base, put into the command zone at game start (see {@link forge.game.BaseCard}); null for none. */
+    public final PaperCard getBase() {
+        return base;
+    }
+    public final void setBase(PaperCard base) {
+        this.base = base;
     }
 
     /** Upgrades applied at game start to every card of the given name this player owns. */
