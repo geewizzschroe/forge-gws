@@ -197,11 +197,11 @@ public class Match {
         removedCards.add(c);
     }
 
-    private static void preparePlayerZone(Player player, final ZoneType zoneType, CardPool section, boolean canRandomFoil) {
+    private void preparePlayerZone(Player player, final ZoneType zoneType, CardPool section, boolean canRandomFoil) {
         PlayerZone library = player.getZone(zoneType);
         List<Card> newLibrary = new ArrayList<>();
         for (final Entry<PaperCard, Integer> stackOfCards : section) {
-            final PaperCard cp = stackOfCards.getKey();
+            final PaperCard cp = rules.applyCardOverride(stackOfCards.getKey());
             for (int i = 0; i < stackOfCards.getValue(); i++) {
                 final Card card = Card.fromPaperCard(cp, player);
 

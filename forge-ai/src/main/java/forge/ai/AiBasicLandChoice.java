@@ -57,7 +57,7 @@ public final class AiBasicLandChoice {
 
         // nothing coloured left to cast: lean on the commander's colours, else take the first option
         ColorSet identity = ai.getCommanderColorID();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5 && identity != null; i++) {
             if (identity.hasAnyColor(MagicColor.WUBRG[i]) && options.contains(basics.get(i))) {
                 return basics.get(i);
             }

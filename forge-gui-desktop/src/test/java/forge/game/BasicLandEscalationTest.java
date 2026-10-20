@@ -96,6 +96,19 @@ public class BasicLandEscalationTest extends AITest {
     }
 
     @Test
+    public void aiWithNoCommanderAndNoColouredCardsStillGetsALand() {
+        // late in a long game hand and library can hold no coloured cards; without a commander there is no
+        // colour identity to fall back on either (this used to throw)
+        Game game = initAndCreateGame();
+        game.getRules().setMaxLandsPerPlayer(10);
+        Player p = game.getPlayers().get(1);
+        assertTrue(p.getCommanders().isEmpty());
+        Card made = BasicLandEscalation.conjureChosenBasicLand(p);
+        assertNotNull(made);
+        assertTrue(made.isLand());
+    }
+
+    @Test
     public void nothingIsConjuredAtTheCap() {
         Game game = initAndCreateGame();
         game.getRules().setMaxLandsPerPlayer(10);

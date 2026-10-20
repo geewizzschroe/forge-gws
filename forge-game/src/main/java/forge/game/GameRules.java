@@ -1,7 +1,12 @@
 package forge.game;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+
+import forge.card.CardRules;
+import forge.item.PaperCard;
 
 public class GameRules {
     private final GameType gameType;
@@ -20,6 +25,7 @@ public class GameRules {
     private int simTimeout = 120;
     private boolean conjureBasicLandEachTurn = false;
     private int maxLandsPerPlayer = 0;
+    private final Map<String, CardRules> cardOverrides = new HashMap<>();
 
     // it's a preference, not rule... but I could hardly find a better place for it
     private boolean useGrayText;
@@ -168,5 +174,21 @@ public class GameRules {
 
     public void setMaxLandsPerPlayer(final int value) {
         this.maxLandsPerPlayer = value;
+    }
+
+    /**
+     * Use these rules instead of the printed card's for every card of that name in the decks of this
+     * match (for example a landless version of a ramp spell). The card keeps its set, so its art stays.
+     */
+    public void addCardOverride(final CardRules rules) {
+        cardOverrides.put(rules.getName(), rules);
+    }
+    /** The overriding version of this card, or the card itself if it has no override. */
+    public PaperCard applyCardOverride(final PaperCard card) {
+        CardRules rules = cardOverrides.get(card.getName());
+        if (rules == null) {
+            return card;
+        }
+        return new PaperCard(rules, card.getEdition(), card.getRarity());
     }
 }
