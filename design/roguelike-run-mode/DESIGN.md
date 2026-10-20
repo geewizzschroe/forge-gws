@@ -159,7 +159,7 @@ None of these blocks Phase 1 (engine rules).
 ### 3.3 New questions raised by those answers
 
 - **N1. Relic-inventory card.** The engine's card text is normally static. How is the text generated and kept current as relics are gained? Do the relics' effects live on that card, or in engine code with the card only displaying them? Untested. (Phase 1 item 6)
-- **N2. Treasure fallback scope.** Ramp spells only, or any land that cannot enter at the cap? Partial case (more lands than room) is assumed: as many lands as fit, the rest as Treasures. (Phase 1 item 2)
+- **N2. Treasure fallback scope.** *Resolved:* only a failed ramp (a conjured land kept out by the cap). Each Treasure is tapped or untapped as the land would have been. Partial case: as many lands as fit, the rest as Treasures. Built (Phase 1 item 2). See decision 13.
 - **N3. Skipped or extra main phases.** If a player skips their precombat main phase, do they miss that turn's land? No extra land for extra main phases is assumed. [assumed] (Phase 1 item 1)
 - **N4. Delivery.** Resolved, see 3.1 and 2.10.
 - **N5. Which keywords stack.** Assumed: the engine's normal rules decide (for example Ward and Flanking stack; haste and vigilance do not). Needs tests. (Phase 1 item 4)
@@ -318,10 +318,10 @@ All engine switches default to off, so normal Forge games are unchanged. Tests l
 | Item | Status | Where | Tests |
 |---|---|---|---|
 | 1. R1 + R2 | Done [run] | `GameRules.setConjureBasicLandEachTurn` / `setMaxLandsPerPlayer`; `BasicLandEscalation`; turn action in `PhaseHandler` `case MAIN1`; cap check in `GameAction.changeZone` (a blocked land stays where it was); `PlayerController.chooseBasicLandToConjure` (human: pick-one prompt; AI: `AiBasicLandChoice`) | `BasicLandEscalationTest`, including one full AI-vs-AI game with landless decks |
-| 2. R6 | AI part done [run]; Treasure fallback **not built** (waits on N2); no ramp cards converted yet | `forge-ai/.../ability/MakeCardAi` (always plays; a choice made only of basic lands uses `AiBasicLandChoice`, anything else keeps the old first-option pick) | `BasicLandEscalationTest` |
+| 2. R6 | Done [run]; no ramp cards converted yet | `forge-ai/.../ability/MakeCardAi` (always plays; a choice made only of basic lands uses `AiBasicLandChoice`, anything else keeps the old first-option pick). Treasure fallback in `MakeCardEffect`: a land it puts onto the battlefield that the cap keeps out becomes a Treasure via `BasicLandEscalation.makeTreasures`, which runs the normal token ability (so token doublers and token triggers apply); tapped if the land would have entered tapped. The built-in per-turn land never conjures at the cap, so it never makes Treasures. | `BasicLandEscalationTest`: untapped, tapped, room-for-one, no cap |
 | 3. R3 | Done [run] | `RegisteredPlayer.setMaxLife` (0 = no limit), copied to `Player` at game start; `Player.gainLife` trims the gain after replacement effects, so doublers apply first and life-gain triggers see only life actually gained. The run mode sets it to 2× run max; the engine only knows "a cap". Starting life already existed. | `MaxLifeTest` |
 | 4. R4 | Done [run] for P/T and keywords | `CardUpgrade` record (power, toughness, keywords) in `forge-game`; `RegisteredPlayer.addCardUpgrade(name, upgrade)`; applied in `Match.prepareAllZones` after commanders are created, as perpetual effects | `CardUpgradeTest`: additive on every copy, opponent's copies untouched, survives zone changes, commander upgraded in the command zone, repeated keywords kept as separate instances |
-| 5. R5 | Done [run] | `BasicLandEscalation.withoutLands(deck)`: copy of the deck without any card whose front face is a land (nonbasic lands included); spells with a land back face stay | `BasicLandEscalationTest` |
+| 5. R5 | Done [run]; approach confirmed (decision 14) | `BasicLandEscalation.withoutLands(deck)`: copy of the deck without any card whose front face is a land (nonbasic lands included); spells with a land back face stay | `BasicLandEscalationTest` |
 | 6. R7 | Not started (waits on N1) | | |
 
 Notes from the build:
@@ -393,6 +393,8 @@ All of this was used successfully in the design sessions.
 10. Ramp at the cap creates Treasure tokens (D10).
 11. Duplicate keywords: stackable ones stack, one-time keywords do nothing extra (D5).
 12. Delivery: bundle in the app, copy into the resource folder on every launch (N4, 2.10).
+13. Treasure fallback only on a failed ramp: a conjured land kept out by the cap becomes a Treasure, tapped if the land would have entered tapped. Other blocked lands just stay where they were (N2).
+14. Land stripping removes every card whose front face is a land, nonbasic lands included; spells with a land back face stay. Curating the mode's card pool handles the rest.
 
 ---
 

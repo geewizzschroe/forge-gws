@@ -1,6 +1,7 @@
 package forge.game;
 
 import static org.testng.AssertJUnit.assertEquals;
+import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
 import static org.testng.AssertJUnit.assertTrue;
@@ -104,6 +105,70 @@ public class BasicLandEscalationTest extends AITest {
         }
         assertNull(BasicLandEscalation.conjureChosenBasicLand(p));
         assertEquals(10, BasicLandEscalation.countLands(p));
+        assertEquals("the built-in land never turns into a Treasure", 0, treasures(p).size());
+    }
+
+    private List<Card> treasures(Player p) {
+        List<Card> out = new ArrayList<>();
+        for (Card c : p.getCardsIn(ZoneType.Battlefield)) {
+            if (c.isToken() && c.getType().hasSubtype("Treasure")) {
+                out.add(c);
+            }
+        }
+        return out;
+    }
+
+    private void resolveRamp(Player p, String extra) {
+        SpellAbility sa = AbilityFactory.getAbility(
+                "DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True" + extra,
+                addCardToZone("Savannah Lions", p, ZoneType.Hand));
+        sa.setActivatingPlayer(p);
+        AbilityUtils.resolve(sa);
+    }
+
+    @Test
+    public void rampAtTheCapMakesAnUntappedTreasure() {
+        Game game = initAndCreateGame();
+        game.getRules().setMaxLandsPerPlayer(10);
+        Player p = game.getPlayers().get(1);
+        addCards("Island", 10, p);
+        resolveRamp(p, "");
+        assertEquals(10, BasicLandEscalation.countLands(p));
+        assertEquals(1, treasures(p).size());
+        assertFalse(treasures(p).get(0).isTapped());
+    }
+
+    @Test
+    public void tappedRampAtTheCapMakesATappedTreasure() {
+        Game game = initAndCreateGame();
+        game.getRules().setMaxLandsPerPlayer(10);
+        Player p = game.getPlayers().get(1);
+        addCards("Island", 10, p);
+        resolveRamp(p, " | Tapped$ True");
+        assertEquals(1, treasures(p).size());
+        assertTrue(treasures(p).get(0).isTapped());
+    }
+
+    @Test
+    public void rampWithRoomForOneMakesOneLandAndOneTreasure() {
+        Game game = initAndCreateGame();
+        game.getRules().setMaxLandsPerPlayer(10);
+        Player p = game.getPlayers().get(1);
+        addCards("Island", 9, p);
+        resolveRamp(p, " | Amount$ 2 | Tapped$ True");
+        assertEquals(10, BasicLandEscalation.countLands(p));
+        assertEquals(1, treasures(p).size());
+        assertTrue(treasures(p).get(0).isTapped());
+    }
+
+    @Test
+    public void rampWithoutACapMakesNoTreasure() {
+        Game game = initAndCreateGame();
+        Player p = game.getPlayers().get(1);
+        addCards("Island", 10, p);
+        resolveRamp(p, "");
+        assertEquals(11, BasicLandEscalation.countLands(p));
+        assertEquals(0, treasures(p).size());
     }
 
     @Test

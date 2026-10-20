@@ -7,11 +7,14 @@ import forge.StaticData;
 import forge.card.MagicColor;
 import forge.deck.Deck;
 import forge.deck.DeckSection;
+import forge.game.ability.AbilityFactory;
 import forge.game.ability.AbilityKey;
+import forge.game.ability.AbilityUtils;
 import forge.game.card.Card;
 import forge.game.card.CardCollection;
 import forge.game.card.CardZoneTable;
 import forge.game.player.Player;
+import forge.game.spellability.SpellAbility;
 import forge.game.trigger.TriggerType;
 import forge.game.zone.ZoneType;
 import forge.item.PaperCard;
@@ -41,6 +44,20 @@ public final class BasicLandEscalation {
             }
         }
         return result;
+    }
+
+    /**
+     * Create Treasure tokens for conjured lands the land cap kept out (a ramp effect at the cap).
+     * Uses the normal token ability, so token replacement effects and triggers apply.
+     */
+    public static void makeTreasures(final Player player, final SpellAbility cause, final int amount, final boolean tapped) {
+        if (amount <= 0) {
+            return;
+        }
+        SpellAbility token = AbilityFactory.getAbility("DB$ Token | TokenScript$ c_a_treasure_sac | TokenAmount$ " + amount
+                + (tapped ? " | TokenTapped$ True" : ""), cause.getHostCard());
+        token.setActivatingPlayer(player);
+        AbilityUtils.resolve(token);
     }
 
     public static int countLands(final Player player) {
