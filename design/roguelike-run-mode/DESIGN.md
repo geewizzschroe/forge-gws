@@ -164,6 +164,24 @@ None of these blocks Phase 1 (engine rules).
 - **N4. Delivery.** Resolved, see 3.1 and 2.10.
 - **N5. Which keywords stack.** Assumed: the engine's normal rules decide (for example Ward and Flanking stack; haste and vigilance do not). Needs tests. (Phase 1 item 4)
 
+### 3.4 Proposed: Bases (user idea, not yet decided)
+
+Each side of a match has a **Base**: a game object for the place its forces fight from. It is always present, even when the commander is not on the battlefield. It stays out of normal interaction, like an emblem, and doesn't need to be on the battlefield. It could hold the relics (replacing the relic-inventory card, R7) and have its own passive and activated abilities. Bases would be largely interchangeable early in a run, grow stronger as matches are won, and could be swapped at a special node. That makes the Base a second layer of character creation before the run, and another place for upgrades to land.
+
+Engine fit [code, not run]:
+- The closest existing piece is the **Vanguard** variant: 106 avatar cards, each kept in its player's command zone for the whole game. They can change starting hand size and life (`HandLifeModifier`) and can have activated abilities used from the command zone (`ActivationZone$ Command`, for example Bosh, Iron Golem Avatar). `RegisteredPlayer` already carries a per-player avatar list (`Player.java` ~2978).
+- Command-zone cards are mostly out of reach of normal cards. About a dozen card scripts target something in the command zone; the ones seen by name are mostly about commanders. Not checked one by one. With a curated card pool this can be controlled.
+- Phase 1 item 4 already applies per-name upgrades to cards in the command zone (tested with a commander), so P/T and keyword upgrades would reach a Base the same way. Ability upgrades would need a new upgrade kind (perpetual abilities exist in the engine, 4.4).
+- The mobile command-zone display shows every command-zone card (`VPlayerPanel.CommandZoneDisplay`, no filtering), so one Base per side keeps the one-card rule (2.7).
+
+Open questions:
+- **B1.** Is the Base the relic carrier, so the relic-inventory card (R7) becomes the Base?
+- **B2.** What does a Base have of its own: stat modifiers (hand, life), passives, activated abilities, a mix?
+- **B3.** How does a Base grow: automatically with wins, by chosen upgrades, or both?
+- **B4.** At a swap node, what carries over to the new Base (relics, upgrades)?
+- **B5.** Do enemies and bosses have Bases too, and are theirs authored per encounter?
+- **B6.** Reuse the Vanguard avatar slot, or add a separate Base slot on `RegisteredPlayer`? (Implementation; the Vanguard path may bring variant-specific behaviour, not checked.)
+
 ---
 
 ## 4. Findings (evidence)
