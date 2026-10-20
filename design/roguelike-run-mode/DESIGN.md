@@ -4,6 +4,8 @@ A Legends of Runeterra "Path of Champions"-style run mode for Forge, with a Slay
 
 This document records every decision made so far, the evidence behind it, and a phased roadmap for building it. It was written at the end of a long design conversation so that a new session can pick the work up cold.
 
+**Second revision.** Records the owner's answers to D3, D5, D6, D7, D10 and D12 (section 3.1) and what they imply (3.3, 4, 5, 6, 9).
+
 **Evidence tags used throughout**
 
 | Tag | Meaning |
@@ -63,6 +65,7 @@ What makes it different from other Forge modes:
 - **Upgrades are per card name, not per copy.** They last for the rest of the run, including copies picked up later.
 - Upgrades are **additive**. Numbers and abilities stack.
   - Example: your deck has 2x Savannah Lions with `[+1/+1]`. You take a reward of 2x Savannah Lions with `[haste]`. You now have 4x Savannah Lions, every one with both upgrades.
+- **Stacking.** Upgrades that can stack, stack. An upgrade that grants a keyword which does nothing when duplicated (haste, vigilance and similar) has **no additional effect** when it appears more than once. [assumed] The engine's normal keyword rules already give this behaviour; verify with tests (N5).
 - A reward card may be offered **with a randomly attached upgrade**.
 - Upgrades unlocked in meta-progression apply **at the start of a run**.
 - The "Upgrade a card" node modifies a card's features for the rest of the run.
@@ -72,6 +75,7 @@ What makes it different from other Forge modes:
 - Relics are acquired from **shops and bosses**.
 - The Commander (or its game logic) can be upgraded through relics or level-up progression. The "big cool" example: being able to play Jill as her **Shiva** side directly.
 - The Commander itself does not change identity. Upgrades modify it.
+- **Relic presentation:** a single command-zone card that displays the player's **relic inventory** and lists each relic's effects. This is the one deliberate exception to the no-UI-space rule (2.7). How its text is generated, and where the relic effects themselves live, are open (N1).
 
 ### 2.5 Health
 
@@ -85,9 +89,10 @@ What makes it different from other Forge modes:
 This is a **built-in rule of the mode**, part of its background logic. It is **not** a relic and **not** a card. It must take **no UI space**.
 
 - **Decks contain no lands.** This applies to both sides, including boss decks.
-- **At the beginning of each player's upkeep, if that player controls fewer than 10 lands, that player chooses a basic land type and a basic land of that type is conjured onto the battlefield.**
+- **At the beginning of each player's precombat main phase (after the draw step), if that player controls fewer than 10 lands, that player chooses a basic land type and a basic land of that type is conjured onto the battlefield.** Choosing after the draw means the player sees the new card first.
 - **10 lands is the maximum in all cases**, regardless of source (the per-turn land, ramp spells, forced entries).
 - Land-search ramp spells are **re-implemented in spirit** to conjure a basic instead of searching.
+- **Ramp at the cap creates Treasure tokens.** A ramp effect that would conjure lands while the player is at the cap creates that many Treasure tokens instead. [assumed] If only some of the lands fit, the remainder become Treasures (N2).
 - Mana therefore escalates at a fixed pace (1, 2, 3 ... 10) with no luck, as in other digital card games.
 - Splashing becomes a per-turn decision rather than a deck-construction one.
 
@@ -100,29 +105,48 @@ This is a **built-in rule of the mode**, part of its background logic. It is **n
 
 ### 2.7 UI constraint
 
-Rules and mechanics changes must **not take up space in the UI**. The command zone row on the match screen shows every card in that zone, so card-based rule changes are not acceptable (see 4.8).
+Rules and mechanics changes must **not take up space in the UI**. The command zone row on the match screen shows every card in that zone, so card-based rule changes are not acceptable (see 4.8). The one deliberate exception is the single relic-inventory card (2.4).
+
+### 2.8 UI host and entry point
+
+The mode is hosted **inside Adventure mode** and entered from the Adventure menu. This was decided lightly ("Adventure menu, I suppose") and can be revisited if the match-launcher spike (6.1) shows it is too costly. New screens are Adventure scenes. `RewardScene`, `ShopScene`, `InnScene` and `EffectData` are the reusable parts, and `DuelScene` needs decoupling from overworld sprites (4.1).
+
+### 2.9 Decking
+
+A player who must draw from an empty library still loses. **Kept for now.** Deck power and size will be tuned as starter decks and boss decks are built.
 
 ---
 
 ## 3. Open design questions
 
-None of these blocks Phase 1 (engine rules). They need answers before the phases that depend on them.
+### 3.1 Resolved since the first draft
 
-| # | Question | Needed by |
-|---|---|---|
-| D1 | **Floors.** After a boss: new, harder floor, or end the run? | Phase 2 |
-| D2 | **Currency.** Shops need one. Where does it come from (enemy nodes?) and what do things cost? | Phase 2 |
-| D3 | **Relic presentation.** Relics are player-facing items. How are they shown, and are modifier-style relics also kept out of the command zone? | Phase 1.6 / 3 |
-| D4 | **What can an upgrade be?** The engine supports power/toughness, keywords, abilities, mana cost, colours, types (see 4.4). Which are in scope and how are they randomised on rewards? | Phase 1.4 / 2 |
-| D5 | **Duplicate-keyword rule.** Haste twice: no effect? Stacking keywords (Ward, Annihilator)? | Phase 1.4 |
-| D6 | **Land choice timing.** Upkeep (before the draw, as specified) or precombat main (after seeing the draw)? | Phase 1.1 |
-| D7 | **Decking.** With small decks a library running out is a real loss condition (4.9). Keep, soften, or disable? | Phase 1.5 |
-| D8 | **Node types beyond the six named**: elites, events? Map shape, number of nodes per floor, scaling. | Phase 2 |
-| D9 | **Meta-progression shape.** Levels, experience, what unlocks when. | Phase 4 |
-| D10 | **Ramp cap behaviour.** A "put a land onto the battlefield" spell at 10 lands: does nothing? (The global cap rule blocks the entry; it has been tested for forced entries only.) | Phase 1.2 |
-| D11 | **Landfall and domain cards.** Keep as free value or exclude from pools? (Landfall now triggers every turn; with chosen basics, domain counts only types actually chosen.) | Phase 2 |
-| D12 | **UI host** (see 6.1). | Phase 0 |
-| D13 | **Retry details** (see 2.2 assumption). | Phase 2 |
+- **D3. Relic presentation.** One command-zone card showing the relic inventory and each relic's effects (2.4).
+- **D5. Duplicate keywords.** Stackable upgrades stack. One-time keywords (haste, vigilance) do nothing extra (2.3.1).
+- **D6. Land timing.** Start of the precombat main phase, after the draw (2.5.1).
+- **D7. Decking.** Kept for now (2.9).
+- **D10. Ramp at the cap.** Creates that many Treasures (2.5.1).
+- **D12. UI host.** Adventure, entered from the Adventure menu (2.8).
+
+### 3.2 Still open
+
+None of these blocks Phase 1 (engine rules).
+
+- **D1. Floors.** After a boss: new, harder floor, or end the run? (Phase 2)
+- **D2. Currency.** Shops need one. Where does it come from (enemy nodes?) and what do things cost? (Phase 2)
+- **D4. What can an upgrade be?** The engine supports power/toughness, keywords, abilities, mana cost, colours and types (4.4). Which are in scope, and how are they randomised on rewards? (Phase 1 item 4 and Phase 2)
+- **D8. Node types and map.** Elites, events? Map shape, nodes per floor, difficulty scaling. (Phase 2)
+- **D9. Meta-progression shape.** Levels, experience, what unlocks when. (Phase 4)
+- **D11. Landfall and domain cards.** Keep as free value or exclude from pools? Landfall now triggers every turn, and with chosen basics, domain counts only the types actually chosen. (Phase 2)
+- **D13. Retry details.** See the assumption in 2.2. (Phase 2)
+
+### 3.3 New questions raised by those answers
+
+- **N1. Relic-inventory card.** The engine's card text is normally static. How is the text generated and kept current as relics are gained? Do the relics' effects live on that card, or in engine code with the card only displaying them? Untested. (Phase 1 item 6)
+- **N2. Treasure fallback scope.** Ramp spells only, or any land that cannot enter at the cap? Partial case (more lands than room) is assumed: as many lands as fit, the rest as Treasures. (Phase 1 item 2)
+- **N3. Skipped or extra main phases.** If a player skips their precombat main phase, do they miss that turn's land? No extra land for extra main phases is assumed. [assumed] (Phase 1 item 1)
+- **N4. Adventure layout delivery.** Adventure screens load their layout JSON from the resource folder, which the updater replaces from Card-Forge's server (4.8, 4.10). Do we build the new screens and the menu entry in code, embed the layouts in the app, or change the updater? **Blocks Phase 3 and 5. Decide in Phase 0.**
+- **N5. Which keywords stack.** Assumed: the engine's normal rules decide (for example Ward and Flanking stack; haste and vigilance do not). Needs tests. (Phase 1 item 4)
 
 ---
 
@@ -186,12 +210,15 @@ All headless, AI vs AI, Commander variant, 20 starting life.
 - **[run] Relic route with a choice list.** An upkeep trigger with `Choices$ Plains,Island,Swamp,Mountain,Forest` worked mechanically, but the AI always chose Plains. A mono-red boss **cast zero spells in 3 of 3 games**, and the log warned 39 times about the default logic. Fixing this needs Java, so a script-only version cannot give bosses a sensible choice.
 - **[run] Built-in route (emulated).** An event handler at the start of upkeep created the chosen basic directly, with a simple colour-need heuristic for the AI (colour symbols remaining in hand and library, divided by 1 + lands of that colour already out). The boss chose Mountains all ten times. The hero chose a Plains/Islands mix (for example P, I, P, P, I, P, I, P, I, I). Games ran 20-26 turns with 24-34 casts per side and no extra card in the command zone. This is the design adopted.
 - **[run] Universal cap.** A replacement effect (`Event$ Moved | Destination$ Battlefield | ValidCard$ Land.YouCtrl | CheckSVar ... GE10 | Prevent$ True | Layer$ CantHappen`) blocked forced land entries: 14 Islands forced onto the capped player left exactly 10 lands; an uncapped player reached 14. In the final engine this becomes Java.
+- **[run] Main-phase timing (D6).** The built-in emulation re-run with the land created at the beginning of the precombat main phase (after the draw) behaved the same: boss Mountains ten times out of ten, hero Plains/Islands mix, 22-26 turns, 27-34 casts per side, no exceptions, and the hero's command zone held only the engine's own Commander Effect card.
+- **[code]** A Treasure token script exists (`forge-gui/res/tokenscripts/c_a_treasure_sac.txt`) for the ramp-at-cap fallback. The fallback itself is untested.
 - **[code]** The AI has colour-aware basic-land choice code in `AiController` (around lines 619, 670, 1562) for its own land searches, which could inform the heuristic. It is not wired to `MakeCard`.
 - **[code]** Commander colour-identity restriction on mana applies only to abilities written as `ColorIdentity` mana (`AbilityManaPart.java`), not to ordinary any-colour or basic-land mana.
 
 ### 4.8 UI
 
 - **[code]** The mobile match screen's command-zone row (`VPlayerPanel.CommandZoneDisplay`) shows **every card in the command zone**, including effect cards. A search for a hidden/ignored flag found only `isImmutable()` and `isEmblem()`, used for card-detail text. **Not looked at on screen.**
+- **[code]** Adventure screens (`UIScene`) build their layout from a JSON file loaded through `Config.getFile` (`UIScene.java:224`), that is, from the resource folder. The Adventure start menu wires its buttons by name from `start_menu.json` (`StartScene.java:45-54`; it includes a "Switch" button to Classic mode). A new screen or menu entry therefore needs either a layout file in the resource folder or code that builds the layout (N4).
 
 ### 4.9 Impact of the landless model on the card pool
 
@@ -211,6 +238,7 @@ Rough text-pattern counts over 34,088 card scripts (`forge-gui/res/cardsfolder`)
 - **[code]** For snapshot-versioned builds (this fork is `2.0.16-SNAPSHOT`), the resource download URL is Card-Forge's daily-snapshots release (`AssetsDownloader.java`, `ForgeConstants.GITHUB_SNAPSHOT_URL`). Data files in `forge-gui/res/` do **not** reach a phone through the dev APK unless the updater URL is changed and an `assets.zip` is hosted, or the data is embedded in the app build.
 - **[code]** A resource update deletes the whole `res/` folder and re-extracts it (`GuiDownloadZipService.extract`). The user-data folder (`data/` under the app's obb directory on Android) is separate and is not deleted. Account-wide meta-progression should live there.
 - **[code]** The in-app updater will offer Card-Forge's official snapshot to a fork build.
+- **[code]** Combined with 4.8: Adventure-hosted screens that rely on layout files in `res/` hit the same delivery limit as content data.
 - Mobile code is shared between Android and the desktop dev build (`forge-gui-mobile`, `forge-gui-mobile-dev`).
 
 ---
@@ -223,12 +251,13 @@ Rough text-pattern counts over 34,088 card scripts (`forge-gui/res/cardsfolder`)
 
 | ID | Rule | Suggested home | Notes |
 |---|---|---|---|
-| R1 | Landless mana escalation | New per-match rule flag (on `GameRules` or `RegisteredPlayer`); turn-based action in `PhaseHandler.onPhaseBegin()` `case UPKEEP:` (`PhaseHandler.java:257`), beside the existing turn-based actions (untap, draw) | Uses a chooser interface: human prompt via the player controller, AI via a heuristic. Honours R2. |
-| R2 | Global land cap of 10 | Engine check on any land entering the battlefield for flagged players | Must hold for conjures, ramp, forced entries. Tested in script form only. |
+| R1 | Landless mana escalation | New per-match rule flag (on `GameRules` or `RegisteredPlayer`); turn-based action in `PhaseHandler.onPhaseBegin()` `case MAIN1:` (`PhaseHandler.java:276`), beside the existing turn-based actions (untap, draw) | Runs after the draw. Uses a chooser interface: human prompt via the player controller, AI via a heuristic that can see the freshly drawn card. Honours R2. See N3. |
+| R2 | Global land cap of 10, with Treasure fallback | Engine check on any land entering the battlefield for flagged players | Must hold for conjures, ramp, forced entries. Prevention tested in script form only. Ramp effects at the cap create Treasure tokens (D10, N2). |
 | R3 | In-match life cap and starting life | Fields on `RegisteredPlayer`, enforced in `Player.gainLife` | Run mode converts end life to run life. |
-| R4 | Per-name upgrades | New `RegisteredPlayer` field (name to list of upgrade records), applied at game start via the existing hook | Reuses the engine's perpetual records. |
+| R4 | Per-name upgrades | New `RegisteredPlayer` field (name to list of upgrade records), applied at game start via the existing hook | Reuses the engine's perpetual records. Stackable upgrades stack; duplicate one-time keywords have no extra effect (2.3.1, N5). |
 | R5 | Deck normaliser | Mode-level: strip lands from any deck at match start | Applies to starter and boss decks. |
 | R6 | Basic-land chooser for `MakeCard` | New AI class for `MakeCard` (or a script-param logic), sharing R1's heuristic | Needed so converted ramp spells work for the AI. |
+| R7 | Relic inventory card | One generated command-zone card showing the relics and their effects | Text generation and where effects live are open (N1). |
 
 ### 5.2 Run model and content (forge-gui)
 
@@ -240,28 +269,31 @@ Rough text-pattern counts over 34,088 card scripts (`forge-gui/res/cardsfolder`)
 
 ### 5.3 UI
 
-New screens: run start (character and starter pick), node map, reward pick, shop, rest, cut, upgrade, run summary and meta screen. Hosted either as Conquest-style classic screens or as Adventure scenes (see 6.1).
+New Adventure scenes (decided, 2.8): run start (character and starter pick), node map, reward pick, shop, rest, cut, upgrade, run summary and meta screen, plus an entry on the Adventure menu. Reuse `RewardScene` (pick-one rewards), `ShopScene` and `InnScene`. How layouts reach the device: see N4.
 
 ---
 
 ## 6. Roadmap
 
-### 6.1 Phase 0: decisions and the remaining spikes
+### 6.1 Phase 0: remaining decisions and spikes
 
-- **Decide the UI host** (D12). **Classic screens** (Conquest-style): clean separation, reached from Classic mode. **Adventure scenes**: native feel on the phone and reuse of `RewardScene`, `ShopScene`, `InnScene` and `EffectData`, but `DuelScene` must first be decoupled from `EnemySprite`. The owner plays Adventure exclusively. A short spike (launch `DuelScene`, or a minimal launcher, with no overworld sprites) settles the cost.
-- Answer D6 (land choice timing) and D7 (decking). They change Phase 1.
-- Not a blocker: D1-D5, D8-D11, D13.
+The UI host is decided (2.8). Remaining Phase 0 work:
+
+- **Match-launcher spike.** Launch `DuelScene`, or a minimal equivalent, without overworld sprites (4.1). If this proves expensive, revisit 2.8.
+- **Layout and data delivery (N4).** Decide how new screens, the menu entry and mode content reach a fork build despite the updater (4.10). This blocks Phase 3 and 5.
+- Answer N1-N3 and N5 as convenient. They shape Phase 1, but none blocks its start.
+- Still open and not blocking: D1, D2, D4, D8, D9, D11, D13.
 
 ### 6.2 Phase 1: engine rules (headless tests, no UI)
 
-1. **R1 + R2**: built-in mana escalation and the 10-land cap, with a chooser interface.
-2. **R6**: `MakeCard` AI for basics, and convert a handful of the standard ramp pattern as a proof (a bulk conversion of the roughly 244 is a later task).
+1. **R1 + R2**: built-in mana escalation at the start of the precombat main phase and the 10-land cap, with a chooser interface (human prompt, AI heuristic).
+2. **R6**: `MakeCard` AI for basics. Convert a handful of the standard ramp pattern as a proof, including the **Treasure fallback at the cap**. A bulk conversion of the roughly 244 ramp cards is a later task.
 3. **R3**: starting life, in-match life cap, end-of-match life read-back (including loser data from registered players).
-4. **R4**: upgrade records applied at game start, plus a serialisable upgrade description.
-5. **R5**: land stripper for starter and boss decks. Settle D7.
-6. **Relic mechanism** (D3): decide whether relics stay card-based or become a Java modifier system.
+4. **R4**: upgrade records applied at game start, plus a serialisable upgrade description. Tests for stacking: P/T boosts add; a duplicated haste or vigilance changes nothing; a stackable keyword (for example Ward or Flanking) stacks.
+5. **R5**: land stripper for starter and boss decks. Decking stays (2.9).
+6. **R7**: the relic-inventory command-zone card and the relic effect mechanism (N1).
 
-**Exit criteria**: new TestNG tests for each rule pass (use the existing `AITest` pattern in `forge-gui-desktop/src/test/java/forge/ai/`); an AI-vs-AI soak over many seeds shows lands going 1 to 10, the cap holding, sensible colour choices, and no exceptions; the existing test suite for the touched modules still passes.
+**Exit criteria**: new TestNG tests for each rule pass (use the existing `AITest` pattern in `forge-gui-desktop/src/test/java/forge/ai/`); an AI-vs-AI soak over many seeds shows lands going 1 to 10, the cap holding, the Treasure fallback working, sensible colour choices, and no exceptions; the existing test suite for the touched modules still passes.
 
 ### 6.3 Phase 2: run model and content (headless)
 
@@ -269,7 +301,7 @@ RunState, node graph generator, reward generator (cards, buckets, attached upgra
 
 ### 6.4 Phase 3: UI
 
-Screens listed in 5.3 in the chosen host. Test with the desktop dev build under a virtual display (see 7).
+The Adventure scenes listed in 5.3, plus the menu entry. Test with the desktop dev build under a virtual display (see 7). The harness has already driven Adventure's start menu, character creation, map and console.
 
 ### 6.5 Phase 4: meta-progression
 
@@ -277,7 +309,7 @@ MetaProfile, unlock rules, level-up effects (run max life, unlocked starter deck
 
 ### 6.6 Phase 5: Android build and delivery
 
-Build the side-by-side `forge.app.dev` APK. Decide how mode data reaches the phone (embedded in the build, or a hosted resource bundle with the updater URL changed, see 4.10). Disable or redirect the in-app updater prompt. On-device checks.
+Build the side-by-side `forge.app.dev` APK. Settle how mode data and screen layouts reach the phone (embedded in the build, built in code, or a hosted resource bundle with the updater URL changed; see 4.10 and N4). Disable or redirect the in-app updater prompt. On-device checks.
 
 ### 6.7 Phase 6: content and balance
 
@@ -292,6 +324,7 @@ All of this was used successfully in the design sessions.
 - **Headless engine tests.** `forge-gui-desktop/src/test/java/forge/ai/AITest.java` shows how to initialise the card database and build games. `forge-gui-desktop/src/main/java/forge/view/SimulateMatch.java` (`forge sim`) is the canonical AI-vs-AI runner.
 - **Spike pattern** (`spikes/`): a standalone program compiled against `forge-gui-desktop/target/forge-gui-desktop-*-jar-with-dependencies.jar`, run from the `forge-gui` directory with `-Djava.awt.headless=true -Duser.home=<scratch>`.
 - **Real UI, headless.** Run the desktop dev jar (`forge-gui-mobile-dev`) under `Xvfb`, drive it with Java's `java.awt.Robot` (`ui-harness/Click.java`), take screenshots with ImageMagick `import`. In Adventure, **F9** opens the console. `teleport to poi <name>` is a quick way to load map content.
+- The UI harness has already driven Adventure's start menu, character creation, map screen and console, which is the host chosen in 2.8.
 - **Final check** has to happen on a real device.
 
 ---
@@ -303,7 +336,8 @@ All of this was used successfully in the design sessions.
 | AI quality | Boss and hero AI with landless decks, custom colour choice, and upgraded cards is only lightly tested. The AI kept all landless hands and cast many spells, but play strength and balance were not evaluated. |
 | Small decks | Decking (4.3) and long games. |
 | Command-zone UI | Any card-based rule or relic occupies UI. Unresolved for relics (D3). |
-| Data delivery | The updater points at Card-Forge (4.10). |
+| Data and layout delivery | The updater points at Card-Forge (4.10); Adventure screens load layouts from `res/` (4.8, N4). |
+| Adventure coupling | Reusing `DuelScene` needs it decoupled from overworld sprites, which risks regressions in Adventure itself. |
 | Scope | Conquest, a comparable mode, is about 6,700 lines. A lean first version should be a fraction of that, but this is a guess. |
 | Fork drift | Upstream Forge changes the same files regularly. |
 | Human prompt and upgrade display | The human land-choice prompt, and how upgrades are shown on cards outside matches, have not been prototyped. |
@@ -317,6 +351,12 @@ All of this was used successfully in the design sessions.
 3. Land cap as a relic effect. **Replaced** by an engine cap, 10 in all cases.
 4. Upgrades per copy. **Replaced** by per name, additive.
 5. A "play Shiva directly" relic is a design aspiration; Shiva reverts at chapter III (4.6).
+6. Land choice moved from upkeep to the start of the precombat main phase, after the draw (D6).
+7. Decking kept for now (D7).
+8. UI host: Adventure, entered from the Adventure menu (D12). Lightly held.
+9. Relics get one command-zone inventory card (D3), an exception to 2.7.
+10. Ramp at the cap creates Treasure tokens (D10).
+11. Duplicate keywords: stackable ones stack, one-time keywords do nothing extra (D5).
 
 ---
 

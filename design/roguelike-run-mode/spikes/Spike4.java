@@ -42,6 +42,8 @@ public class Spike4 {
         Object[] boss = {"Lightning Bolt", 5, "Goblin Piker", 5, "Hill Giant", 5, "Shock", 4, "Mons's Goblin Raiders", 5, "Cinder Pyromancer", 3};
 
         boolean only3 = args.length > 1 && args[1].equals("x3");
+        final PhaseType landPhase = args.length > 2 && args[2].equals("main1") ? PhaseType.MAIN1 : PhaseType.UPKEEP;
+        System.out.println("NOTE land phase = " + landPhase);
         // ---------------- X1: relic route, AI vs AI ----------------
         for (long seed = 1; seed <= (only3 ? 0 : 3); seed++) {
             final long sd = seed;
@@ -110,7 +112,7 @@ public class Spike4 {
             chosen.put("Hero", new ArrayList<>()); chosen.put("Boss", new ArrayList<>());
             Object l = new Object() {
                 @Subscribe public void on(GameEventTurnPhase ev) {
-                    if (ev.phase() != PhaseType.UPKEEP) return;
+                    if (ev.phase() != landPhase) return;
                     Game g = gh[0];
                     Player ap = g.getPhaseHandler().getPlayerTurn();
                     int lands = 0;
