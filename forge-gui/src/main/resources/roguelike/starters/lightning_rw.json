@@ -1,0 +1,25 @@
+{
+  "id": "lightning_rw",
+  "name": "Lightning: Army of One",
+  "commander": "Lightning, Army of One",
+  "base": "guardian_corps_armory.txt",
+  "rewardPool": "rw_core",
+  "deck": {
+    "Ashe, Princess of Dalmasca": 2,
+    "Dragoon's Lance": 2,
+    "Freya Crescent": 2,
+    "Genji Glove": 2,
+    "Haste Magic": 2,
+    "Item Shopkeep": 2,
+    "Joshua, Phoenix's Dominant": 2,
+    "Magitek Infantry": 2,
+    "Self-Destruct": 2,
+    "Slash of Light": 2,
+    "Thunder Magic": 2,
+    "Unexpected Request": 2,
+    "Warrior's Sword": 2,
+    "Weapons Vendor": 2,
+    "You're Not Alone": 2,
+    "Zack Fair": 2
+  }
+}

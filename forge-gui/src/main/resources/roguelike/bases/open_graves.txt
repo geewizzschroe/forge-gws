@@ -1,0 +1,6 @@
+Name:Open Graves
+ManaCost:no cost
+Types:Base
+T:Mode$ ChangesZone | Origin$ Battlefield | Destination$ Graveyard | ValidCard$ Creature.nonToken+YouCtrl | TriggerZones$ Command | Execute$ TrigZombie | TriggerDescription$ Whenever a nontoken creature you control dies, create a 2/2 black Zombie creature token.
+SVar:TrigZombie:DB$ Token | TokenScript$ b_2_2_zombie
+Oracle:Whenever a nontoken creature you control dies, create a 2/2 black Zombie creature token.

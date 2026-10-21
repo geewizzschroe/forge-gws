@@ -335,7 +335,10 @@ public class GameAction {
             if (zoneFrom == null || zoneFrom.is(ZoneType.None)) {
                 copied.getOwner().addInboundToken(copied);
             }
-            ReplacementResult repres = game.getReplacementHandler().run(ReplacementType.Moved, repParams);
+            // landless play: a land can't enter under a player already at the land cap
+            ReplacementResult repres = toBattlefield && BasicLandEscalation.blocksLandEntering(copied)
+                    ? ReplacementResult.Prevented
+                    : game.getReplacementHandler().run(ReplacementType.Moved, repParams);
             copied.getOwner().removeInboundToken(copied);
 
             if (repres != ReplacementResult.NotReplaced && repres != ReplacementResult.Updated) {
@@ -1559,7 +1562,8 @@ public class GameAction {
 
                 if ((game.getRules().hasAppliedVariant(GameType.Commander)
                         || game.getRules().hasAppliedVariant(GameType.Brawl)
-                        || game.getRules().hasAppliedVariant(GameType.Planeswalker)) && !checkAgain) {
+                        || game.getRules().hasAppliedVariant(GameType.Planeswalker)
+                        || game.getRules().getGameType() == GameType.Roguelike) && !checkAgain) {
                     for (final Card c : p.getCardsIn(ZoneType.Graveyard).threadSafeIterable()) {
                         checkAgain |= stateBasedAction_Commander(c, mapParams);
                     }

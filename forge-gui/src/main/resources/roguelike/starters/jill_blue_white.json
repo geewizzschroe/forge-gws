@@ -1,0 +1,25 @@
+{
+  "id": "jill_blue_white",
+  "name": "Jill: Shimmering Wake (sample)",
+  "commander": "Jill, Shiva's Dominant",
+  "base": "wayfarers_camp.txt",
+  "rewardPool": "uw_core",
+  "deck": {
+    "Faerie Seer": 2,
+    "Moon-Circuit Hacker": 2,
+    "Chilling Trap": 2,
+    "Burrog Befuddler": 2,
+    "Micromancer": 2,
+    "Brineborn Cutthroat": 2,
+    "Counterspell": 2,
+    "High Fae Trickster": 2,
+    "Cathar Commando": 2,
+    "Sandsteppe Outcast": 2,
+    "Repel the Darkness": 2,
+    "Luminous Rebuke": 2,
+    "Mischievous Pup": 2,
+    "Resolute Reinforcements": 2,
+    "Stasis Snare": 2,
+    "Charming Prince": 2
+  }
+}

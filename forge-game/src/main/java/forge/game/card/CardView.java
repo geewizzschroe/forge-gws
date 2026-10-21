@@ -1010,8 +1010,18 @@ public class CardView extends GameEntityView {
         // prevent NPE
         if (getCurrentState() == null)
             return false;
-        // Use card art for prepared spell
-        return CardStateName.PreparedSpell.equals(getCurrentState().state);
+        // Use card art for prepared spell, or for a preview of the card as it currently is
+        return preview || CardStateName.PreparedSpell.equals(getCurrentState().state);
+    }
+
+    /**
+     * An out-of-game preview of the card as it currently is (for example with run upgrades): drawn
+     * from its current state (art plus current text and stats) instead of its printed image, and
+     * shown without an id.
+     */
+    private transient boolean preview;
+    public void setPreview(boolean value) {
+        preview = value;
     }
 
     void updateState(Card c) {
@@ -1254,7 +1264,7 @@ public class CardView extends GameEntityView {
                 return "H" + getHiddenId();
             }
             final int id = getId();
-            if (id > 0) {
+            if (id > 0 && !preview) {
                 return String.valueOf(getId());
             }
             return StringUtils.EMPTY;

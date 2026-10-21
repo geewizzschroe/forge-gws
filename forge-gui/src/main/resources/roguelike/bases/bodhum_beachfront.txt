@@ -1,0 +1,6 @@
+Name:Bodhum Beachfront
+ManaCost:no cost
+Types:Base
+T:Mode$ Attacks | ValidCard$ Creature.equipped+YouCtrl | TriggerZones$ Command | Execute$ bodhum_Pump | TriggerDescription$ Whenever an equipped creature you control attacks, it gets +1/+1 until end of turn.
+SVar:bodhum_Pump:DB$ Pump | Defined$ TriggeredAttackerLKICopy | NumAtt$ +1 | NumDef$ +1
+Oracle:Whenever an equipped creature you control attacks, it gets +1/+1 until end of turn.

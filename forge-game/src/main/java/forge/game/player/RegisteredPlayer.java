@@ -6,12 +6,15 @@ import forge.LobbyPlayer;
 import forge.deck.CardPool;
 import forge.deck.Deck;
 import forge.deck.DeckSection;
+import forge.game.CardUpgrade;
 import forge.game.GameType;
 import forge.item.IPaperCard;
 import forge.item.PaperCard;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class RegisteredPlayer {
@@ -23,6 +26,9 @@ public class RegisteredPlayer {
     private LobbyPlayer player = null;
 
     private int startingLife = 20;
+    private int maxLife = 0;
+    private PaperCard base = null;
+    private final Map<String, List<CardUpgrade>> cardUpgrades = new LinkedHashMap<>();
     private int startingHand = 7;
     private int manaShards = 0;
     private Iterable<IPaperCard> extraCardsOnBattlefield = null;
@@ -62,6 +68,30 @@ public class RegisteredPlayer {
     }
     public final void setStartingLife(int startingLife) {
         this.startingLife = startingLife;
+    }
+
+    /** Highest life total the player can reach by gaining life; 0 means no limit. */
+    public final int getMaxLife() {
+        return maxLife;
+    }
+    public final void setMaxLife(int maxLife) {
+        this.maxLife = maxLife;
+    }
+
+    /** The player's Base, put into the command zone at game start (see {@link forge.game.BaseCard}); null for none. */
+    public final PaperCard getBase() {
+        return base;
+    }
+    public final void setBase(PaperCard base) {
+        this.base = base;
+    }
+
+    /** Upgrades applied at game start to every card of the given name this player owns. */
+    public final Map<String, List<CardUpgrade>> getCardUpgrades() {
+        return cardUpgrades;
+    }
+    public final void addCardUpgrade(String cardName, CardUpgrade upgrade) {
+        cardUpgrades.computeIfAbsent(cardName, k -> Lists.newArrayList()).add(upgrade);
     }
 
     public final int getManaShards() {

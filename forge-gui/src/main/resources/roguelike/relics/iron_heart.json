@@ -1,0 +1,6 @@
+{
+  "id": "iron_heart",
+  "name": "Iron Heart",
+  "description": "+5 run max life.",
+  "maxLifeBonus": 5
+}

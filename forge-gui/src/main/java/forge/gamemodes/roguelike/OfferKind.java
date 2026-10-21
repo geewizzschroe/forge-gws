@@ -1,0 +1,15 @@
+package forge.gamemodes.roguelike;
+
+/** What an open choice is for. */
+public enum OfferKind {
+    /** After an enemy: pick one card (several copies) or one bucket of cards. */
+    CARD_REWARD,
+    /** After a boss: pick one relic. */
+    BOSS_RELIC,
+    /** Shop: buy any number of options, then leave. */
+    SHOP,
+    /** Upgrade node: pick one (card, upgrade) pair. */
+    UPGRADE,
+    /** Cut node: pick one card name to remove copies of. */
+    CUT
+}

@@ -1,0 +1,25 @@
+{
+  "id": "jill_blue_black",
+  "name": "Jill: Drowned Court (sample)",
+  "commander": "Jill, Shiva's Dominant",
+  "base": "wayfarers_camp.txt",
+  "rewardPool": "ub_core",
+  "deck": {
+    "Faerie Seer": 2,
+    "Moon-Circuit Hacker": 2,
+    "Chilling Trap": 2,
+    "Burrog Befuddler": 2,
+    "Micromancer": 2,
+    "Brineborn Cutthroat": 2,
+    "Counterspell": 2,
+    "High Fae Trickster": 2,
+    "Ahriman": 2,
+    "Skymarch Bloodletter": 2,
+    "Sephiroth's Intervention": 2,
+    "Moment of Craving": 2,
+    "Go for the Throat": 2,
+    "Gravedigger": 2,
+    "Bloodtithe Collector": 2,
+    "Serpent Assassin": 2
+  }
+}

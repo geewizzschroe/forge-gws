@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import forge.StaticData;
 import forge.card.CardEdition;
 import forge.card.ICardFace;
+import forge.game.BasicLandEscalation;
 import forge.game.Game;
 import forge.game.GameEntityCounterTable;
 import forge.game.ability.AbilityKey;
@@ -172,6 +173,7 @@ public class MakeCardEffect extends SpellAbilityEffect {
             }
 
             CardCollection madeCards = new CardCollection();
+            int blockedUntapped = 0, blockedTapped = 0;
             final boolean wCounter = sa.hasParam("WithCounter");
             final boolean battlefield = zone.equals(ZoneType.Battlefield);
 
@@ -200,6 +202,15 @@ public class MakeCardEffect extends SpellAbilityEffect {
                     final int libraryPos = sa.hasParam("LibraryPosition") ? AbilityUtils.calculateAmount(source, 
                     sa.getParam("LibraryPosition"), sa) : 0;
                     final Card made = game.getAction().moveTo(zone, c, libraryPos, sa, moveParams);
+                    if (battlefield && made.isLand() && !made.isInPlay() && BasicLandEscalation.isAtLandCap(player)) {
+                        // landless play: a conjured land kept out by the land cap becomes a Treasure instead
+                        if (made.isTapped()) {
+                            blockedTapped++;
+                        } else {
+                            blockedUntapped++;
+                        }
+                        continue;
+                    }
                     if (wCounter && !battlefield) {
                         made.addCounter(CounterType.getType(sa.getParam("WithCounter")),
                                 AbilityUtils.calculateAmount(source, sa.getParamOrDefault("WithCounterNum", 
@@ -211,6 +222,8 @@ public class MakeCardEffect extends SpellAbilityEffect {
             }
             triggerList.triggerChangesZoneAll(game, sa);
             counterTable.replaceCounterEffect(game, sa);
+            BasicLandEscalation.makeTreasures(player, sa, blockedUntapped, false);
+            BasicLandEscalation.makeTreasures(player, sa, blockedTapped, true);
 
             if (sa.hasParam("Reveal")) {
                 game.getAction().reveal(cards, player, true);

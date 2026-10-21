@@ -1,0 +1,7 @@
+Name:Harrow
+ManaCost:2 G
+Types:Instant
+A:SP$ MakeCard | Cost$ 2 G Sac<1/Land> | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True | SubAbility$ DBSecond | SpellDescription$ Conjure two basic land cards of your choice onto the battlefield.
+SVar:DBSecond:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True
+SVar:AIPreference:SacCost$Land.Basic
+Oracle:As an additional cost to cast this spell, sacrifice a land.\nConjure two basic land cards of your choice onto the battlefield.

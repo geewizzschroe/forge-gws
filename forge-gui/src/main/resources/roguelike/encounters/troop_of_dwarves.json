@@ -1,0 +1,18 @@
+{
+  "id": "troop_of_dwarves",
+  "name": "A Troop of Dwarves",
+  "minRow": 0,
+  "base": "mountain_pass.txt",
+  "life": 16,
+  "hand": 6,
+  "deck": {
+    "Axgard Cavalry": 3,
+    "Bloodfire Dwarf": 2,
+    "Brazen Dwarf": 3,
+    "Breakneck Berserker": 2,
+    "Dwarven Trader": 3,
+    "Axgard Artisan": 2,
+    "Shock": 3,
+    "Hill Giant": 2
+  }
+}

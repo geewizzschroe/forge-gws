@@ -1,0 +1,26 @@
+{
+  "id": "jill_frozen_throne",
+  "name": "Jill: Frozen Throne (sample milestone deck)",
+  "commander": "Jill, Shiva's Dominant",
+  "base": "wayfarers_camp.txt",
+  "rewardPool": "frozen_core",
+  "deck": {
+    "Frost Trickster": 2,
+    "Gilded Scuttler": 2,
+    "Chrome Prowler": 2,
+    "Network Disruptor": 2,
+    "Ice Magic": 2,
+    "Stuck in Summoner's Sanctum": 2,
+    "Choking Tethers": 2,
+    "Capture Sphere": 2,
+    "Summon: Shiva": 2,
+    "Sleep Magic": 2,
+    "Ultros, Obnoxious Octopus": 2,
+    "Kapsho Kitefins": 2,
+    "Faebloom Trick": 2,
+    "Exclusion Mage": 2,
+    "Ultimecia, Temporal Threat": 2,
+    "Hraesvelgr of the First Brood": 2
+  },
+  "independentOfCore": true
+}

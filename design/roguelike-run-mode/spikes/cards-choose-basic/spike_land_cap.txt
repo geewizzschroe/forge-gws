@@ -1,0 +1,6 @@
+Name:Spike Land Cap
+ManaCost:no cost
+Types:Artifact
+R:Event$ Moved | ActiveZones$ Command | Destination$ Battlefield | ValidCard$ Land.YouCtrl | CheckSVar$ LandCount | SVarCompare$ GE10 | Prevent$ True | Layer$ CantHappen | Description$ A land can't enter the battlefield under your control if you already control ten or more lands.
+SVar:LandCount:Count$Valid Land.YouCtrl
+Oracle:A land can't enter the battlefield under your control if you already control ten or more lands.

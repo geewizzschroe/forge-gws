@@ -1,0 +1,6 @@
+{
+  "id": "bucket_bounce",
+  "name": "Back to the Hand",
+  "bucket": true,
+  "cards": ["Man-o'-War", "Into the Roil", "Repulse", "Unsummon", "Peel from Reality", "Aethersnipe"]
+}

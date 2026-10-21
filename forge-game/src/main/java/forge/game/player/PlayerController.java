@@ -363,6 +363,11 @@ public abstract class PlayerController {
     public abstract String chooseCardName(SpellAbility sa, Predicate<ICardFace> cpp, String valid, String message);
     public abstract String chooseCardName(SpellAbility sa, List<ICardFace> faces, String message);
 
+    /** Pick which basic land to conjure under the landless-play rule (see BasicLandEscalation). */
+    public String chooseBasicLandToConjure(List<String> basicLandNames) {
+        return basicLandNames.isEmpty() ? null : basicLandNames.get(0);
+    }
+
     // better to have this odd method than those if playerType comparison in ChangeZone
     public abstract Card chooseSingleCardForZoneChange(ZoneType destination, List<ZoneType> origin, SpellAbility sa, CardCollection fetchList, DelayedReveal delayedReveal, String selectPrompt, boolean isOptional, Player decider);
     public abstract List<Card> chooseCardsForZoneChange(ZoneType destination, List<ZoneType> origin, SpellAbility sa, CardCollection fetchList, int min, int max, DelayedReveal delayedReveal, String selectPrompt, Player decider);

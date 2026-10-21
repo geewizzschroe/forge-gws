@@ -1,0 +1,45 @@
+{
+  "levelXpBase": 200,
+  "levelXpGrowth": 200,
+  "accountLevelXpBase": 500,
+  "accountLevelXpGrowth": 500,
+  "accountLevels": [
+    {
+      "level": 2,
+      "unlocks": [
+        {
+          "kind": "relic",
+          "id": "lucky_coin"
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "unlocks": [
+        {
+          "kind": "pool",
+          "id": "bucket_ramp"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "unlocks": [
+        {
+          "kind": "set",
+          "set": "FIN",
+          "description": "Final Fantasy cards in the reward pool"
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "unlocks": [
+        {
+          "kind": "relic",
+          "id": "war_drum"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "goblin_raiders",
+  "name": "Goblin Raiders",
+  "minRow": 0,
+  "base": "raider_camp.txt",
+  "life": 16,
+  "hand": 6,
+  "deck": {
+    "Raging Goblin": 3,
+    "Goblin Piker": 3,
+    "Mogg Fanatic": 3,
+    "Goblin Raider": 3,
+    "Lightning Bolt": 2,
+    "Shock": 3,
+    "Hill Giant": 3
+  }
+}

@@ -1,0 +1,5 @@
+Name:Nature's Lore
+ManaCost:1 G
+Types:Sorcery
+A:SP$ MakeCard | Name$ Forest | Zone$ Battlefield | Conjure$ True | SpellDescription$ Conjure a Forest card onto the battlefield.
+Oracle:Conjure a Forest card onto the battlefield.
