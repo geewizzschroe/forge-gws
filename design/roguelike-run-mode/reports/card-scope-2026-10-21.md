@@ -18,7 +18,7 @@ How the scope grew on 2026-10-21:
 
 No exceptions have been added.
 
-Content cards outside the scope: 135 of 344 (counted once per file).
+Content cards outside the scope: 135 of 347 (counted once per file).
 Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 
 ## character jill (0 of 1 outside)
@@ -89,7 +89,7 @@ Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 - in  Ultimecia, Temporal Threat (FIN, PMEI)
 - in  Hraesvelgr of the First Brood (FIC)
 
-## starter jill_mono_blue (0 of 14 outside)
+## starter jill_mono_blue (0 of 17 outside)
 
 - in  Jill, Shiva's Dominant (FIN)
 - in  Faerie Seer (J25, WOC, J22, J21, H1R, PLST, ... 8 sets)
@@ -102,9 +102,12 @@ Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 - in  High Fae Trickster (FDN)
 - in  Fading Hope (J25, DBL, MID)
 - in  Into the Roil (FDN, CMR, ZNR, C18, C17, C14, ... 8 sets)
-- in  Unsummon (FRA, FDN, 30A, ANB, M20, E02, ... 23 sets)
-- in  Summon: Shiva (FIN)
-- in  The Lunar Whale (FIN)
+- in  Run Away Together (ECL, FDN, BLB, WOC, GN3, CLB, ... 10 sets)
+- in  Whirler Rogue (DRC, FDC, OTC, PIP, MKC, CMM, ... 19 sets)
+- in  Rite of Replication (SOC, MAR, OMB, FIC, TDC, FDN, ... 11 sets)
+- in  Skyship Buccaneer (FDN)
+- in  Starlit Mantle (J25, THB)
+- in  Soul Read (J25, J22)
 
 ## starter lightning_rw (0 of 17 outside)
 
