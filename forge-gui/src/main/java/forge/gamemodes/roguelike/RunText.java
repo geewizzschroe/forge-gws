@@ -40,8 +40,8 @@ public final class RunText {
         }
         if (s.offer != null) {
             return switch (s.offer.kind) {
-                case CARD_REWARD -> "Victory! Choose a reward.";
-                case BOSS_RELIC -> "The boss is beaten! Choose a relic.";
+                case CARD_REWARD -> lastLine(s) + "\nChoose a reward.";
+                case BOSS_RELIC -> lastLine(s) + "\nThe boss is beaten! Choose a relic.";
                 case SHOP -> "Shop. You have " + s.gold + " gold.";
                 case UPGRADE -> "Choose a card to upgrade.";
                 case CUT -> "Choose a card to cut from your deck.";
@@ -52,6 +52,71 @@ public final class RunText {
             return (enc.boss ? "Boss: " : "Next fight: ") + enc.name + " (" + enc.life + " life)";
         }
         return "Choose where to go next.";
+    }
+
+    private static String lastLine(final RunState s) {
+        return s.log.isEmpty() ? "" : s.log.get(s.log.size() - 1);
+    }
+
+    /** A few lines about what a node holds, for the map screen. */
+    public static String nodeDetail(final Run run, final MapNode n) {
+        RunConfig cfg = run.getContent().getConfig();
+        return switch (n.type) {
+            case ENEMY, BOSS -> {
+                EncounterDef e = run.getContent().getEncounter(n.encounterId);
+                StringBuilder sb = new StringBuilder();
+                sb.append(n.type == NodeType.BOSS ? "Boss: " : "Enemy: ").append(e.name).append('\n');
+                sb.append(e.life).append(" life, ").append(e.hand).append("-card hand");
+                if (e.commander != null) {
+                    sb.append(", commander ").append(e.commander);
+                }
+                if (e.base != null) {
+                    sb.append("\nBase: ").append(baseText(run.getContent().getBase(e.base)));
+                }
+                yield sb.toString();
+            }
+            case SHOP -> "Shop: buy relics and cards with gold.";
+            case REST -> "Rest: heal " + Math.round(cfg.restHealFraction * 100) + "% of your max life.";
+            case CUT -> "Cut a card: remove a card from your deck.";
+            case UPGRADE -> "Upgrade a card: choose one of " + cfg.upgradeChoices + " upgrades.";
+        };
+    }
+
+    /** "Name - rules text" of a Base script. */
+    static String baseText(final List<String> script) {
+        String name = "";
+        String oracle = "";
+        for (String line : script) {
+            if (line.startsWith("Name:")) {
+                name = line.substring(5);
+            } else if (line.startsWith("Oracle:")) {
+                oracle = line.substring(7).replace("\\n", " ");
+            }
+        }
+        return oracle.isEmpty() ? name : name + " - " + oracle;
+    }
+
+    /** The end-of-run summary. */
+    public static String summary(final Run run) {
+        RunState s = run.getState();
+        StringBuilder sb = new StringBuilder();
+        sb.append(s.status == RunStatus.WON ? "Run won!" : "Run over.").append('\n');
+        sb.append("Character: ").append(run.getContent().getStarter(s.starterId).name).append('\n');
+        sb.append("Floor reached: ").append(s.floor).append('\n');
+        sb.append("Matches won: ").append(s.matchesWon).append("   lost: ").append(s.matchesLost).append('\n');
+        if (!s.beaten.isEmpty()) {
+            sb.append("Beaten: ").append(String.join(", ", s.beaten)).append('\n');
+        }
+        sb.append("Final deck: ").append(s.deckSize()).append(" cards, ").append(s.upgrades.size()).append(" upgraded names\n");
+        if (!s.relics.isEmpty()) {
+            List<String> names = new ArrayList<>();
+            for (String id : s.relics) {
+                names.add(run.getContent().getRelic(id).name);
+            }
+            sb.append("Relics: ").append(String.join(", ", names)).append('\n');
+        }
+        sb.append("Gold left: ").append(s.gold);
+        return sb.toString();
     }
 
     public static String node(final Run run, final MapNode n) {

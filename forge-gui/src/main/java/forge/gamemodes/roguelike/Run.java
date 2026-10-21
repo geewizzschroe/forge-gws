@@ -96,7 +96,7 @@ public class Run {
         }
         MapNode node = state.map.get(nodeId);
         state.activeNodeId = nodeId;
-        state.log.add("Entered " + node);
+        state.log.add("Entered " + RunText.node(this, node));
         switch (node.type) {
             case ENEMY, BOSS -> state.lifeBeforeMatch = state.life;
             case REST -> {
@@ -118,6 +118,9 @@ public class Run {
     }
 
     private void completeNode() {
+        if (state.activeNodeId != null) {
+            state.visited.add(state.activeNodeId);
+        }
         state.currentNodeId = state.activeNodeId;
         state.activeNodeId = null;
         state.offer = null;
@@ -172,6 +175,8 @@ public class Run {
         }
         MapNode node = getActiveNode();
         if (won) {
+            state.matchesWon++;
+            state.beaten.add(match.encounter().name);
             state.life = Math.max(1, Math.min(endLife, state.maxLife));
             boolean boss = node.type == NodeType.BOSS;
             int gold = boss ? content.getConfig().goldPerBoss : content.getConfig().goldPerEnemy;
@@ -184,10 +189,12 @@ public class Run {
                 afterMatchReward();
             }
         } else if (state.retriesLeft > 0) {
+            state.matchesLost++;
             state.retriesLeft--;
             state.life = state.lifeBeforeMatch;
             state.log.add("Lost to " + match.encounter().name + "; retrying (" + state.retriesLeft + " retries left)");
         } else {
+            state.matchesLost++;
             state.status = RunStatus.LOST;
             state.log.add("Lost to " + match.encounter().name + "; the run is over");
         }
@@ -205,6 +212,7 @@ public class Run {
                 state.floor++;
                 state.map = RunMap.generate(content.getConfig(), content, state.nextRandom());
                 state.currentNodeId = null;
+                state.visited.clear();
                 state.log.add("Floor " + state.floor);
             }
         }
@@ -219,8 +227,8 @@ public class Run {
             throw new IllegalStateException("Use buy() in a shop");
         }
         OfferOption o = offer.options.get(index);
+        state.log.add("Chose " + RunText.option(this, o));
         apply(o);
-        state.log.add("Chose " + o);
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
         state.offer = null;
         if (matchReward) {
@@ -239,10 +247,10 @@ public class Run {
         if (o.bought || state.gold < o.price) {
             throw new IllegalStateException("Can't buy " + o + " with " + state.gold + " gold");
         }
+        state.log.add("Bought " + RunText.option(this, o));
         state.gold -= o.price;
         o.bought = true;
         apply(o);
-        state.log.add("Bought " + o);
     }
 
     /** Leave a shop, or pass on an offer that allows it. */
@@ -253,7 +261,7 @@ public class Run {
         }
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
         state.offer = null;
-        state.log.add("Skipped " + offer.kind);
+        state.log.add(offer.kind == OfferKind.SHOP ? "Left the shop" : "Skipped the choice");
         if (matchReward) {
             afterMatchReward();
         } else {

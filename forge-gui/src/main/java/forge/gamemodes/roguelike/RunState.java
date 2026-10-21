@@ -34,6 +34,12 @@ public class RunState {
     /** Life when the active match was entered, restored by a retry. */
     public int lifeBeforeMatch;
     public Offer offer;
+    /** Nodes finished on the current floor's map, in order (the path drawn on the map). */
+    public List<Integer> visited = new ArrayList<>();
+    public int matchesWon;
+    public int matchesLost;
+    /** Names of the enemies beaten, in order. */
+    public List<String> beaten = new ArrayList<>();
 
     public List<String> log = new ArrayList<>();
 

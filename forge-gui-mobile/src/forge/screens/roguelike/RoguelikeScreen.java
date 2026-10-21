@@ -39,13 +39,23 @@ public class RoguelikeScreen extends FScreen {
         protected ScrollBounds layoutAndGetScrollBounds(float visibleWidth, float visibleHeight) {
             float y = 0;
             for (FDisplayObject child : getChildren()) {
-                float h = child instanceof FTextArea t ? t.getPreferredHeight(visibleWidth) : Utils.AVG_FINGER_HEIGHT;
+                float h;
+                if (child instanceof RunMapView) {
+                    h = Math.max(visibleHeight * 0.6f, Utils.AVG_FINGER_HEIGHT * 4);
+                } else if (child instanceof FTextArea t) {
+                    h = t.getPreferredHeight(visibleWidth);
+                } else {
+                    h = Utils.AVG_FINGER_HEIGHT;
+                }
                 child.setBounds(0, y, visibleWidth, h);
                 y += h + PADDING;
             }
             return new ScrollBounds(visibleWidth, y);
         }
     });
+
+    /** The map node whose details are shown; reset when it stops being a choice. */
+    private Integer selectedNode;
 
     public RoguelikeScreen() {
         super(null, NewGameMenu.getMenu());
@@ -85,11 +95,12 @@ public class RoguelikeScreen extends FScreen {
 
         status.setText(RunText.status(run));
         if (run.getState().status != RunStatus.IN_PROGRESS) {
+            status.setText(RunText.summary(run));
             button("New run", e -> {
                 ctrl().abandonRun();
                 update();
             });
-            text(String.join("\n", run.getState().log));
+            text("Run log:\n" + String.join("\n", run.getState().log));
             revalidate();
             return;
         }
@@ -130,8 +141,25 @@ public class RoguelikeScreen extends FScreen {
                 button("Look at the Bases", e -> CardZoom.show(bases, 0, null));
             }
         } else {
-            for (MapNode n : run.getAvailableNodes()) {
-                button(RunText.node(run, n), e -> act(() -> run.enterNode(n.id)));
+            List<MapNode> available = run.getAvailableNodes();
+            if (selectedNode == null || run.getState().map.nodes.size() <= selectedNode) {
+                selectedNode = available.isEmpty() ? null : available.get(0).id;
+            }
+            actions.add(new RunMapView(run, selectedNode, id -> {
+                selectedNode = id;
+                update();
+            }));
+            if (selectedNode != null) {
+                MapNode sel = run.getState().map.get(selectedNode);
+                text("Step " + (sel.row + 1) + " - " + RunText.nodeDetail(run, sel));
+                if (available.contains(sel)) {
+                    button("Go: " + RunText.node(run, sel), e -> act(() -> {
+                        selectedNode = null;
+                        run.enterNode(sel.id);
+                    }));
+                } else {
+                    text("You can't go there from here. Ringed nodes are where you can go next.");
+                }
             }
         }
 

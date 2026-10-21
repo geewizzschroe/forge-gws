@@ -37,6 +37,23 @@ public class RunTextTest extends AITest {
         MapNode first = run.getAvailableNodes().get(0);
         assertTrue(RunText.node(run, first), RunText.node(run, first).startsWith("Step 1 - Enemy: "));
 
+        assertTrue(RunText.nodeDetail(run, first), RunText.nodeDetail(run, first).startsWith("Enemy: "));
+        MapNode boss = run.getState().map.get(run.getState().map.bossId);
+        String bossText = RunText.nodeDetail(run, boss);
+        assertTrue(bossText, bossText.contains("Boss: Krenko's Warband"));
+        assertTrue(bossText, bossText.contains("commander Krenko, Mob Boss"));
+        assertTrue(bossText, bossText.contains("Base: Goblin Warren - Goblins you control get +1/+0. At the beginning"));
+
+        run.getState().status = RunStatus.LOST;
+        run.getState().matchesWon = 2;
+        run.getState().matchesLost = 2;
+        run.getState().beaten.add("Goblin Raiders");
+        String summary = RunText.summary(run);
+        assertTrue(summary, summary.startsWith("Run over."));
+        assertTrue(summary, summary.contains("Matches won: 2   lost: 2"));
+        assertTrue(summary, summary.contains("Beaten: Goblin Raiders"));
+        assertTrue(summary, summary.contains("Relics: Whetstone"));
+
         OfferOption o = new OfferOption();
         o.cards.put("Air Elemental", 2);
         o.upgradeCard = "Air Elemental";

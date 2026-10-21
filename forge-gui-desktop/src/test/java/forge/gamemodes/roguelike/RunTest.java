@@ -70,6 +70,8 @@ public class RunTest extends AITest {
         run.enterNode(0);
         assertEquals(16, run.getState().life); // 30% of 20
         assertEquals(Integer.valueOf(0), run.getState().currentNodeId);
+        assertEquals(List.of(0), run.getState().visited);
+        assertTrue(run.getState().log.toString(), run.getState().log.contains("Entered Step 1 - Rest"));
         assertEquals(1, run.getAvailableNodes().size());
         run.getState().life = 19;
         run.getState().currentNodeId = null;
