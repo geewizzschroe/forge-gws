@@ -100,8 +100,15 @@ This is a **built-in rule of the mode**, part of its background logic. It is **n
 
 ### 2.6 Meta-progression
 
-- Unlocks that affect starter decks and starting state are **account-wide**. Things acquired during a run (relics, card upgrades, added cards) belong to the run only.
-- "Levelling up" the character between runs is a possible path (raising run max life, unlocking upgrades and starters). **Spitballed, not designed.**
+- Things acquired during a run (relics, card upgrades, added cards) belong to the run only.
+- **Decided (D9, 2026-10-21):**
+  - **Experience is earned per match**, not per run: a normal fight gives a little (about 30), a boss a lot (about 150), and finishing a run successfully a great deal (about 500, on top of the final boss). Scaled to the run's difficulty. So a failed run still earns experience for the matches in it.
+  - **Two layers.** A **level per character** (Jill levels separately from future characters), and a second, **account-wide** level.
+  - **Character level unlocks:** starter decks, higher run max life, upgrades installed at the start of a run, extra gold and extra retries. Putting time into a character makes them more capable and ready for runs with harder starting conditions. Bases: leaning per character (for tuning), not settled.
+  - **Account level unlocks:** relics and cards added to the pools, cards unlocked a whole (curated) set at a time, more node types or other things that shake up even a level-1 character's runs; new characters perhaps someday, not yet.
+  - **Milestones:** a handful of unlocks with esoteric conditions that unlock extra-out-there starter decks. Example: "Use Jill's enters ability to bounce a boss's [commander] 30 times" ([commander] is a placeholder word; it may become "captain" or similar).
+  - **Unlocks happen at set levels**, as is usual in the genre: no choices or skill tree.
+  - **Loadout:** before a run, the player picks which unlocks to bring.
 
 ### 2.7 UI constraint
 
@@ -152,7 +159,7 @@ None of these blocks Phase 1 (engine rules).
 - **D2. Currency.** Shops need one. Where does it come from (enemy nodes?) and what do things cost? (Phase 2)
 - **D4. What can an upgrade be?** The engine supports power/toughness, keywords, abilities, mana cost, colours and types (4.4). Which are in scope, and how are they randomised on rewards? (Phase 1 item 4 and Phase 2)
 - **D8. Node types and map.** Elites, events? Map shape, nodes per floor, difficulty scaling. (Phase 2)
-- **D9. Meta-progression shape.** Levels, experience, what unlocks when. (Phase 4)
+- **D9. Meta-progression shape.** *Resolved*, see 2.6. Details still open: the experience needed per level and the level count, what "run difficulty" is (experience is scaled by it), whether lost matches give experience, how account experience is earned, and any limit on what a loadout can bring. (Phase 4)
 - **D11. Landfall and domain cards.** Keep as free value or exclude from pools? Landfall now triggers every turn, and with chosen basics, domain counts only the types actually chosen. (Phase 2)
 - **D13. Retry details.** See the assumption in 2.2. (Phase 2)
 
@@ -455,6 +462,7 @@ All of this was used successfully in the design sessions.
 13. Treasure fallback only on a failed ramp: a conjured land kept out by the cap becomes a Treasure, tapped if the land would have entered tapped. Other blocked lands just stay where they were (N2).
 14. Land stripping removes every card whose front face is a land, nonbasic lands included; spells with a land back face stay. Curating the mode's card pool handles the rest.
 15. Relics live on the player's Base (B1). Bases copy the Vanguard shape but are their own card type, "Base" (B2). Enemies and bosses have Bases that carry their gimmicks (B5).
+16. Meta-progression (D9): per-match experience; a level per character plus an account level; character levels unlock starters, max life, starting upgrades, gold and retries; account levels unlock pool content and variety; milestone unlocks for unusual starters; unlocks at fixed levels; pick a loadout before each run.
 
 ---
 
