@@ -10,6 +10,7 @@ import forge.StaticData;
 import forge.card.CardEdition;
 import forge.card.CardRules;
 import forge.card.ColorSet;
+import forge.gamemodes.roguelike.BaseAbility;
 import forge.gamemodes.roguelike.CardPoolDef;
 import forge.gamemodes.roguelike.RelicDef;
 import forge.gamemodes.roguelike.RoguelikeContent;
@@ -142,6 +143,7 @@ public final class Progression {
                 case "gold" -> s.goldBonus += d.amount;
                 case "retry" -> s.retryBonus += d.amount;
                 case "upgrade" -> s.upgrades.computeIfAbsent(d.card, k -> new ArrayList<>()).add(d.upgrade);
+                case "baseAbility" -> s.baseAbilities.add(new BaseAbility(d.name, d.description, d.script));
                 default -> { } // starters and Bases are chosen in the loadout
             }
         }
@@ -211,7 +213,7 @@ public final class Progression {
     }
 
     public static String describe(final RoguelikeContent c, final UnlockDef d) {
-        if (d.description != null) {
+        if (d.description != null && !"baseAbility".equals(d.kind)) {
             return d.description;
         }
         return switch (d.kind) {
@@ -221,6 +223,7 @@ public final class Progression {
             case "retry" -> "+" + d.amount + (d.amount == 1 ? " retry" : " retries");
             case "upgrade" -> "Starting upgrade: " + d.card + " " + d.upgrade.describe();
             case "base" -> "Base: " + baseName(c, d.base);
+            case "baseAbility" -> d.name + ": " + d.description;
             case "relic" -> "Relic in the pool: " + c.getRelic(d.id).name;
             case "pool" -> "Cards in the pool: " + c.getPool(d.id).name;
             case "set" -> "Set in the reward pool: " + d.set;

@@ -23,6 +23,8 @@ public class RunState {
     public List<String> relicPool;
     public List<String> extraRewardCards = new ArrayList<>();
     public List<String> unlockedPools = new ArrayList<>();
+    /** Abilities added to the player's Base by unlocks. */
+    public List<BaseAbility> baseAbilities = new ArrayList<>();
     /** Experience earned so far in this run. */
     public long xpEarned;
     /** The run-won experience has been added to the character's progress. */

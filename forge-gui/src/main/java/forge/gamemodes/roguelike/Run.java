@@ -70,6 +70,7 @@ public class Run {
             s.relicPool = setup.relicPool == null ? null : new ArrayList<>(setup.relicPool);
             s.extraRewardCards.addAll(setup.extraRewardCards);
             s.unlockedPools.addAll(setup.unlockedPools);
+            s.baseAbilities.addAll(setup.baseAbilities);
         }
         s.map = RunMap.generate(cfg, content, s.nextRandom());
         s.log.add("Run started with " + starter.name + " (seed " + seed + ")");
@@ -160,7 +161,8 @@ public class Run {
             relics.add(content.getRelic(id));
         }
         String baseFile = state.baseOverride != null ? state.baseOverride : content.getStarter(state.starterId).base;
-        List<String> script = BaseAssembler.assemble(baseFile == null ? null : content.getBase(baseFile), relics);
+        List<String> script = BaseAssembler.assemble(baseFile == null ? null : content.getBase(baseFile), relics,
+                state.baseAbilities);
         return script == null ? null : BaseCard.fromScript(script);
     }
 

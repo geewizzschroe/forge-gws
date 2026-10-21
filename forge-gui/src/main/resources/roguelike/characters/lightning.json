@@ -1,0 +1,110 @@
+{
+  "id": "lightning",
+  "name": "Lightning",
+  "commander": "Lightning, Army of One",
+  "starters": [
+    "lightning_rw"
+  ],
+  "levels": [
+    {
+      "level": 2,
+      "unlocks": [
+        {
+          "kind": "maxLife",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "unlocks": [
+        {
+          "kind": "baseAbility",
+          "name": "Sunforger",
+          "description": "Lightning comes into play with a Sunforger equipped.",
+          "script": [
+            "T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Creature.IsCommander+YouOwn | TriggerZones$ Command | Execute$ lightning_Sunforger | TriggerDescription$ Sunforger: Whenever your commander enters, conjure a Sunforger onto the battlefield attached to it.",
+            "SVar:lightning_Sunforger:DB$ MakeCard | Name$ Sunforger | Zone$ Battlefield | AttachedTo$ TriggeredCard | Conjure$ True"
+          ]
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "unlocks": [
+        {
+          "kind": "gold",
+          "amount": 25
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "unlocks": [
+        {
+          "kind": "base",
+          "base": "bodhum_beachfront.txt"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "unlocks": [
+        {
+          "kind": "upgrade",
+          "card": "Lightning, Army of One",
+          "upgrade": {
+            "power": 1,
+            "toughness": 1
+          }
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "unlocks": [
+        {
+          "kind": "retry",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "unlocks": [
+        {
+          "kind": "baseAbility",
+          "name": "Sunforger Drill",
+          "description": "Sunforgers you control have equip Soldier {1}.",
+          "script": [
+            "S:Mode$ Continuous | EffectZone$ Command | Affected$ Card.namedSunforger+YouCtrl | AddKeyword$ Equip:1:Creature.Soldier+YouCtrl:Soldier | Description$ Sunforger Drill: Sunforgers you control have equip Soldier {1}."
+          ]
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "unlocks": [
+        {
+          "kind": "maxLife",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "unlocks": [
+        {
+          "kind": "upgrade",
+          "card": "Lightning, Army of One",
+          "upgrade": {
+            "keywords": [
+              "Ward:1"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "milestones": []
+}

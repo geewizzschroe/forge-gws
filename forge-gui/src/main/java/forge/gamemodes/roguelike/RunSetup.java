@@ -19,6 +19,8 @@ public class RunSetup {
     public List<String> relicPool;
     /** Cards added to the reward pool on top of the starter's own. */
     public List<String> extraRewardCards = new ArrayList<>();
+    /** Abilities added to the player's Base by unlocks. */
+    public List<BaseAbility> baseAbilities = new ArrayList<>();
     /** Locked card pools that have been unlocked (buckets among them can be offered). */
     public List<String> unlockedPools = new ArrayList<>();
 }

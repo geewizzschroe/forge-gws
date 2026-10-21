@@ -23,7 +23,12 @@ public final class BaseAssembler {
 
     /** The assembled script, or null when there is neither a Base nor any relic. */
     public static List<String> assemble(final List<String> base, final List<RelicDef> relics) {
-        if (base == null && relics.isEmpty()) {
+        return assemble(base, relics, List.of());
+    }
+
+    /** The assembled script with unlocked Base abilities too, or null when there is nothing to put on a Base. */
+    public static List<String> assemble(final List<String> base, final List<RelicDef> relics, final List<BaseAbility> abilities) {
+        if (base == null && relics.isEmpty() && abilities.isEmpty()) {
             return null;
         }
         List<String> out = new ArrayList<>();
@@ -49,9 +54,27 @@ public final class BaseAssembler {
             relicText.add(r.name + ": " + r.description);
         }
 
+        List<String> abilityText = new ArrayList<>();
+        for (BaseAbility a : abilities) {
+            for (String line : a.script) {
+                addSVarName(line, svars, "Base ability " + a.name);
+                out.add(line);
+            }
+            abilityText.add(a.name + ": " + a.description);
+        }
+
+        List<String> text = new ArrayList<>();
+        if (!abilityText.isEmpty()) {
+            text.add("Unlocked:\\r\\n" + String.join("\\r\\n", abilityText));
+        }
         if (!relicText.isEmpty()) {
-            out.add("Text:Relics:\\r\\n" + String.join("\\r\\n", relicText));
-            String list = String.join("\\n", relicText);
+            text.add("Relics:\\r\\n" + String.join("\\r\\n", relicText));
+        }
+        if (!text.isEmpty()) {
+            out.add("Text:" + String.join("\\r\\n", text));
+            List<String> all = new ArrayList<>(abilityText);
+            all.addAll(relicText);
+            String list = String.join("\\n", all);
             oracle = oracle.isEmpty() ? list : oracle + "\\n" + list;
         }
         out.add("Oracle:" + oracle);
