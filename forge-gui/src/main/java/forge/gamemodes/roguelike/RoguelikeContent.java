@@ -21,6 +21,7 @@ import forge.StaticData;
 import forge.card.CardRules;
 import forge.gamemodes.roguelike.meta.CharacterDef;
 import forge.gamemodes.roguelike.meta.MetaConfig;
+import forge.item.PaperCard;
 import forge.localinstance.properties.ForgeConstants;
 
 /**
@@ -251,34 +252,93 @@ public class RoguelikeContent {
         return v;
     }
 
-    /** Card names used by the content that the card database does not know (empty when all is well). */
-    public Collection<String> findUnknownCards() {
-        TreeSet<String> unknown = new TreeSet<>();
-        List<String> names = new ArrayList<>();
+    /**
+     * Card names used in decks and pools, by where they are used (for example "starter jill_mono_blue").
+     * Rule overrides are not included: they change cards, they don't add them.
+     */
+    public Map<String, List<String>> cardNamesBySource() {
+        Map<String, List<String>> bySource = new LinkedHashMap<>();
+        for (CharacterDef ch : characters.values()) {
+            addNames(bySource, "character " + ch.id, Collections.singletonList(ch.commander));
+        }
         for (StarterDef s : starters.values()) {
+            List<String> names = new ArrayList<>();
             names.add(s.commander);
             names.addAll(s.deck.keySet());
+            addNames(bySource, "starter " + s.id, names);
         }
         for (EncounterDef e : encounters.values()) {
-            if (e.commander != null) {
-                names.add(e.commander);
-            }
+            List<String> names = new ArrayList<>();
+            names.add(e.commander);
             names.addAll(e.deck.keySet());
+            addNames(bySource, "encounter " + e.id, names);
         }
         for (CardPoolDef p : pools.values()) {
-            names.addAll(p.cards);
+            addNames(bySource, "pool " + p.id, p.cards);
+        }
+        return bySource;
+    }
+
+    private static void addNames(final Map<String, List<String>> bySource, final String source, final List<String> names) {
+        List<String> kept = new ArrayList<>();
+        for (String n : names) {
+            if (n != null && !kept.contains(n)) {
+                kept.add(n);
+            }
+        }
+        if (!kept.isEmpty()) {
+            bySource.put(source, kept);
+        }
+    }
+
+    /** Card names used by the content that the card database does not know (empty when all is well). */
+    public Collection<String> findUnknownCards() {
+        List<String> names = new ArrayList<>();
+        for (List<String> used : cardNamesBySource().values()) {
+            names.addAll(used);
         }
         for (CardRules o : overrides) {
             names.add(o.getName());
         }
-        for (CharacterDef ch : characters.values()) {
-            names.add(ch.commander);
-        }
+        TreeSet<String> unknown = new TreeSet<>();
         for (String n : names) {
-            if (n != null && StaticData.instance().getCommonCards().getCard(n) == null) {
+            if (StaticData.instance().getCommonCards().getCard(n) == null) {
                 unknown.add(n);
             }
         }
         return unknown;
+    }
+
+    /**
+     * Cards with no printing in the card scope sets ({@link RunConfig#cardScopeSets}) and not listed as
+     * exceptions, by where they are used. Empty when all content is in scope.
+     */
+    public Map<String, List<String>> findOutOfScopeCards() {
+        Map<String, List<String>> out = new LinkedHashMap<>();
+        for (Map.Entry<String, List<String>> e : cardNamesBySource().entrySet()) {
+            List<String> names = new ArrayList<>();
+            for (String n : e.getValue()) {
+                if (!isInScope(n)) {
+                    names.add(n);
+                }
+            }
+            if (!names.isEmpty()) {
+                out.put(e.getKey(), names);
+            }
+        }
+        return out;
+    }
+
+    /** Whether a card has a printing in a scope set or is a listed exception. */
+    public boolean isInScope(final String name) {
+        if (config.cardScopeExceptions.contains(name)) {
+            return true;
+        }
+        for (PaperCard pc : StaticData.instance().getCommonCards().getAllCards(name)) {
+            if (config.cardScopeSets.contains(pc.getEdition())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

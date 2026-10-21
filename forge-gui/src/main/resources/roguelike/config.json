@@ -28,5 +28,7 @@
   "cutCopies": 0,
   "upgradeChoices": 3,
   "rewardUpgradeChance": 0.25,
-  "bossRelicChoices": 3
+  "bossRelicChoices": 3,
+  "cardScopeSets": ["FIN", "FDN"],
+  "cardScopeExceptions": []
 }

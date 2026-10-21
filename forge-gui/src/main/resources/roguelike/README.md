@@ -11,6 +11,7 @@ Everything here except `overrides/` is **sample content**, there to make the run
 testable. Replace it freely.
 
 - `config.json`: run numbers (`RunConfig`). Fields marked PLACEHOLDER in `RunConfig.java` stand in for open design questions.
+  `cardScopeSets` and `cardScopeExceptions` set the card scope; `CardScopeTest` lists deck and pool cards outside it.
 - `upgrades.json`: the pool card upgrades are drawn from (power/toughness and keywords).
 - `starters/`: characters (commander, landless starter deck, Base, reward pool).
 - `encounters/`: enemies and bosses (deck, optional commander, Base, life, hand size, earliest map row).

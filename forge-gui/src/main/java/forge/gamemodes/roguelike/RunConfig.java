@@ -1,5 +1,7 @@
 package forge.gamemodes.roguelike;
 
+import java.util.List;
+
 /**
  * Tunable numbers for the run mode, loaded from {@code config.json} in the content folder.
  *
@@ -54,4 +56,9 @@ public class RunConfig {
     public double xpMultiplier = 1.0;
     // PLACEHOLDER: relic choices after a boss.
     public int bossRelicChoices = 3;
+
+    // Decided (DESIGN.md 2.3, card scope): starter and enemy cards come from these set codes.
+    public List<String> cardScopeSets = java.util.List.of("FIN", "FDN");
+    // Cards allowed outside those sets because they belong in a particular deck.
+    public List<String> cardScopeExceptions = java.util.List.of();
 }
