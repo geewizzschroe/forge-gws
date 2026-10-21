@@ -5,14 +5,14 @@ A card is **in** scope when any printing of it is in a scope set (`cardScopeSets
 Rule overrides (`overrides/`) are not counted: they change existing cards rather than adding any.
 The sets in brackets are the card's printings as Forge knows them (first six shown).
 
+Scope sets: FIN (Final Fantasy), FCA (Final Fantasy: Through the Ages), FIC (Final Fantasy Commander), FDN (Foundations), FDC (Foundations Commander).
+The related products were added to the first FIN + FDN setting the same day; that moved Counterspell, Cultivate, Lightning Bolt, Rampant Growth, Snapcaster Mage, Venser, Shaper Savant and Wall of Omens into scope.
+Not included: J25 (Foundations Jumpstart), RFIN (Final Fantasy Regional Promos), PFDN (Foundations Promos).
+
 This is a listing only. No cards have been swapped or added as exceptions.
 
-Open question for the scope definition: some cards have printings in related products but not the main sets.
-For example Counterspell and Venser, Shaper Savant are in FCA (Final Fantasy Through the Ages), Snapcaster Mage and Rampant Growth are in FIC (Final Fantasy Commander), and Counterspell is also in FDC (Foundations Commander).
-Those count as **out** under the current setting of exactly FIN and FDN.
-
-Content cards outside the scope: 221 of 344 (counted once per file).
-Scope sets: [FIN, FDN]. Exceptions: [].
+Content cards outside the scope: 202 of 344 (counted once per file).
+Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 
 ## character jill (0 of 1 outside)
 
@@ -22,7 +22,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 
 - in  Lightning, Army of One (FIN)
 
-## starter jill_blue_black (15 of 16 outside)
+## starter jill_blue_black (14 of 16 outside)
 
 - in  Jill, Shiva's Dominant (FIN)
 - OUT Hypnotic Specter (SLZ, 30A, PLST, HA1, M10, 10E, ... 15 sets)
@@ -38,15 +38,15 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Agent of Treachery (TLE, SLD, M20)
 - OUT Exclude (CMM, PLST, JMP, MH1, A25, C14, ... 8 sets)
 - OUT Fact or Fiction (FRC, PF26, WOC, CMM, LTC, DMR, ... 30 sets)
-- OUT Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
+- in  Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
 - OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 
-## starter jill_blue_white (14 of 16 outside)
+## starter jill_blue_white (13 of 16 outside)
 
 - in  Jill, Shiva's Dominant (FIN)
 - OUT Restoration Angel (INR, BLC, MOC, J22, 2X2, J21, ... 14 sets)
 - OUT Flickerwisp (AA3, 2X2, TSR, KHC, CMR, PLST, ... 16 sets)
-- OUT Wall of Omens (FCA, TDC, MKC, 2X2, AFC, KHC, ... 15 sets)
+- in  Wall of Omens (FCA, TDC, MKC, 2X2, AFC, KHC, ... 15 sets)
 - OUT Blade Splicer (BLC, MOC, J21, 2XM, MM3, NPH)
 - OUT Felidar Guardian (PLST, SLD, AER)
 - OUT Ephemerate (MAR, PSVC, H1R, STA, PLST, SLD, ... 8 sets)
@@ -60,7 +60,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Mulldrifter (SLZ, ECC, MKC, 2X2, J21, AFC, ... 25 sets)
 - OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 
-## starter jill_frozen_throne (15 of 16 outside)
+## starter jill_frozen_throne (14 of 16 outside)
 
 - in  Jill, Shiva's Dominant (FIN)
 - OUT Frost Titan (HA7, PLST, SLD, C14, M12, PDP12, ... 7 sets)
@@ -75,11 +75,11 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Man-o'-War (DMR, J21, PLST, MH1, A25, EMA, ... 17 sets)
 - OUT Exclude (CMM, PLST, JMP, MH1, A25, C14, ... 8 sets)
 - OUT Fact or Fiction (FRC, PF26, WOC, CMM, LTC, DMR, ... 30 sets)
-- OUT Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
+- in  Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
 - OUT Phantasmal Image (SPG, AFC, SLD, MM3, M12)
 - OUT Spellstutter Sprite (J22, PLST, SLD, MMA, F11, LRW, ... 7 sets)
 
-## starter jill_mono_blue (11 of 17 outside)
+## starter jill_mono_blue (10 of 17 outside)
 
 - in  Jill, Shiva's Dominant (FIN)
 - OUT Man-o'-War (DMR, J21, PLST, MH1, A25, EMA, ... 17 sets)
@@ -93,7 +93,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - in  Into the Roil (FDN, CMR, ZNR, C18, C17, C14, ... 8 sets)
 - OUT Repulse (OTP, WOC, GN3, PLST, CN2, JVC, ... 9 sets)
 - in  Unsummon (FRA, FDN, 30A, ANB, M20, E02, ... 23 sets)
-- OUT Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
+- in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
 - OUT Preordain (SOA, PF26, TDC, MB2, OTC, WHO, ... 18 sets)
 - OUT Riftwing Cloudskate (TSR, PLST, JVC, DDM, MMA, DD2, ... 7 sets)
 - in  Summon: Shiva (FIN)
@@ -119,7 +119,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - in  You're Not Alone (FIN)
 - in  Zack Fair (FIN, PMEI)
 
-## encounter boss_krenko (9 of 10 outside)
+## encounter boss_krenko (8 of 10 outside)
 
 - in  Krenko, Mob Boss (FDN, RVR, CMM, J22, PLST, JMP, ... 10 sets)
 - OUT Raging Goblin (ANB, OANA, EVG, M10, DD1, 10E, ... 17 sets)
@@ -128,17 +128,17 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Goblin Raider (9ED, 8ED, 7ED, USG, PO2)
 - OUT Goblin Instigator (MOC, PLST, JMP, M19)
 - OUT Beetleback Chief (TDC, J25, PLST, JMP, CM2, PCA, ... 11 sets)
-- OUT Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
+- in  Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
 - OUT Searing Spear (J22, PLST, E01, F13, M13, PRM)
 - OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
-## encounter goblin_raiders (7 of 7 outside)
+## encounter goblin_raiders (6 of 7 outside)
 
 - OUT Raging Goblin (ANB, OANA, EVG, M10, DD1, 10E, ... 17 sets)
 - OUT Goblin Piker (M12, M11, DPA, M10, 10E, 9ED, ... 7 sets)
 - OUT Mogg Fanatic (PLST, EMA, TPR, EVG, PD2, DD1, ... 12 sets)
 - OUT Goblin Raider (9ED, 8ED, 7ED, USG, PO2)
-- OUT Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
+- in  Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
 - OUT Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
 - OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
@@ -164,7 +164,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
 - OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
-## pool blue_core (21 of 24 outside)
+## pool blue_core (19 of 24 outside)
 
 - OUT Man-o'-War (DMR, J21, PLST, MH1, A25, EMA, ... 17 sets)
 - OUT Mulldrifter (SLZ, ECC, MKC, 2X2, J21, AFC, ... 25 sets)
@@ -176,7 +176,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - in  Into the Roil (FDN, CMR, ZNR, C18, C17, C14, ... 8 sets)
 - OUT Repulse (OTP, WOC, GN3, PLST, CN2, JVC, ... 9 sets)
 - in  Unsummon (FRA, FDN, 30A, ANB, M20, E02, ... 23 sets)
-- OUT Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
+- in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
 - OUT Preordain (SOA, PF26, TDC, MB2, OTC, WHO, ... 18 sets)
 - OUT Riftwing Cloudskate (TSR, PLST, JVC, DDM, MMA, DD2, ... 7 sets)
 - OUT Faerie Miscreant (M20, ORI)
@@ -189,7 +189,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Peel from Reality (CMR, PLST, JMP, DDO, M15, AVR, ... 7 sets)
 - OUT Glen Elendra Archmage (WOC, P30A, SLD, UMA, MMA, EVE)
 - OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
-- OUT Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
+- in  Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
 
 ## pool bucket_bounce (4 of 6 outside)
 
@@ -210,23 +210,23 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Mahamoti Djinn (30A, PLST, UMA, IMA, ORI, M15, ... 18 sets)
 - OUT Faerie Miscreant (M20, ORI)
 
-## pool bucket_ramp (6 of 6 outside)
+## pool bucket_ramp (4 of 6 outside)
 
-- OUT Rampant Growth (SOS, FIC, TDC, J25, DSC, BLC, ... 42 sets)
-- OUT Cultivate (SLZ, MSC, SOC, TMC, ECC, EOC, ... 47 sets)
+- in  Rampant Growth (SOS, FIC, TDC, J25, DSC, BLC, ... 42 sets)
+- in  Cultivate (SLZ, MSC, SOC, TMC, ECC, EOC, ... 47 sets)
 - OUT Kodama's Reach (ECC, TDC, OTC, LCC, CMM, MOC, ... 25 sets)
 - OUT Wood Elves (HOB, PW26, LTC, MOC, P30A, NCC, ... 24 sets)
 - OUT Sakura-Tribe Elder (SOC, TDC, PL25, DSC, PLG24, MB2, ... 34 sets)
 - OUT Explosive Vegetation (DRC, DSC, DMC, PLST, C18, CN2, ... 12 sets)
 
-## pool frozen_core (34 of 37 outside)
+## pool frozen_core (31 of 37 outside)
 
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 - OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
 - OUT Claustrophobia (PLST, GN2, GNT, BBD, IMA, DDT, ... 10 sets)
 - OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
-- OUT Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
+- in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
 - in  Essence Scatter (SOS, PIO, FDN, DMU, PLST, AKR, ... 14 sets)
 - OUT Exclude (CMM, PLST, JMP, MH1, A25, C14, ... 8 sets)
 - OUT Fact or Fiction (FRC, PF26, WOC, CMM, LTC, DMR, ... 30 sets)
@@ -252,11 +252,11 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Rimewind Taskmage (CSP)
 - OUT Sea Gate Oracle (GN3, KHC, PLST, JMP, C17, MM3, ... 9 sets)
 - OUT Sleep (PLST, ANB, M19, C15, M13, M11, ... 7 sets)
-- OUT Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
+- in  Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
 - OUT Spellstutter Sprite (J22, PLST, SLD, MMA, F11, LRW, ... 7 sets)
 - OUT Thing in the Ice (INR, SIR, PR23, SOI)
 - in  Unsummon (FRA, FDN, 30A, ANB, M20, E02, ... 23 sets)
-- OUT Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
+- in  Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
 - OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
 
 ## pool rw_core (0 of 76 outside)
@@ -338,14 +338,14 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - in  You're Not Alone (FIN)
 - in  Zack Fair (FIN, PMEI)
 
-## pool ub_core (32 of 35 outside)
+## pool ub_core (29 of 35 outside)
 
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 - OUT Agent of Treachery (TLE, SLD, M20)
 - OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
 - OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
-- OUT Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
+- in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
 - OUT Dimir Infiltrator (PLST, PCA, PC2, RAV)
 - OUT Doom Blade (MSC, GN3, STA, PLST, SLD, E02, ... 16 sets)
 - in  Essence Scatter (SOS, PIO, FDN, DMU, PLST, AKR, ... 14 sets)
@@ -370,13 +370,13 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Repulse (OTP, WOC, GN3, PLST, CN2, JVC, ... 9 sets)
 - OUT Riftwing Cloudskate (TSR, PLST, JVC, DDM, MMA, DD2, ... 7 sets)
 - OUT Sea Gate Oracle (GN3, KHC, PLST, JMP, C17, MM3, ... 9 sets)
-- OUT Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
+- in  Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
 - OUT Spellstutter Sprite (J22, PLST, SLD, MMA, F11, LRW, ... 7 sets)
 - in  Unsummon (FRA, FDN, 30A, ANB, M20, E02, ... 23 sets)
-- OUT Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
+- in  Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
 - OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
 
-## pool uw_core (32 of 36 outside)
+## pool uw_core (29 of 36 outside)
 
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 - OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
@@ -385,7 +385,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Cloudshift (TLE, PLST, JMP, SLD, A25, AVR)
 - OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
-- OUT Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
+- in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
 - OUT Ephemerate (MAR, PSVC, H1R, STA, PLST, SLD, ... 8 sets)
 - in  Essence Scatter (SOS, PIO, FDN, DMU, PLST, AKR, ... 14 sets)
 - OUT Exclude (CMM, PLST, JMP, MH1, A25, C14, ... 8 sets)
@@ -411,7 +411,7 @@ Scope sets: [FIN, FDN]. Exceptions: [].
 - OUT Soulherder (J21, H1R, KHC, SLD, MH1, PRM)
 - OUT Thraben Inspector (INR, CMM, SIR, J22, PRCQ, TSR, ... 10 sets)
 - in  Unsummon (FRA, FDN, 30A, ANB, M20, E02, ... 23 sets)
-- OUT Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
-- OUT Wall of Omens (FCA, TDC, MKC, 2X2, AFC, KHC, ... 15 sets)
+- in  Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
+- in  Wall of Omens (FCA, TDC, MKC, 2X2, AFC, KHC, ... 15 sets)
 - OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
 
