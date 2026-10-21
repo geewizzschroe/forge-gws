@@ -16,9 +16,11 @@ How the scope grew on 2026-10-21:
 
 - Jill's starters were rebuilt around her core; the mono-blue starter now has no out-of-scope cards.
 
+- The enemy decks (four encounters and Krenko) were replaced with in-scope decks, and World Map left `rw_core`.
+
 No exceptions have been added.
 
-Content cards outside the scope: 118 of 379 (counted once per file).
+Content cards outside the scope: 95 of 379 (counted once per file).
 Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 
 ## character jill (0 of 1 outside)
@@ -129,50 +131,50 @@ Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 - in  You're Not Alone (FIN)
 - in  Zack Fair (FIN, PMEI)
 
-## encounter boss_krenko (7 of 10 outside)
+## encounter boss_krenko (0 of 10 outside)
 
 - in  Krenko, Mob Boss (FDN, RVR, CMM, J22, PLST, JMP, ... 10 sets)
-- OUT Raging Goblin (ANB, OANA, EVG, M10, DD1, 10E, ... 17 sets)
-- OUT Goblin Piker (M12, M11, DPA, M10, 10E, 9ED, ... 7 sets)
-- OUT Mogg Fanatic (PLST, EMA, TPR, EVG, PD2, DD1, ... 12 sets)
-- OUT Goblin Raider (9ED, 8ED, 7ED, USG, PO2)
-- OUT Goblin Instigator (MOC, PLST, JMP, M19)
+- in  Goblin Trailblazer (J25, J22, CMR, PLST, RIX)
+- in  Fanatical Firebrand (J25, FDN, J22, JMP, RIX)
+- in  Swab Goblin (FDN, RIX)
+- in  Boggart Brute (J25, PLST, JMP, M19, DDT, ORI)
 - in  Beetleback Chief (TDC, J25, PLST, JMP, CM2, PCA, ... 11 sets)
+- in  Goblin Arsonist (J25, M21, DDK, M13, M12, ROE)
 - in  Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
-- OUT Searing Spear (J22, PLST, E01, F13, M13, PRM)
-- OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
+- in  Scorching Dragonfire (FDN, DSK, J22, AJMP, M21, ELD)
+- in  Goblin Boarders (FDN)
 
-## encounter goblin_raiders (5 of 7 outside)
+## encounter goblin_raiders (0 of 7 outside)
 
-- OUT Raging Goblin (ANB, OANA, EVG, M10, DD1, 10E, ... 17 sets)
-- OUT Goblin Piker (M12, M11, DPA, M10, 10E, 9ED, ... 7 sets)
-- OUT Mogg Fanatic (PLST, EMA, TPR, EVG, PD2, DD1, ... 12 sets)
-- OUT Goblin Raider (9ED, 8ED, 7ED, USG, PO2)
-- in  Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
+- in  Fanatical Firebrand (J25, FDN, J22, JMP, RIX)
+- in  Goblin Trailblazer (J25, J22, CMR, PLST, RIX)
+- in  Swab Goblin (FDN, RIX)
+- in  Boggart Brute (J25, PLST, JMP, M19, DDT, ORI)
+- in  Goblin Boarders (FDN)
+- in  Goblin Arsonist (J25, M21, DDK, M13, M12, ROE)
 - in  Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
-- OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
-## encounter restless_dead (5 of 8 outside)
+## encounter restless_dead (0 of 8 outside)
 
-- OUT Walking Corpse (PLST, M21, M20, M19, W16, M15, ... 8 sets)
-- OUT Vampire Bats (GVL, DDD, 10E, 5ED, 4ED, LEG)
-- in  Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
-- OUT Dusk Legion Zealot (LCC, GN3, PLST, A25, RIX)
-- in  Murder (J25, DSK, ACR, OTP, MKM, SCD, ... 20 sets)
-- OUT Mind Rot (KLR, PLST, M21, M20, M19, KLD, ... 24 sets)
 - in  Diregraf Ghoul (FDN, PLST, M19, DDQ, ISD, PISD, ... 7 sets)
-- OUT Highborn Ghoul (DKA)
+- in  Shambling Ghast (J25, HBG, AFR, PLST)
+- in  Reassembling Skeleton (TDC, J25, FDN, CMM, J22, GN3, ... 17 sets)
+- in  Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
+- in  Skeleton Archer (FDN, 2X2, PLST, ANB, M21, M20, ... 7 sets)
+- in  Suspicious Shambler (FDN, J22)
+- in  Murder (J25, DSK, ACR, OTP, MKM, SCD, ... 20 sets)
+- in  Crow of Dark Tidings (FDN, SIR, J22, CMR, PLST, JMP, ... 9 sets)
 
-## encounter troop_of_dwarves (6 of 8 outside)
+## encounter troop_of_dwarves (0 of 8 outside)
 
 - in  Axgard Cavalry (FDN, J22, KHM, PLST)
-- OUT Bloodfire Dwarf (APC)
-- OUT Brazen Dwarf (AFR)
-- OUT Breakneck Berserker (KHM)
-- OUT Dwarven Trader (HML)
-- OUT Axgard Artisan (MOM)
+- in  Dwarven Castle Guard (FIN)
+- in  Giott, King of the Dwarves (FIN)
 - in  Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
-- OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
+- in  Coeurl (FIN)
+- in  Warrior's Sword (FIN)
+- in  Suplex (FIN)
+- in  Daybreak Combatants (J25, DBL, VOW)
 
 ## pool blue_core (0 of 27 outside)
 
@@ -388,7 +390,7 @@ Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 - in  Weapons Vendor (FIN)
 - in  White Auracite (FIN)
 - in  White Mage's Staff (FIN)
-- in  World Map (FIN)
+- in  Giott, King of the Dwarves (FIN)
 - in  You're Not Alone (FIN)
 - in  Zack Fair (FIN, PMEI)
 
