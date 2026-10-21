@@ -1,0 +1,114 @@
+{
+  "id": "jill",
+  "name": "Jill",
+  "commander": "Jill, Shiva's Dominant",
+  "starters": [
+    "jill_mono_blue"
+  ],
+  "levels": [
+    {
+      "level": 2,
+      "unlocks": [
+        {
+          "kind": "maxLife",
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "unlocks": [
+        {
+          "kind": "starter",
+          "id": "jill_blue_white"
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "unlocks": [
+        {
+          "kind": "gold",
+          "amount": 25
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "unlocks": [
+        {
+          "kind": "base",
+          "base": "frozen_bastion.txt"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "unlocks": [
+        {
+          "kind": "upgrade",
+          "card": "Jill, Shiva's Dominant",
+          "upgrade": {
+            "power": 1,
+            "toughness": 1
+          }
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "unlocks": [
+        {
+          "kind": "retry",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "level": 8,
+      "unlocks": [
+        {
+          "kind": "starter",
+          "id": "jill_blue_black"
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "unlocks": [
+        {
+          "kind": "maxLife",
+          "amount": 3
+        }
+      ]
+    },
+    {
+      "level": 10,
+      "unlocks": [
+        {
+          "kind": "upgrade",
+          "card": "Jill, Shiva's Dominant",
+          "upgrade": {
+            "keywords": [
+              "Ward:1"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "milestones": [
+    {
+      "id": "jill_bounce_boss",
+      "description": "Use Jill's enters ability to bounce a boss's commander 30 times",
+      "counter": "commanderEntersBouncedEnemyCommander",
+      "target": 30,
+      "unlocks": [
+        {
+          "kind": "starter",
+          "id": "jill_frozen_throne"
+        }
+      ]
+    }
+  ]
+}

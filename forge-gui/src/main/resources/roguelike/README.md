@@ -19,3 +19,5 @@ testable. Replace it freely.
 - `bases/`: Base card scripts (type line `Types:Base`). Abilities used from the command zone need
   `ActivationZone$ Command`, triggers `TriggerZones$ Command`, statics `EffectZone$ Command`.
 - `overrides/`: landless versions of ramp cards, used instead of the printed card in every match of the mode.
+- `characters/`: meta-progression per character: commander, starters available from level 1, unlocks by level, milestones (a counter name, a target and unlocks).
+- `meta.json`: experience curves and account levels. Relics and pools marked `"locked": true` appear only once an account level unlocks them.

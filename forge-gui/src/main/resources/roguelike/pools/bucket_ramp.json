@@ -2,5 +2,13 @@
   "id": "bucket_ramp",
   "name": "Green Ramp",
   "bucket": true,
-  "cards": ["Rampant Growth", "Cultivate", "Kodama's Reach", "Wood Elves", "Sakura-Tribe Elder", "Explosive Vegetation"]
+  "cards": [
+    "Rampant Growth",
+    "Cultivate",
+    "Kodama's Reach",
+    "Wood Elves",
+    "Sakura-Tribe Elder",
+    "Explosive Vegetation"
+  ],
+  "locked": true
 }

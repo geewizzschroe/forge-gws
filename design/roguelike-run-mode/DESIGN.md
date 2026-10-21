@@ -408,6 +408,23 @@ To get the mode playable on a phone before the Adventure scenes exist, there is 
 
 MetaProfile, unlock rules, level-up effects (run max life, unlocked starter decks and upgrades). Needs D9.
 
+#### 6.5.1 Phase 4 progress
+
+Built [run] in `forge-gui/.../roguelike/meta/`, following the D9 answers (2.6). Details D9 left open are PLACEHOLDER values.
+
+- **Content**: `characters/<id>.json` (`CharacterDef`: commander, starters open from level 1, unlocks per level, milestones with a counter name, target and unlocks) and `meta.json` (`MetaConfig`: experience curves and the account levels). Relics and card pools can be marked `"locked"`; they appear only once an account level unlocks them.
+- **Unlock kinds**: per character `starter`, `maxLife`, `gold`, `retry`, `upgrade` (card plus upgrade, installed at run start), `base` (an alternate Base to choose); per account `relic`, `pool` (a locked card pool, buckets included) and `set` (a whole set's nonland cards, minus an `exclude` list, joins the reward pool).
+- **Experience** (`RunConfig`): 30 per fight won, 150 per boss, 500 for winning the run, times `xpMultiplier` (PLACEHOLDER 1.0 until run difficulty exists). PLACEHOLDER: a lost match gives 0. Every point goes to the character and to the account.
+- **Levels** (`Progression.level`): PLACEHOLDER curves, character level 2 at 200 experience and each next level 200 more than the last (3 at 600, 4 at 1200 ...); account level 2 at 500, then +500 more each time.
+- **Loadout**: choose the character, then one unlocked starter, an unlocked Base, and which unlocks to bring (all on by default, remembered for next time). `Progression.setup` turns it into `RunSetup`, which `Run.start` applies (max life, gold, retries, starting upgrades, Base, the relics that can be offered, extra reward cards and unlocked buckets).
+- **Milestones** (`MatchStatsTracker`, attached to each match): the first counter is `commanderEntersBouncedEnemyCommander` (your commander's enters trigger returning the enemy commander, a boss's, to hand). Run-level counters: `matchesWon`, `bossesBeaten`, `runsWon`. New counters need a little code each. Known gap: a bounce of the enemy commander by an effect that does not use the stack, followed by your commander's trigger resolving, would be counted.
+- **Recording** (`RunProgress`): after each match and after the run is won; level-ups, account levels and completed milestones become messages shown after the match.
+- **Prototype screen**: character select (with level and account level), loadout screen with toggles, a Progress view (earned and upcoming unlocks, milestone counters, account unlocks), and progress messages after matches. Saved in `<user data>/roguelike/profile.json`.
+- **Sample content**: Jill's levels 2-10 (+2 life, the blue-white starter, +25 gold, the Frozen Bastion Base, Jill +1/+1, +1 retry, the blue-black starter, +3 life, Jill Ward 1); the milestone "bounce a boss's commander 30 times" unlocks a third, odd starter; account levels unlock Lucky Coin, the Green Ramp bucket, the Final Fantasy set (cards sharing a colour with the commander, PLACEHOLDER filter) and War Drum.
+- **Simulator**: `RunSimulator.setProfile` plays runs with progression; `-Droguelike.sim.progress=true` adds the levels reached to the report, for pacing.
+- **Tests**: `MetaProgressionTest` (level curve, unlocks by level, loadout to run state, account unlocks, recording and milestones, the bounce tracker in a real game, simulated runs recording experience).
+- Not built: "harder starting conditions" (run difficulty), new characters, account unlocks of node types (no extra node types exist yet).
+
 ### 6.6 Phase 5: Android build and delivery
 
 Build the side-by-side `forge.app.dev` APK. Implement and verify the copy-on-launch delivery step (2.10): bundle the mode's files in the app and copy them into the resource folder after the updater finishes. Disable or redirect the in-app updater prompt. On-device checks.

@@ -25,4 +25,7 @@ public class RunRecord {
     public final Map<String, Integer> nodesEntered = new LinkedHashMap<>();
     /** Every choice taken, in the run log's wording. */
     public final List<String> choices = new ArrayList<>();
+    public long xpEarned;
+    /** Level-up and milestone messages, when simulated with a profile. */
+    public final List<String> progressMessages = new ArrayList<>();
 }

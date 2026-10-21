@@ -13,6 +13,9 @@ import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import forge.ai.AITest;
+import forge.gamemodes.roguelike.meta.CharacterDef;
+import forge.gamemodes.roguelike.meta.MetaProfile;
+import forge.gamemodes.roguelike.meta.ProgressText;
 import forge.gamemodes.roguelike.sim.MatchRecord;
 import forge.gamemodes.roguelike.sim.RandomPolicy;
 import forge.gamemodes.roguelike.sim.RunRecord;
@@ -25,7 +28,7 @@ import forge.gamemodes.roguelike.sim.SimReport;
  * <pre>
  * xvfb-run -a mvn -pl forge-gui-desktop -am test -Dtest=RunBalanceSimTest -Dsurefire.failIfNoSpecifiedTests=false \
  *     -Droguelike.sim.runs=20 [-Droguelike.sim.fights=10] [-Droguelike.sim.starter=jill_mono_blue] \
- *     [-Droguelike.sim.rows=7] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true]
+ *     [-Droguelike.sim.rows=7] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true] [-Droguelike.sim.progress=true]
  * </pre>
  *
  * The report and a CSV of every match are written to forge-gui-desktop/target/roguelike-sim/; with
@@ -74,6 +77,8 @@ public class RunBalanceSimTest extends AITest {
         int fights = Integer.getInteger("roguelike.sim.fights", 0);
         RunSimulator sim = new RunSimulator(c);
         sim.setMatchTimeoutSeconds(Integer.getInteger("roguelike.sim.timeout", 120));
+        MetaProfile profile = Boolean.getBoolean("roguelike.sim.progress") ? new MetaProfile() : null;
+        sim.setProfile(profile);
         if (Boolean.getBoolean("roguelike.sim.logs")) {
             sim.setLogDir(new File("target/roguelike-sim/logs"));
         }
@@ -97,6 +102,14 @@ public class RunBalanceSimTest extends AITest {
         File dir = new File("target/roguelike-sim");
         dir.mkdirs();
         String report = SimReport.markdown("Run-mode simulation: " + starter + ", " + runs + " runs", records, encounterTests);
+        if (profile != null) {
+            StringBuilder sb = new StringBuilder(report).append("\n## Progression (runs played with a fresh profile, all unlocks on)\n\n");
+            for (CharacterDef ch : c.getCharacters().values()) {
+                sb.append("- ").append(ProgressText.levelLine(c, ch, profile.character(ch.id))).append('\n');
+            }
+            sb.append("- ").append(ProgressText.accountLine(c, profile)).append('\n');
+            report = sb.toString();
+        }
         Files.writeString(new File(dir, "report.md").toPath(), report, StandardCharsets.UTF_8);
         Files.writeString(new File(dir, "matches.csv").toPath(), SimReport.matchesCsv(all), StandardCharsets.UTF_8);
         System.out.println(report);

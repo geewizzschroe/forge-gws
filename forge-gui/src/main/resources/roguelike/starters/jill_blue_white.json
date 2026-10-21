@@ -1,0 +1,24 @@
+{
+  "id": "jill_blue_white",
+  "name": "Jill: Shimmering Wake (sample)",
+  "commander": "Jill, Shiva's Dominant",
+  "base": "wayfarers_camp.txt",
+  "rewardPool": "uw_core",
+  "deck": {
+    "Restoration Angel": 2,
+    "Flickerwisp": 2,
+    "Wall of Omens": 2,
+    "Blade Splicer": 2,
+    "Felidar Guardian": 2,
+    "Ephemerate": 2,
+    "Cloudshift": 2,
+    "Momentary Blink": 2,
+    "Soulherder": 2,
+    "Thraben Inspector": 2,
+    "Ghostly Flicker": 2,
+    "Charming Prince": 2,
+    "Man-o'-War": 2,
+    "Mulldrifter": 2,
+    "Cloudkin Seer": 2
+  }
+}

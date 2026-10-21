@@ -16,4 +16,6 @@ public class RelicDef {
     public String description;
     public List<String> script = new ArrayList<>();
     public int maxLifeBonus;
+    /** Not offered until unlocked at an account level. */
+    public boolean locked;
 }

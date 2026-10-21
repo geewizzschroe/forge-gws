@@ -4,5 +4,6 @@
   "description": "Your commander has haste.",
   "script": [
     "S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.IsCommander+YouCtrl | AddKeyword$ Haste | Description$ War Drum: Your commander has haste."
-  ]
+  ],
+  "locked": true
 }

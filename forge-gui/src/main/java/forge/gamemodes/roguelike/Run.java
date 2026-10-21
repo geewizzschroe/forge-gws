@@ -43,6 +43,11 @@ public class Run {
     }
 
     public static Run start(final RoguelikeContent content, final String starterId, final long seed) {
+        return start(content, starterId, seed, null);
+    }
+
+    /** Start a run with starting conditions from meta-progression (null for none). */
+    public static Run start(final RoguelikeContent content, final String starterId, final long seed, final RunSetup setup) {
         RunConfig cfg = content.getConfig();
         StarterDef starter = content.getStarter(starterId);
         RunState s = new RunState();
@@ -54,6 +59,18 @@ public class Run {
         s.life = s.maxLife;
         s.retriesLeft = cfg.retries;
         s.gold = cfg.startingGold;
+        if (setup != null) {
+            s.characterId = setup.characterId;
+            s.maxLife += setup.maxLifeBonus;
+            s.life = s.maxLife;
+            s.gold += setup.goldBonus;
+            s.retriesLeft += setup.retryBonus;
+            setup.upgrades.forEach((name, ups) -> s.upgrades.computeIfAbsent(name, k -> new ArrayList<>()).addAll(ups));
+            s.baseOverride = setup.base;
+            s.relicPool = setup.relicPool == null ? null : new ArrayList<>(setup.relicPool);
+            s.extraRewardCards.addAll(setup.extraRewardCards);
+            s.unlockedPools.addAll(setup.unlockedPools);
+        }
         s.map = RunMap.generate(cfg, content, s.nextRandom());
         s.log.add("Run started with " + starter.name + " (seed " + seed + ")");
         return new Run(content, s);
@@ -142,8 +159,8 @@ public class Run {
         for (String id : state.relics) {
             relics.add(content.getRelic(id));
         }
-        StarterDef starter = content.getStarter(state.starterId);
-        List<String> script = BaseAssembler.assemble(starter.base == null ? null : content.getBase(starter.base), relics);
+        String baseFile = state.baseOverride != null ? state.baseOverride : content.getStarter(state.starterId).base;
+        List<String> script = BaseAssembler.assemble(baseFile == null ? null : content.getBase(baseFile), relics);
         return script == null ? null : BaseCard.fromScript(script);
     }
 
@@ -174,7 +191,9 @@ public class Run {
             }
         }
         MapNode node = getActiveNode();
+        RunConfig cfg = content.getConfig();
         if (won) {
+            state.xpEarned += Math.round((node.type == NodeType.BOSS ? cfg.xpPerBoss : cfg.xpPerFight) * cfg.xpMultiplier);
             state.matchesWon++;
             state.beaten.add(match.encounter().name);
             state.life = Math.max(1, Math.min(endLife, state.maxLife));
@@ -189,11 +208,13 @@ public class Run {
                 afterMatchReward();
             }
         } else if (state.retriesLeft > 0) {
+            state.xpEarned += Math.round(cfg.xpLostMatch * cfg.xpMultiplier);
             state.matchesLost++;
             state.retriesLeft--;
             state.life = state.lifeBeforeMatch;
             state.log.add("Lost to " + match.encounter().name + "; retrying (" + state.retriesLeft + " retries left)");
         } else {
+            state.xpEarned += Math.round(cfg.xpLostMatch * cfg.xpMultiplier);
             state.matchesLost++;
             state.status = RunStatus.LOST;
             state.log.add("Lost to " + match.encounter().name + "; the run is over");
@@ -206,6 +227,7 @@ public class Run {
         completeNode();
         if (node.type == NodeType.BOSS) {
             if (state.floor >= content.getConfig().floors) {
+                state.xpEarned += Math.round(content.getConfig().xpRunWon * content.getConfig().xpMultiplier);
                 state.status = RunStatus.WON;
                 state.log.add("Run won");
             } else {
@@ -309,7 +331,7 @@ public class Run {
         Random rnd = state.nextRandom();
         List<CardPoolDef> buckets = new ArrayList<>();
         for (CardPoolDef p : content.getPools().values()) {
-            if (p.bucket) {
+            if (p.bucket && (!p.locked || state.unlockedPools.contains(p.id))) {
                 buckets.add(p);
             }
         }
@@ -402,13 +424,15 @@ public class Run {
 
     private List<String> rewardPool() {
         StarterDef starter = content.getStarter(state.starterId);
-        return starter.rewardPool == null ? new ArrayList<>(state.deck.keySet()) : content.getPool(starter.rewardPool).cards;
+        List<String> pool = new ArrayList<>(starter.rewardPool == null ? state.deck.keySet() : content.getPool(starter.rewardPool).cards);
+        pool.addAll(state.extraRewardCards);
+        return pool;
     }
 
     private List<String> unownedRelics() {
         List<String> out = new ArrayList<>();
         for (String id : content.getRelics().keySet()) {
-            if (!state.relics.contains(id)) {
+            if (!state.relics.contains(id) && (state.relicPool == null || state.relicPool.contains(id))) {
                 out.add(id);
             }
         }

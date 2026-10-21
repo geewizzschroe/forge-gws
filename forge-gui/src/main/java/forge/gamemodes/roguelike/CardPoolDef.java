@@ -12,5 +12,7 @@ public class CardPoolDef {
     public String name;
     /** True for a themed bucket that can be offered whole as a reward. */
     public boolean bucket;
+    /** Not available until unlocked at an account level. */
+    public boolean locked;
     public List<String> cards = new ArrayList<>();
 }

@@ -116,6 +116,9 @@ public final class RunText {
             sb.append("Relics: ").append(String.join(", ", names)).append('\n');
         }
         sb.append("Gold left: ").append(s.gold);
+        if (s.characterId != null) {
+            sb.append("\nExperience earned: ").append(s.xpEarned);
+        }
         return sb.toString();
     }
 

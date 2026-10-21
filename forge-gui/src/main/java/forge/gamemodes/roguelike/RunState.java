@@ -15,6 +15,18 @@ public class RunState {
     public RunStatus status = RunStatus.IN_PROGRESS;
 
     public String starterId;
+    /** Character this run's experience goes to; null for none. */
+    public String characterId;
+    /** Base file used instead of the starter's own, or null. */
+    public String baseOverride;
+    /** Relic ids that can be offered; null means every relic. */
+    public List<String> relicPool;
+    public List<String> extraRewardCards = new ArrayList<>();
+    public List<String> unlockedPools = new ArrayList<>();
+    /** Experience earned so far in this run. */
+    public long xpEarned;
+    /** The run-won experience has been added to the character's progress. */
+    public boolean xpRecordedForWin;
     public String commander;
     public Map<String, Integer> deck = new LinkedHashMap<>();
     public Map<String, List<RunUpgrade>> upgrades = new LinkedHashMap<>();

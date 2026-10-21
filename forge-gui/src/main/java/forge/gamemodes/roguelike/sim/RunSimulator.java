@@ -24,7 +24,14 @@ import forge.gamemodes.roguelike.Run;
 import forge.gamemodes.roguelike.RunMatchFactory;
 import forge.gamemodes.roguelike.RunMatchFactory.RunMatch;
 import forge.gamemodes.roguelike.RunState;
+import forge.gamemodes.roguelike.RunSetup;
 import forge.gamemodes.roguelike.RunStatus;
+import forge.gamemodes.roguelike.meta.CharacterDef;
+import forge.gamemodes.roguelike.meta.Loadout;
+import forge.gamemodes.roguelike.meta.MatchStatsTracker;
+import forge.gamemodes.roguelike.meta.MetaProfile;
+import forge.gamemodes.roguelike.meta.Progression;
+import forge.gamemodes.roguelike.meta.RunProgress;
 
 /**
  * Plays the run mode with the AI on both sides, for balancing. The card database must be loaded
@@ -39,6 +46,8 @@ public class RunSimulator {
     private long matchTimeoutSeconds = 120;
     private File logDir;
     private int logCount;
+    private MetaProfile profile;
+    private MatchStatsTracker tracker;
 
     public RunSimulator(final RoguelikeContent content) {
         this.content = content;
@@ -46,6 +55,14 @@ public class RunSimulator {
 
     public void setMatchTimeoutSeconds(final long seconds) {
         matchTimeoutSeconds = seconds;
+    }
+
+    /**
+     * Play runs with meta-progression: each run starts from the character's unlocks in this profile (all
+     * switched on) and its experience and counters are recorded into it. Null for plain runs.
+     */
+    public void setProfile(final MetaProfile profile) {
+        this.profile = profile;
     }
 
     /** Write each match's game log to a numbered file in this folder (null to stop). */
@@ -57,7 +74,16 @@ public class RunSimulator {
     }
 
     public RunRecord simulateRun(final String starterId, final long seed, final RunPolicy policy) {
-        Run run = Run.start(content, starterId, seed);
+        RunSetup setup = null;
+        if (profile != null) {
+            CharacterDef ch = Progression.characterForStarter(content, starterId);
+            if (ch != null) {
+                Loadout loadout = new Loadout();
+                loadout.starterId = starterId;
+                setup = Progression.setup(content, profile, ch, loadout);
+            }
+        }
+        Run run = Run.start(content, starterId, seed, setup);
         RunState s = run.getState();
         RunRecord rec = new RunRecord();
         rec.seed = seed;
@@ -77,7 +103,12 @@ public class RunSimulator {
                 m.row = run.getActiveNode().row;
                 m.heroLifeBefore = s.life;
                 RunMatch match = run.createMatch(new LobbyPlayerAi("Hero", null), new LobbyPlayerAi(enc.name, null));
-                run.finishMatch(match, play(match, m));
+                long xpBefore = s.xpEarned;
+                boolean won = run.finishMatch(match, play(match, m));
+                if (profile != null) {
+                    rec.progressMessages.addAll(RunProgress.afterMatch(content, profile, run, enc, won, xpBefore,
+                            tracker == null ? null : tracker.getCounters()));
+                }
                 rec.matches.add(m);
                 if (s.status == RunStatus.LOST) {
                     rec.endedBy = enc.name;
@@ -90,6 +121,9 @@ public class RunSimulator {
                 MapNode node = policy.chooseNode(run, next);
                 rec.nodesEntered.merge(node.type.name(), 1, Integer::sum);
                 run.enterNode(node.id);
+            }
+            if (profile != null) {
+                rec.progressMessages.addAll(RunProgress.afterStep(content, profile, run));
             }
             for (; logSeen < s.log.size(); logSeen++) {
                 String line = s.log.get(logSeen);
@@ -105,6 +139,7 @@ public class RunSimulator {
         rec.finalMaxLife = s.maxLife;
         rec.goldLeft = s.gold;
         rec.relics.addAll(s.relics);
+        rec.xpEarned = s.xpEarned;
         return rec;
     }
 
@@ -146,9 +181,11 @@ public class RunSimulator {
     private Game play(final RunMatch match, final MatchRecord m) {
         final Game game = match.match().createGame();
         game.setNoGUIUser();
+        tracker = null;
         long start = System.currentTimeMillis();
         ExecutorService exec = Executors.newSingleThreadExecutor();
-        Future<?> f = exec.submit(() -> match.match().startGame(game));
+        Future<?> f = exec.submit(() -> match.match().startGame(game,
+                () -> tracker = MatchStatsTracker.attach(game, match.hero())));
         exec.shutdown();
         try {
             f.get(matchTimeoutSeconds, TimeUnit.SECONDS);

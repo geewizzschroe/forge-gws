@@ -1,11 +1,19 @@
 package forge.gamemodes.roguelike;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import forge.LobbyPlayer;
 import forge.game.GameView;
 import forge.gamemodes.match.HostedMatch;
 import forge.gamemodes.roguelike.RunMatchFactory.RunMatch;
+import forge.gamemodes.roguelike.meta.CharacterDef;
+import forge.gamemodes.roguelike.meta.Loadout;
+import forge.gamemodes.roguelike.meta.MatchStatsTracker;
+import forge.gamemodes.roguelike.meta.MetaProfile;
+import forge.gamemodes.roguelike.meta.Progression;
+import forge.gamemodes.roguelike.meta.RunProgress;
 import forge.gui.FThreads;
 import forge.gui.GuiBase;
 import forge.gui.interfaces.IGuiGame;
@@ -23,6 +31,11 @@ public final class RoguelikeController {
     private Run run;
     private boolean runLoaded;
     private RunMatch activeMatch;
+    private MatchStatsTracker tracker;
+    private MetaProfile profile;
+    /** Messages from the last match (levels, milestones) not yet shown to the player. */
+    private final List<String> pendingMessages = new ArrayList<>();
+
 
     private RoguelikeController() {
     }
@@ -59,11 +72,50 @@ public final class RoguelikeController {
         return run;
     }
 
+    public File getProfileFile() {
+        return new File(ForgeConstants.USER_DIR + "roguelike" + File.separator + "profile.json");
+    }
+
+    public MetaProfile getProfile() {
+        if (profile == null) {
+            try {
+                profile = MetaProfile.load(getProfileFile());
+            } catch (RuntimeException e) {
+                System.err.println("Could not load run-mode progress: " + e);
+                profile = new MetaProfile();
+            }
+        }
+        return profile;
+    }
+
+    public void saveProfile() {
+        getProfile().save(getProfileFile());
+    }
+
+    /** Start a run for a character with the given loadout; the loadout is remembered for next time. */
+    public Run startRun(final CharacterDef character, final Loadout loadout) {
+        getProfile().character(character.id).loadout = loadout;
+        saveProfile();
+        RunSetup setup = Progression.setup(getContent(), getProfile(), character, loadout);
+        run = Run.start(getContent(), loadout.starterId, System.nanoTime(), setup);
+        runLoaded = true;
+        save();
+        return run;
+    }
+
+    /** Start a run with a starter and no meta-progression. */
     public Run startRun(final String starterId) {
         run = Run.start(getContent(), starterId, System.nanoTime());
         runLoaded = true;
         save();
         return run;
+    }
+
+    /** Messages about levels and milestones since the last call. */
+    public List<String> takeMessages() {
+        List<String> out = new ArrayList<>(pendingMessages);
+        pendingMessages.clear();
+        return out;
     }
 
     public void abandonRun() {
@@ -98,6 +150,8 @@ public final class RoguelikeController {
         activeMatch = m;
         final IGuiGame gui = GuiBase.getInterface().getNewGuiGame();
         final HostedMatch hostedMatch = GuiBase.getInterface().hostMatch();
+        tracker = null;
+        hostedMatch.setStartGameHook(() -> tracker = MatchStatsTracker.attach(hostedMatch.getGame(), m.hero()));
         FThreads.invokeInEdtNowOrLater(() -> hostedMatch.startMatch(m.match().getRules(), null,
                 m.match().getPlayers(), m.hero(), gui));
     }
@@ -109,8 +163,26 @@ public final class RoguelikeController {
         }
         RunMatch m = activeMatch;
         activeMatch = null;
+        long xpBefore = run.getState().xpEarned;
         boolean won = run.finishMatch(m, view.getGame());
+        pendingMessages.addAll(RunProgress.afterMatch(getContent(), getProfile(), run, m.encounter(), won, xpBefore,
+                tracker == null ? null : tracker.getCounters()));
+        saveProfile();
+        tracker = null;
         save();
         return won;
+    }
+
+    /** Call after any run step: records the run-won experience once, when the run has just been won. */
+    public void afterStep() {
+        if (run == null) {
+            return;
+        }
+        List<String> messages = RunProgress.afterStep(getContent(), getProfile(), run);
+        if (!messages.isEmpty()) {
+            pendingMessages.addAll(messages);
+            saveProfile();
+            save();
+        }
     }
 }

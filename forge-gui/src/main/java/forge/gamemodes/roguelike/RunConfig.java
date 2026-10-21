@@ -45,6 +45,13 @@ public class RunConfig {
     // PLACEHOLDER: D4 upgrades. Choices at an Upgrade node, and the chance a card reward comes upgraded.
     public int upgradeChoices = 3;
     public double rewardUpgradeChance = 0.25;
+    // Experience (D9): per match won, scaled by xpMultiplier (PLACEHOLDER until run difficulty exists).
+    public int xpPerFight = 30;
+    public int xpPerBoss = 150;
+    public int xpRunWon = 500;
+    // PLACEHOLDER: experience for a lost match.
+    public int xpLostMatch = 0;
+    public double xpMultiplier = 1.0;
     // PLACEHOLDER: relic choices after a boss.
     public int bossRelicChoices = 3;
 }

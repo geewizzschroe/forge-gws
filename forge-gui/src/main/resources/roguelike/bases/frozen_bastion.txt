@@ -1,0 +1,5 @@
+Name:Frozen Bastion
+ManaCost:no cost
+Types:Base
+A:AB$ Tap | Cost$ 3 | ActivationZone$ Command | ActivationLimit$ 1 | ValidTgts$ Creature.OppCtrl | TgtPrompt$ Select target creature an opponent controls | SpellDescription$ Tap target creature an opponent controls. Activate only once each turn.
+Oracle:{3}: Tap target creature an opponent controls. Activate only once each turn.

@@ -14,7 +14,14 @@ import forge.gamemodes.roguelike.RoguelikeController;
 import forge.gamemodes.roguelike.Run;
 import forge.gamemodes.roguelike.RunStatus;
 import forge.gamemodes.roguelike.RunText;
+import forge.gamemodes.roguelike.RoguelikeContent;
 import forge.gamemodes.roguelike.StarterDef;
+import forge.gamemodes.roguelike.meta.CharacterDef;
+import forge.gamemodes.roguelike.meta.CharacterProgress;
+import forge.gamemodes.roguelike.meta.Loadout;
+import forge.gamemodes.roguelike.meta.MetaProfile;
+import forge.gamemodes.roguelike.meta.ProgressText;
+import forge.gamemodes.roguelike.meta.Progression;
 import forge.item.PaperCard;
 import forge.screens.FScreen;
 import forge.screens.home.NewGameMenu;
@@ -65,6 +72,15 @@ public class RoguelikeScreen extends FScreen {
     @Override
     public void onActivate() {
         update();
+        showMessages();
+    }
+
+    /** Show level-ups and milestones earned since the last look, one after another. */
+    private void showMessages() {
+        List<String> messages = ctrl().takeMessages();
+        if (!messages.isEmpty()) {
+            FOptionPane.showMessageDialog(String.join("\n\n", messages), "Progress");
+        }
     }
 
     private RoguelikeController ctrl() {
@@ -82,13 +98,7 @@ public class RoguelikeScreen extends FScreen {
             return;
         }
         if (run == null) {
-            status.setText("Roguelike run (prototype)\n\nChoose a character to start a run.");
-            for (StarterDef s : ctrl().getContent().getStarters().values()) {
-                button(s.name, e -> {
-                    ctrl().startRun(s.id);
-                    update();
-                });
-            }
+            showRunStart();
             revalidate();
             return;
         }
@@ -252,8 +262,121 @@ public class RoguelikeScreen extends FScreen {
         } catch (RuntimeException e) {
             FOptionPane.showMessageDialog(e.getMessage(), "Can't do that");
         }
+        ctrl().afterStep();
         ctrl().save();
         update();
+        showMessages();
+    }
+
+    // ---------------------------------------------------------------- starting a run
+
+    /** Character being set up for a run; null while choosing one. */
+    private CharacterDef chosenCharacter;
+    private Loadout loadout;
+
+    private void showRunStart() {
+        RoguelikeContent content = ctrl().getContent();
+        MetaProfile profile = ctrl().getProfile();
+        if (content.getCharacters().isEmpty()) { // content without characters: plain starters, no progression
+            status.setText("Roguelike run (prototype)\n\nChoose a starter deck.");
+            for (StarterDef s : content.getStarters().values()) {
+                button(s.name, e -> {
+                    ctrl().startRun(s.id);
+                    update();
+                });
+            }
+            return;
+        }
+        if (chosenCharacter == null) {
+            status.setText("Roguelike run (prototype)\n" + ProgressText.accountLine(content, profile) + "\n\nChoose a character.");
+            for (CharacterDef ch : content.getCharacters().values()) {
+                button(ProgressText.levelLine(content, ch, profile.character(ch.id)), e -> {
+                    chosenCharacter = ch;
+                    loadout = defaultLoadout(content, profile, ch);
+                    update();
+                });
+            }
+            return;
+        }
+
+        CharacterDef ch = chosenCharacter;
+        CharacterProgress progress = profile.character(ch.id);
+        status.setText(ProgressText.levelLine(content, ch, progress) + "\n\nChoose a starter deck and what to bring.");
+        for (String id : Progression.availableStarters(content, ch, progress)) {
+            boolean on = id.equals(loadout.starterId);
+            button((on ? "[x] " : "[ ] ") + content.getStarter(id).name, e -> {
+                loadout.starterId = id;
+                update();
+            });
+        }
+        List<Progression.Unlock> unlocks = Progression.characterUnlocks(content, ch, progress);
+        List<String> bases = new ArrayList<>();
+        for (Progression.Unlock u : unlocks) {
+            if ("base".equals(u.def().kind)) {
+                bases.add(u.def().base);
+            }
+        }
+        if (!bases.isEmpty()) {
+            String own = content.getStarter(loadout.starterId).base;
+            button((loadout.base == null ? "[x] " : "[ ] ") + "Base: the starter's own" + (own == null ? "" : " (" + baseName(content, own) + ")"), e -> {
+                loadout.base = null;
+                update();
+            });
+            for (String b : bases) {
+                button((b.equals(loadout.base) ? "[x] " : "[ ] ") + "Base: " + baseName(content, b), e -> {
+                    loadout.base = b;
+                    update();
+                });
+            }
+        }
+        for (Progression.Unlock u : unlocks) {
+            String kind = u.def().kind;
+            if ("starter".equals(kind) || "base".equals(kind)) {
+                continue;
+            }
+            boolean on = !loadout.disabled.contains(u.key());
+            button((on ? "[x] " : "[ ] ") + Progression.describe(content, u.def()) + "  (" + u.source() + ")", e -> {
+                if (on) {
+                    loadout.disabled.add(u.key());
+                } else {
+                    loadout.disabled.remove(u.key());
+                }
+                update();
+            });
+        }
+        button("Start the run", e -> {
+            ctrl().startRun(ch, loadout);
+            chosenCharacter = null;
+            update();
+        });
+        button("Progress", e -> FOptionPane.showMessageDialog(ProgressText.progress(content, profile, ch), ch.name));
+        button("Back", e -> {
+            chosenCharacter = null;
+            update();
+        });
+    }
+
+    /** The last loadout if it still fits what is unlocked, else the first starter with everything on. */
+    private static Loadout defaultLoadout(final RoguelikeContent content, final MetaProfile profile, final CharacterDef ch) {
+        CharacterProgress p = profile.character(ch.id);
+        List<String> starters = Progression.availableStarters(content, ch, p);
+        Loadout l = new Loadout();
+        Loadout last = p.loadout;
+        l.starterId = last != null && starters.contains(last.starterId) ? last.starterId : starters.get(0);
+        if (last != null) {
+            l.disabled.addAll(last.disabled);
+            l.base = last.base;
+        }
+        return l;
+    }
+
+    private static String baseName(final RoguelikeContent content, final String file) {
+        for (String line : content.getBase(file)) {
+            if (line.startsWith("Name:")) {
+                return line.substring(5);
+            }
+        }
+        return file;
     }
 
     private FButton button(final String caption, final FEventHandler handler) {

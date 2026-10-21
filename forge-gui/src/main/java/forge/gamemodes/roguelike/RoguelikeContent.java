@@ -19,6 +19,8 @@ import com.google.gson.reflect.TypeToken;
 
 import forge.StaticData;
 import forge.card.CardRules;
+import forge.gamemodes.roguelike.meta.CharacterDef;
+import forge.gamemodes.roguelike.meta.MetaConfig;
 import forge.localinstance.properties.ForgeConstants;
 
 /**
@@ -33,6 +35,8 @@ import forge.localinstance.properties.ForgeConstants;
  * pools/*.json       CardPoolDef
  * bases/*.txt        Base card scripts
  * overrides/*.txt    replacement card scripts (landless ramp) used in every match of the mode
+ * characters/*.json  CharacterDef (meta-progression: levels, unlocks, milestones)
+ * meta.json          MetaConfig (experience curves, account levels)
  * </pre>
  *
  * The content ships inside the app as classpath resources under {@code roguelike/}, listed in
@@ -61,6 +65,8 @@ public class RoguelikeContent {
     private final Map<String, CardPoolDef> pools = new LinkedHashMap<>();
     private final Map<String, List<String>> bases = new LinkedHashMap<>();
     private final List<CardRules> overrides = new ArrayList<>();
+    private final Map<String, CharacterDef> characters = new LinkedHashMap<>();
+    private MetaConfig meta = new MetaConfig();
 
     /** The user's content folder if there is one, else the bundled content. */
     public static RoguelikeContent load() {
@@ -110,6 +116,14 @@ public class RoguelikeContent {
         }
         for (String f : src.list("overrides", ".txt")) {
             c.overrides.add(CardRules.fromScript(lines(src.read(f))));
+        }
+        for (String f : src.list("characters", ".json")) {
+            CharacterDef d = parse(src.read(f), CharacterDef.class, f);
+            c.characters.put(d.id, d);
+        }
+        String meta = src.read("meta.json");
+        if (meta != null) {
+            c.meta = parse(meta, MetaConfig.class, "meta.json");
         }
         return c;
     }
@@ -210,6 +224,10 @@ public class RoguelikeContent {
     public Map<String, RelicDef> getRelics() { return relics; }
     public Map<String, CardPoolDef> getPools() { return pools; }
     public List<CardRules> getOverrides() { return overrides; }
+    public Map<String, CharacterDef> getCharacters() { return characters; }
+    public MetaConfig getMeta() { return meta; }
+
+    public CharacterDef getCharacter(final String id) { return require(characters, id, "character"); }
 
     /** The Base script with that file name; throws if it is missing. */
     public List<String> getBase(final String fileName) {
@@ -252,6 +270,9 @@ public class RoguelikeContent {
         }
         for (CardRules o : overrides) {
             names.add(o.getName());
+        }
+        for (CharacterDef ch : characters.values()) {
+            names.add(ch.commander);
         }
         for (String n : names) {
             if (n != null && StaticData.instance().getCommonCards().getCard(n) == null) {

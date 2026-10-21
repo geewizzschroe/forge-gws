@@ -39,6 +39,7 @@ public final class SimReport {
             sb.append("- Matches per run: ").append(fmt(runs.stream().mapToInt(r -> r.matches.size()).average().orElse(0))).append('\n');
             sb.append("- Final deck size: ").append(fmt(runs.stream().mapToInt(r -> r.finalDeckSize).average().orElse(0))).append('\n');
             sb.append("- Relics per run: ").append(fmt(runs.stream().mapToInt(r -> r.relics.size()).average().orElse(0))).append('\n');
+            sb.append("- Experience per run: ").append(fmt(runs.stream().mapToLong(r -> r.xpEarned).average().orElse(0))).append('\n');
             sb.append("- Gold left at the end: ").append(fmt(runs.stream().mapToInt(r -> r.goldLeft).average().orElse(0))).append("\n\n");
 
             Map<String, Integer> endedBy = new TreeMap<>();
