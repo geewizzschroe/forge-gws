@@ -29,6 +29,6 @@
   "upgradeChoices": 3,
   "rewardUpgradeChance": 0.25,
   "bossRelicChoices": 3,
-  "cardScopeSets": ["FIN", "FCA", "FIC", "FDN", "FDC"],
+  "cardScopeSets": ["FIN", "FCA", "FIC", "RFIN", "FDN", "FDC", "J25", "PFDN"],
   "cardScopeExceptions": []
 }

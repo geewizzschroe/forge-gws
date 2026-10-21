@@ -58,7 +58,7 @@ public class RunConfig {
     public int bossRelicChoices = 3;
 
     // Decided (DESIGN.md 2.3, card scope): starter and enemy cards come from these set codes.
-    public List<String> cardScopeSets = List.of("FIN", "FCA", "FIC", "FDN", "FDC");
+    public List<String> cardScopeSets = List.of("FIN", "FCA", "FIC", "RFIN", "FDN", "FDC", "J25", "PFDN");
     // Cards allowed outside those sets because they belong in a particular deck.
     public List<String> cardScopeExceptions = List.of();
 }

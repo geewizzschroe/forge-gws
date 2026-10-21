@@ -5,14 +5,17 @@ A card is **in** scope when any printing of it is in a scope set (`cardScopeSets
 Rule overrides (`overrides/`) are not counted: they change existing cards rather than adding any.
 The sets in brackets are the card's printings as Forge knows them (first six shown).
 
-Scope sets: FIN (Final Fantasy), FCA (Final Fantasy: Through the Ages), FIC (Final Fantasy Commander), FDN (Foundations), FDC (Foundations Commander).
-The related products were added to the first FIN + FDN setting the same day; that moved Counterspell, Cultivate, Lightning Bolt, Rampant Growth, Snapcaster Mage, Venser, Shaper Savant and Wall of Omens into scope.
-Not included: J25 (Foundations Jumpstart), RFIN (Final Fantasy Regional Promos), PFDN (Foundations Promos).
+Scope sets: FIN (Final Fantasy), FCA (Final Fantasy: Through the Ages), FIC (Final Fantasy Commander), RFIN (Final Fantasy Regional Promos), FDN (Foundations), FDC (Foundations Commander), J25 (Foundations Jumpstart), PFDN (Foundations Promos).
+
+How the scope grew on 2026-10-21:
+- First setting, FIN + FDN: 221 of 344 uses outside.
+- Adding FCA, FIC, FDC moved in Counterspell, Cultivate, Lightning Bolt, Rampant Growth, Snapcaster Mage, Venser, Shaper Savant, Wall of Omens: 202 outside.
+- Adding J25, RFIN, PFDN moved in Air Elemental, Beetleback Chief, Cloudkin Seer, Gravedigger, Murder, Shock: 183 outside.
 
 This is a listing only. No cards have been swapped or added as exceptions.
 
-Content cards outside the scope: 202 of 344 (counted once per file).
-Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
+Content cards outside the scope: 183 of 344 (counted once per file).
+Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 
 ## character jill (0 of 1 outside)
 
@@ -22,11 +25,11 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 
 - in  Lightning, Army of One (FIN)
 
-## starter jill_blue_black (14 of 16 outside)
+## starter jill_blue_black (12 of 16 outside)
 
 - in  Jill, Shiva's Dominant (FIN)
 - OUT Hypnotic Specter (SLZ, 30A, PLST, HA1, M10, 10E, ... 15 sets)
-- OUT Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
+- in  Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
 - OUT Doom Blade (MSC, GN3, STA, PLST, SLD, E02, ... 16 sets)
 - OUT Ravenous Chupacabra (MKC, PW23, GN3, CLB, PLST, JMP, ... 9 sets)
 - OUT Dimir Infiltrator (PLST, PCA, PC2, RAV)
@@ -39,9 +42,9 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - OUT Exclude (CMM, PLST, JMP, MH1, A25, C14, ... 8 sets)
 - OUT Fact or Fiction (FRC, PF26, WOC, CMM, LTC, DMR, ... 30 sets)
 - in  Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
-- OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
+- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 
-## starter jill_blue_white (13 of 16 outside)
+## starter jill_blue_white (12 of 16 outside)
 
 - in  Jill, Shiva's Dominant (FIN)
 - OUT Restoration Angel (INR, BLC, MOC, J22, 2X2, J21, ... 14 sets)
@@ -58,7 +61,7 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - in  Charming Prince (FDN, PLST, ELD)
 - OUT Man-o'-War (DMR, J21, PLST, MH1, A25, EMA, ... 17 sets)
 - OUT Mulldrifter (SLZ, ECC, MKC, 2X2, J21, AFC, ... 25 sets)
-- OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
+- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 
 ## starter jill_frozen_throne (14 of 16 outside)
 
@@ -119,7 +122,7 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - in  You're Not Alone (FIN)
 - in  Zack Fair (FIN, PMEI)
 
-## encounter boss_krenko (8 of 10 outside)
+## encounter boss_krenko (7 of 10 outside)
 
 - in  Krenko, Mob Boss (FDN, RVR, CMM, J22, PLST, JMP, ... 10 sets)
 - OUT Raging Goblin (ANB, OANA, EVG, M10, DD1, 10E, ... 17 sets)
@@ -127,33 +130,33 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - OUT Mogg Fanatic (PLST, EMA, TPR, EVG, PD2, DD1, ... 12 sets)
 - OUT Goblin Raider (9ED, 8ED, 7ED, USG, PO2)
 - OUT Goblin Instigator (MOC, PLST, JMP, M19)
-- OUT Beetleback Chief (TDC, J25, PLST, JMP, CM2, PCA, ... 11 sets)
+- in  Beetleback Chief (TDC, J25, PLST, JMP, CM2, PCA, ... 11 sets)
 - in  Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
 - OUT Searing Spear (J22, PLST, E01, F13, M13, PRM)
 - OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
-## encounter goblin_raiders (6 of 7 outside)
+## encounter goblin_raiders (5 of 7 outside)
 
 - OUT Raging Goblin (ANB, OANA, EVG, M10, DD1, 10E, ... 17 sets)
 - OUT Goblin Piker (M12, M11, DPA, M10, 10E, 9ED, ... 7 sets)
 - OUT Mogg Fanatic (PLST, EMA, TPR, EVG, PD2, DD1, ... 12 sets)
 - OUT Goblin Raider (9ED, 8ED, 7ED, USG, PO2)
 - in  Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
-- OUT Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
+- in  Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
 - OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
-## encounter restless_dead (7 of 8 outside)
+## encounter restless_dead (5 of 8 outside)
 
 - OUT Walking Corpse (PLST, M21, M20, M19, W16, M15, ... 8 sets)
 - OUT Vampire Bats (GVL, DDD, 10E, 5ED, 4ED, LEG)
-- OUT Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
+- in  Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
 - OUT Dusk Legion Zealot (LCC, GN3, PLST, A25, RIX)
-- OUT Murder (J25, DSK, ACR, OTP, MKM, SCD, ... 20 sets)
+- in  Murder (J25, DSK, ACR, OTP, MKM, SCD, ... 20 sets)
 - OUT Mind Rot (KLR, PLST, M21, M20, M19, KLD, ... 24 sets)
 - in  Diregraf Ghoul (FDN, PLST, M19, DDQ, ISD, PISD, ... 7 sets)
 - OUT Highborn Ghoul (DKA)
 
-## encounter troop_of_dwarves (7 of 8 outside)
+## encounter troop_of_dwarves (6 of 8 outside)
 
 - in  Axgard Cavalry (FDN, J22, KHM, PLST)
 - OUT Bloodfire Dwarf (APC)
@@ -161,14 +164,14 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - OUT Breakneck Berserker (KHM)
 - OUT Dwarven Trader (HML)
 - OUT Axgard Artisan (MOM)
-- OUT Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
+- in  Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
 - OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
-## pool blue_core (19 of 24 outside)
+## pool blue_core (17 of 24 outside)
 
 - OUT Man-o'-War (DMR, J21, PLST, MH1, A25, EMA, ... 17 sets)
 - OUT Mulldrifter (SLZ, ECC, MKC, 2X2, J21, AFC, ... 25 sets)
-- OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
+- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 - OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
 - OUT Phantom Monster (30A, IMA, EMA, ME1, 5ED, 4ED, ... 10 sets)
@@ -182,7 +185,7 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - OUT Faerie Miscreant (M20, ORI)
 - OUT Sea Gate Oracle (GN3, KHC, PLST, JMP, C17, MM3, ... 9 sets)
 - OUT Frost Lynx (PLST, IKO, M20, BBD, IMA, M15)
-- OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
+- in  Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
 - OUT Mahamoti Djinn (30A, PLST, UMA, IMA, ORI, M15, ... 18 sets)
 - in  Essence Scatter (SOS, PIO, FDN, DMU, PLST, AKR, ... 14 sets)
 - OUT Exclude (CMM, PLST, JMP, MH1, A25, C14, ... 8 sets)
@@ -200,11 +203,11 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - OUT Peel from Reality (CMR, PLST, JMP, DDO, M15, AVR, ... 7 sets)
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 
-## pool bucket_fliers (7 of 7 outside)
+## pool bucket_fliers (5 of 7 outside)
 
 - OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
-- OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
-- OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
+- in  Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
+- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 - OUT Phantom Monster (30A, IMA, EMA, ME1, 5ED, 4ED, ... 10 sets)
 - OUT Mahamoti Djinn (30A, PLST, UMA, IMA, ORI, M15, ... 18 sets)
@@ -219,12 +222,12 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - OUT Sakura-Tribe Elder (SOC, TDC, PL25, DSC, PLG24, MB2, ... 34 sets)
 - OUT Explosive Vegetation (DRC, DSC, DMC, PLST, C18, CN2, ... 12 sets)
 
-## pool frozen_core (31 of 37 outside)
+## pool frozen_core (29 of 37 outside)
 
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
-- OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
+- in  Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
 - OUT Claustrophobia (PLST, GN2, GNT, BBD, IMA, DDT, ... 10 sets)
-- OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
+- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
 - in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
 - in  Essence Scatter (SOS, PIO, FDN, DMU, PLST, AKR, ... 14 sets)
@@ -338,12 +341,12 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - in  You're Not Alone (FIN)
 - in  Zack Fair (FIN, PMEI)
 
-## pool ub_core (29 of 35 outside)
+## pool ub_core (26 of 35 outside)
 
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 - OUT Agent of Treachery (TLE, SLD, M20)
-- OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
-- OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
+- in  Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
+- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
 - in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
 - OUT Dimir Infiltrator (PLST, PCA, PC2, RAV)
@@ -354,7 +357,7 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - OUT Faerie Miscreant (M20, ORI)
 - OUT Frost Lynx (PLST, IKO, M20, BBD, IMA, M15)
 - OUT Glen Elendra Archmage (WOC, P30A, SLD, UMA, MMA, EVE)
-- OUT Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
+- in  Gravedigger (J25, J22, PLST, AKR, M20, M19, ... 27 sets)
 - OUT Hypnotic Specter (SLZ, 30A, PLST, HA1, M10, 10E, ... 15 sets)
 - in  Into the Roil (FDN, CMR, ZNR, C18, C17, C14, ... 8 sets)
 - OUT Mahamoti Djinn (30A, PLST, UMA, IMA, ORI, M15, ... 18 sets)
@@ -376,13 +379,13 @@ Scope sets: [FIN, FCA, FIC, FDN, FDC]. Exceptions: [].
 - in  Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
 - OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
 
-## pool uw_core (29 of 36 outside)
+## pool uw_core (27 of 36 outside)
 
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
-- OUT Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
+- in  Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
 - OUT Blade Splicer (BLC, MOC, J21, 2XM, MM3, NPH)
 - in  Charming Prince (FDN, PLST, ELD)
-- OUT Cloudkin Seer (J25, CLU, PLST, ANB, M20)
+- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
 - OUT Cloudshift (TLE, PLST, JMP, SLD, A25, AVR)
 - OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
 - in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
