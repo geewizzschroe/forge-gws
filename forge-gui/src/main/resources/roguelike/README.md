@@ -14,6 +14,7 @@ testable. Replace it freely.
   `cardScopeSets` and `cardScopeExceptions` set the card scope; `CardScopeTest` lists deck and pool cards outside it.
 - `upgrades.json`: the pool card upgrades are drawn from (power/toughness and keywords).
 - `starters/`: characters (commander, landless starter deck, Base, reward pool).
+  A character's `core` (in `characters/`) must appear 2x in each of its starters, except a starter with `"independentOfCore": true`, which must contain none of it.
 - `encounters/`: enemies and bosses (deck, optional commander, Base, life, hand size, earliest map row).
 - `relics/`: relics. `script` lines are added to the player's Base each match; prefix SVar names with the relic id.
 - `pools/`: card lists. `"bucket": true` makes a themed bucket that can be offered as a reward.

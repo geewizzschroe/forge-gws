@@ -21,5 +21,6 @@
     "Exclusion Mage": 2,
     "Ultimecia, Temporal Threat": 2,
     "Hraesvelgr of the First Brood": 2
-  }
+  },
+  "independentOfCore": true
 }

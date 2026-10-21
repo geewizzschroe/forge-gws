@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import forge.ai.AITest;
 import forge.card.CardRules;
 import forge.game.BaseCard;
+import forge.gamemodes.roguelike.meta.CharacterDef;
 import forge.item.PaperCard;
 
 /** The shipped content in res/roguelike loads and is consistent. */
@@ -115,6 +116,28 @@ public class RoguelikeContentTest extends AITest {
         for (EncounterDef e : c.getEncounters().values()) {
             if (e.base != null) {
                 assertTrue(BaseCard.fromScript(c.getBase(e.base)).getRules().getType().hasStringType("Base"));
+            }
+        }
+    }
+
+    @Test
+    public void startersHoldTheirCharactersCoreOrNoneOfIt() {
+        RoguelikeContent c = RoguelikeContent.load();
+        for (CharacterDef ch : c.getCharacters().values()) {
+            if (ch.core.isEmpty()) {
+                continue;
+            }
+            for (StarterDef s : c.getStarters().values()) {
+                if (!ch.commander.equals(s.commander)) {
+                    continue;
+                }
+                for (String name : ch.core) {
+                    if (s.independentOfCore) {
+                        assertFalse(s.id + " is independent of the core but has " + name, s.deck.containsKey(name));
+                    } else {
+                        assertEquals(s.id + " should have 2x core card " + name, Integer.valueOf(2), s.deck.get(name));
+                    }
+                }
             }
         }
     }

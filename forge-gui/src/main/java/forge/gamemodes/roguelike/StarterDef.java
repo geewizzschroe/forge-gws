@@ -13,4 +13,6 @@ public class StarterDef {
     public String base;
     /** Id of the card pool rewards are drawn from. */
     public String rewardPool;
+    /** True for a starter that shares no cards with its character's core (see {@code CharacterDef.core}). */
+    public boolean independentOfCore;
 }

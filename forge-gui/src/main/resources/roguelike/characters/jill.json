@@ -5,6 +5,16 @@
   "starters": [
     "jill_mono_blue"
   ],
+  "core": [
+    "Faerie Seer",
+    "Moon-Circuit Hacker",
+    "Chilling Trap",
+    "Burrog Befuddler",
+    "Micromancer",
+    "Brineborn Cutthroat",
+    "Counterspell",
+    "High Fae Trickster"
+  ],
   "levels": [
     {
       "level": 2,
