@@ -25,6 +25,7 @@ jobs:
         run: |
           if [ "$GITHUB_REF_TYPE" = "tag" ]; then TAG="$GITHUB_REF_NAME"; else TAG="roguelike-$(tr -d '[:space:]' < .github/roguelike-release.txt)"; fi
           echo "TAG=$TAG" >> "$GITHUB_ENV"
+          echo "VERSION=${TAG#roguelike-}" >> "$GITHUB_ENV"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -57,7 +58,7 @@ jobs:
       - name: Package
         run: |
           mkdir upload
-          cp forge-gui-android/target/*aligned-debugSigned.apk upload/forge-roguelike-${TAG}.apk
+          cp forge-gui-android/target/*aligned-debugSigned.apk upload/forge-roguelike-${VERSION}.apk
 
           P=forge-roguelike-pc
           mkdir $P
@@ -67,7 +68,7 @@ jobs:
           chmod +x $P/run.sh
           printf '@echo off\r\ncd /d "%%~dp0"\r\njava -Xmx4g -jar forge.jar width=1280 height=720 landscape\r\n' > $P/run.bat
           printf 'Forge with the roguelike run mode (prototype).\n\nNeeds Java 17 or newer (for example from https://adoptium.net).\nWindows: double-click run.bat. Mac/Linux: run ./run.sh\nIn the app: New Game, then Roguelike Run.\n' > $P/README.txt
-          zip -qr upload/forge-roguelike-pc-${TAG}.zip $P
+          zip -qr upload/forge-roguelike-pc-${VERSION}.zip $P
           ls -la upload
 
       - name: Publish the release
@@ -80,7 +81,7 @@ jobs:
           body: |
             A prototype of the roguelike run mode built on Forge.
 
-            - **Android:** `forge-roguelike-${{ env.TAG }}.apk` installs as "Forge (dev)", beside the official Forge app. It is debug-signed.
-            - **PC:** unzip `forge-roguelike-pc-${{ env.TAG }}.zip`, then run `run.bat` (Windows) or `run.sh` (Mac/Linux). Needs Java 17 or newer.
+            - **Android:** `forge-roguelike-${{ env.VERSION }}.apk` installs as "Forge (dev)", beside the official Forge app. It is debug-signed.
+            - **PC:** unzip `forge-roguelike-pc-${{ env.VERSION }}.zip`, then run `run.bat` (Windows) or `run.sh` (Mac/Linux). Needs Java 17 or newer.
             - In the app: New Game, then Roguelike Run.
           files: upload/*
