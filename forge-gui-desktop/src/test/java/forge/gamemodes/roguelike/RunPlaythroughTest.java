@@ -67,7 +67,7 @@ public class RunPlaythroughTest extends AITest {
         s.relics.add("whetstone");
         s.relics.add("lucky_coin");
         s.deck.put("Cultivate", 2);
-        s.upgrades.put("Wind Drake", new ArrayList<>(List.of(new RunUpgrade(1, 1, List.of()))));
+        s.upgrades.put("Man-o'-War", new ArrayList<>(List.of(new RunUpgrade(1, 1, List.of()))));
         run.enterNode(run.getAvailableNodes().get(0).id);
         RunMatch m = run.createMatch(new LobbyPlayerAi("Hero", null), new LobbyPlayerAi("Enemy", null));
 
@@ -98,9 +98,9 @@ public class RunPlaythroughTest extends AITest {
                             && text.contains("Lucky Coin"), "relic text " + text);
                 }
                 for (Card card : hero.getCardsIn(ZoneType.Library, ZoneType.Hand)) {
-                    if (card.getName().equals("Wind Drake")) {
+                    if (card.getName().equals("Man-o'-War")) {
                         check(problems, card.getNetPower() == 3 && card.getNetToughness() == 3,
-                                "Wind Drake " + card.getNetPower() + "/" + card.getNetToughness());
+                                "Man-o'-War " + card.getNetPower() + "/" + card.getNetToughness());
                     }
                     if (card.getName().equals("Cultivate")) {
                         SpellAbility sa = card.getFirstSpellAbility();
@@ -109,10 +109,10 @@ public class RunPlaythroughTest extends AITest {
                     check(problems, !card.isLand(), "land in deck: " + card);
                 }
                 // Whetstone pumps creatures on the battlefield
-                Card drake = hero.getCardsIn(ZoneType.Library, "Wind Drake").get(0);
-                Card onField = game.getAction().moveToPlay(drake, null, null);
+                Card manOWar = hero.getCardsIn(ZoneType.Library, "Man-o'-War").get(0);
+                Card onField = game.getAction().moveToPlay(manOWar, null, null);
                 game.getAction().checkStateEffects(true);
-                check(problems, onField.getNetPower() == 4, "Wind Drake with Whetstone " + onField.getNetPower());
+                check(problems, onField.getNetPower() == 4, "Man-o'-War with Whetstone " + onField.getNetPower());
             } catch (Throwable t) {
                 problems.add(t.toString());
             }

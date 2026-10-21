@@ -26,13 +26,13 @@ public class RunTextTest extends AITest {
         RoguelikeContent c = RoguelikeContent.load();
         Run run = Run.start(c, "jill_mono_blue", 5);
         run.getState().relics.add("whetstone");
-        run.getState().upgrades.put("Wind Drake", new ArrayList<>(List.of(new RunUpgrade(1, 1, List.of()))));
+        run.getState().upgrades.put("Man-o'-War", new ArrayList<>(List.of(new RunUpgrade(1, 1, List.of()))));
         String status = RunText.status(run);
         assertTrue(status, status.startsWith("Life 20/20"));
         assertTrue(status, status.contains("Relics: Whetstone"));
         assertTrue(status, status.endsWith("Choose where to go next."));
         String deck = RunText.deckList(run);
-        assertTrue(deck, deck.contains("2x Wind Drake  [+1/+1]"));
+        assertTrue(deck, deck.contains("2x Man-o'-War  [+1/+1]"));
         assertTrue(deck, deck.contains("Whetstone - Creatures you control get +1/+0."));
         MapNode first = run.getAvailableNodes().get(0);
         assertTrue(RunText.node(run, first), RunText.node(run, first).startsWith("Step 1 - Enemy: "));
