@@ -27,13 +27,7 @@ public final class RoguelikeDebug {
 
     /** Raise a character to the given level (never lowers it). */
     public static List<String> raiseToLevel(final RoguelikeContent c, final MetaProfile profile, final String characterId, final int level) {
-        long needed = 0;
-        long step = c.getMeta().levelXpBase;
-        for (int l = 1; l < level; l++) {
-            needed += step;
-            step += c.getMeta().levelXpGrowth;
-        }
-        long missing = needed - profile.character(characterId).xp;
+        long missing = Progression.characterXpForLevel(c, level) - profile.character(characterId).xp;
         return missing > 0 ? grantXp(c, profile, characterId, missing) : List.of("Already level " + level + " or higher.");
     }
 

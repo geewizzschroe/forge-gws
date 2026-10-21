@@ -1,4 +1,5 @@
 {
+  "levelXpSteps": [30, 150, 500],
   "levelXpBase": 200,
   "levelXpGrowth": 200,
   "accountLevelXpBase": 500,

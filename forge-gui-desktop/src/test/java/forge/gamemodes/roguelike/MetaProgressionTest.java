@@ -42,6 +42,15 @@ public class MetaProgressionTest extends AITest {
         assertEquals(new Progression.Level(1, 199, 200), Progression.level(199, 200, 200));
         assertEquals(new Progression.Level(2, 0, 400), Progression.level(200, 200, 200));
         assertEquals(new Progression.Level(3, 0, 600), Progression.level(600, 200, 200));
+        // listed steps first (a fight, a boss, a won run), then +growth per level
+        List<Integer> steps = List.of(30, 150, 500);
+        assertEquals(new Progression.Level(1, 29, 30), Progression.level(29, steps, 200, 200));
+        assertEquals(new Progression.Level(2, 0, 150), Progression.level(30, steps, 200, 200));
+        assertEquals(new Progression.Level(3, 0, 500), Progression.level(180, steps, 200, 200));
+        assertEquals(new Progression.Level(4, 0, 700), Progression.level(680, steps, 200, 200));
+        assertEquals(new Progression.Level(5, 0, 900), Progression.level(1380, steps, 200, 200));
+        RoguelikeContent content = RoguelikeContent.load();
+        assertEquals(30 + 150 + 500, Progression.characterXpForLevel(content, 4)); // as listed in meta.json
         assertEquals(new Progression.Level(3, 50, 600), Progression.level(650, 200, 200));
     }
 

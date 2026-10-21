@@ -36,19 +36,40 @@ public final class Progression {
     }
 
     public static Level level(final long xp, final int base, final int growth) {
+        return level(xp, List.of(), base, growth);
+    }
+
+    /**
+     * The level for an amount of experience. The listed steps are what levels 2, 3, ... each need in turn;
+     * after them each level needs {@code growth} more than the one before. With no steps, level 2 needs
+     * {@code base}.
+     */
+    public static Level level(final long xp, final List<Integer> steps, final int base, final int growth) {
         int level = 1;
         long left = xp;
-        long need = base;
+        long need = steps.isEmpty() ? base : steps.get(0);
         while (need > 0 && left >= need) {
             left -= need;
             level++;
-            need += growth;
+            need = level - 1 < steps.size() ? steps.get(level - 1) : need + growth;
         }
         return new Level(level, left, need);
     }
 
+    /** Total experience a character needs to reach a level. */
+    public static long characterXpForLevel(final RoguelikeContent c, final int level) {
+        MetaConfig m = c.getMeta();
+        long total = 0;
+        long need = m.levelXpSteps.isEmpty() ? m.levelXpBase : m.levelXpSteps.get(0);
+        for (int l = 2; l <= level; l++) {
+            total += need;
+            need = l - 1 < m.levelXpSteps.size() ? m.levelXpSteps.get(l - 1) : need + m.levelXpGrowth;
+        }
+        return total;
+    }
+
     public static Level characterLevel(final RoguelikeContent c, final CharacterProgress p) {
-        return level(p.xp, c.getMeta().levelXpBase, c.getMeta().levelXpGrowth);
+        return level(p.xp, c.getMeta().levelXpSteps, c.getMeta().levelXpBase, c.getMeta().levelXpGrowth);
     }
 
     public static Level accountLevel(final RoguelikeContent c, final MetaProfile profile) {

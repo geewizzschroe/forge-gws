@@ -3,7 +3,7 @@
   "name": "A Troop of Dwarves",
   "minRow": 0,
   "base": "mountain_pass.txt",
-  "life": 16,
+  "life": 20,
   "hand": 6,
   "deck": {
     "Axgard Cavalry": 4,
