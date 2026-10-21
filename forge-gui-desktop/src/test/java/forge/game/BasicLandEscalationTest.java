@@ -18,6 +18,7 @@ import com.google.common.eventbus.Subscribe;
 
 import forge.ai.AITest;
 import forge.ai.LobbyPlayerAi;
+import forge.ai.PlayerControllerAi;
 import forge.deck.Deck;
 import forge.deck.DeckSection;
 import forge.game.ability.AbilityFactory;
@@ -106,6 +107,46 @@ public class BasicLandEscalationTest extends AITest {
         Card made = BasicLandEscalation.conjureChosenBasicLand(p);
         assertNotNull(made);
         assertTrue(made.isLand());
+    }
+
+    @Test
+    public void onlyTheDecksColoursAreOffered() {
+        Game game = initAndCreateGame();
+        Player p = game.getPlayers().get(1);
+        addCardToZone("Savannah Lions", p, ZoneType.Library); // W
+        addCardToZone("Mulldrifter", p, ZoneType.Hand);       // U
+        addCardToZone("Mountain", p, ZoneType.Library);       // lands don't count
+        addCard("Swamp", p);
+        assertEquals(List.of("Plains", "Island"), BasicLandEscalation.basicLandOptions(p));
+    }
+
+    @Test
+    public void aDeckWithNoColourIsOfferedEveryBasic() {
+        Game game = initAndCreateGame();
+        Player p = game.getPlayers().get(1);
+        addCardToZone("Ornithopter", p, ZoneType.Library);
+        assertEquals(5, BasicLandEscalation.basicLandOptions(p).size());
+    }
+
+    @Test
+    public void aOneColourDeckGetsItsLandWithoutBeingAsked() {
+        Game game = initAndCreateGame();
+        game.getRules().setMaxLandsPerPlayer(10);
+        Player p = game.getPlayers().get(1);
+        addCardToZone("Mulldrifter", p, ZoneType.Library);
+        addCardToZone("Counterspell", p, ZoneType.Hand);
+        final boolean[] asked = {false};
+        p.runWithController(() -> {
+            Card made = BasicLandEscalation.conjureChosenBasicLand(p);
+            assertEquals("Island", made.getName());
+        }, new PlayerControllerAi(game, p, p.getLobbyPlayer()) {
+            @Override
+            public String chooseBasicLandToConjure(List<String> basicLandNames) {
+                asked[0] = true;
+                return super.chooseBasicLandToConjure(basicLandNames);
+            }
+        });
+        assertFalse("the player was asked", asked[0]);
     }
 
     @Test

@@ -94,6 +94,7 @@ This is a **built-in rule of the mode**, part of its background logic. It is **n
 
 - **Decks contain no lands.** This applies to both sides, including boss decks.
 - **At the beginning of each player's precombat main phase (after the draw step), if that player controls fewer than 10 lands, that player chooses a basic land type and a basic land of that type is conjured onto the battlefield.** Choosing after the draw means the player sees the new card first.
+  - Only basics of the player's **deck colours** are offered: the colour identity of the nonland, nontoken cards they own in the match, commander included (all five if that is colourless). With **one colour** the land is conjured without a prompt (decided 2026-10-21; `BasicLandEscalation.basicLandOptions`). The ramp cards' own land choice is a separate prompt and is not filtered.
 - **10 lands is the maximum in all cases**, regardless of source (the per-turn land, ramp spells, forced entries).
 - Land-search ramp spells are **re-implemented in spirit** to conjure a basic instead of searching.
 - **Ramp at the cap creates Treasure tokens.** A ramp effect that would conjure lands while the player is at the cap creates that many Treasure tokens instead. [assumed] If only some of the lands fit, the remainder become Treasures (N2).

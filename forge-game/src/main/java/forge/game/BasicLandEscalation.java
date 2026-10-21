@@ -1,9 +1,11 @@
 package forge.game;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import forge.StaticData;
+import forge.card.CardRules;
 import forge.card.MagicColor;
 import forge.deck.Deck;
 import forge.deck.DeckSection;
@@ -25,6 +27,8 @@ import forge.item.PaperCard;
  *
  * At the beginning of each player's first precombat main phase, if they control fewer lands than
  * the cap, they choose a basic land and it is conjured onto the battlefield under their control.
+ * Only the basics of the player's deck colours are offered, and with a single colour the land is
+ * conjured without asking (see {@link #basicLandOptions(Player)}).
  * Separately, a land can never enter the battlefield under the control of a player already at the cap.
  */
 public final class BasicLandEscalation {
@@ -85,13 +89,38 @@ public final class BasicLandEscalation {
         return controller != null && isAtLandCap(controller);
     }
 
+    /**
+     * The basic lands to offer a player: one for each colour in the colour identity of the nonland,
+     * nontoken cards they own in this game (their deck and commander). All five if that has no colour.
+     */
+    public static List<String> basicLandOptions(final Player player) {
+        byte identity = 0;
+        for (Card c : player.getGame().getCardsInGame()) {
+            if (c.isToken() || c.isLand() || !player.equals(c.getOwner())) {
+                continue;
+            }
+            CardRules rules = c.getRules();
+            if (rules != null) {
+                identity |= rules.getColorIdentity().getColor();
+            }
+        }
+        List<String> options = new ArrayList<>();
+        for (int i = 0; i < MagicColor.WUBRG.length; i++) {
+            if ((identity & MagicColor.WUBRG[i]) != 0) {
+                options.add(MagicColor.Constant.BASIC_LANDS.get(i));
+            }
+        }
+        return options.isEmpty() ? MagicColor.Constant.BASIC_LANDS : options;
+    }
+
     /** The turn-based action: conjure the player's chosen basic land if they are under the cap. */
     public static Card conjureChosenBasicLand(final Player player) {
         if (isAtLandCap(player)) {
             return null;
         }
-        String name = player.getController().chooseBasicLandToConjure(MagicColor.Constant.BASIC_LANDS);
-        if (name == null || !MagicColor.Constant.BASIC_LANDS.contains(name)) {
+        List<String> options = basicLandOptions(player);
+        String name = options.size() == 1 ? options.get(0) : player.getController().chooseBasicLandToConjure(options);
+        if (name == null || !options.contains(name)) {
             return null;
         }
         PaperCard pc = StaticData.instance().getCommonCards().getCard(name);
