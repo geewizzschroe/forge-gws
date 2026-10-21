@@ -1,6 +1,6 @@
 Name:Wayfarer's Camp
 ManaCost:no cost
 Types:Base
-A:AB$ Scry | Cost$ 2 | ActivationZone$ Command | ActivationLimit$ 1 | ScryNum$ 1 | SubAbility$ DBDraw | SpellDescription$ Scry 1, then draw a card. Activate only once each turn.
+A:AB$ Scry | Cost$ 2 | ActivationZone$ Command | ActivationLimit$ 1 | ScryNum$ 1 | AILogic$ BestOpportunity | SubAbility$ DBDraw | SpellDescription$ Scry 1, then draw a card. Activate only once each turn.
 SVar:DBDraw:DB$ Draw | NumCards$ 1
 Oracle:{2}: Scry 1, then draw a card. Activate only once each turn.

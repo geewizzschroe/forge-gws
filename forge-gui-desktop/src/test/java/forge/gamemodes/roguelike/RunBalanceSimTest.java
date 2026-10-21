@@ -17,7 +17,9 @@ import forge.gamemodes.roguelike.meta.CharacterDef;
 import forge.gamemodes.roguelike.meta.MetaProfile;
 import forge.gamemodes.roguelike.meta.ProgressText;
 import forge.gamemodes.roguelike.sim.MatchRecord;
+import forge.gamemodes.roguelike.sim.GreedyPolicy;
 import forge.gamemodes.roguelike.sim.RandomPolicy;
+import forge.gamemodes.roguelike.sim.RunPolicy;
 import forge.gamemodes.roguelike.sim.RunRecord;
 import forge.gamemodes.roguelike.sim.RunSimulator;
 import forge.gamemodes.roguelike.sim.SimReport;
@@ -29,6 +31,7 @@ import forge.gamemodes.roguelike.sim.SimReport;
  * xvfb-run -a mvn -pl forge-gui-desktop -am test -Dtest=RunBalanceSimTest -Dsurefire.failIfNoSpecifiedTests=false \
  *     -Droguelike.sim.runs=20 [-Droguelike.sim.fights=10] [-Droguelike.sim.starter=jill_mono_blue] \
  *     [-Droguelike.sim.rows=7] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true] [-Droguelike.sim.progress=true]
+ *     [-Droguelike.sim.policy=greedy]
  * </pre>
  *
  * The report and a CSV of every match are written to forge-gui-desktop/target/roguelike-sim/; with
@@ -44,6 +47,8 @@ public class RunBalanceSimTest extends AITest {
         RunSimulator sim = new RunSimulator(c);
         sim.setMatchTimeoutSeconds(90);
         RunRecord run = sim.simulateRun("jill_mono_blue", 1, new RandomPolicy(1));
+        RunRecord greedy = sim.simulateRun("lightning_rw", 2, new GreedyPolicy());
+        assertTrue(greedy.status != RunStatus.IN_PROGRESS);
         assertTrue(run.status != RunStatus.IN_PROGRESS);
         assertTrue(!run.matches.isEmpty());
         File logs = new File("target/roguelike-sim-smoke-logs");
@@ -86,7 +91,8 @@ public class RunBalanceSimTest extends AITest {
         List<RunRecord> records = new ArrayList<>();
         List<MatchRecord> all = new ArrayList<>();
         for (long seed = 1; seed <= runs; seed++) {
-            RunRecord r = sim.simulateRun(starter, seed, new RandomPolicy(seed));
+            RunPolicy policy = "greedy".equals(System.getProperty("roguelike.sim.policy")) ? new GreedyPolicy() : new RandomPolicy(seed);
+            RunRecord r = sim.simulateRun(starter, seed, policy);
             records.add(r);
             all.addAll(r.matches);
             System.out.println("sim run " + seed + "/" + runs + ": " + r.status + " after " + r.matches.size() + " matches");
