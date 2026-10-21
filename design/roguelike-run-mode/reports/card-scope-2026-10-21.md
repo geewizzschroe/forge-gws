@@ -18,7 +18,7 @@ How the scope grew on 2026-10-21:
 
 No exceptions have been added.
 
-Content cards outside the scope: 135 of 376 (counted once per file).
+Content cards outside the scope: 118 of 379 (counted once per file).
 Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 
 ## character jill (0 of 1 outside)
@@ -174,32 +174,35 @@ Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 - in  Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
 - OUT Hill Giant (30A, DPA, 10E, 9ED, 8ED, 7ED, ... 13 sets)
 
-## pool blue_core (17 of 24 outside)
+## pool blue_core (0 of 27 outside)
 
-- OUT Man-o'-War (DMR, J21, PLST, MH1, A25, EMA, ... 17 sets)
-- OUT Mulldrifter (SLZ, ECC, MKC, 2X2, J21, AFC, ... 25 sets)
-- in  Cloudkin Seer (J25, CLU, PLST, ANB, M20)
-- OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
-- OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
-- OUT Phantom Monster (30A, IMA, EMA, ME1, 5ED, 4ED, ... 10 sets)
-- OUT Merfolk Looter (AFC, HA5, PLST, A25, DDT, CN2, ... 14 sets)
-- in  Into the Roil (FDN, CMR, ZNR, C18, C17, C14, ... 8 sets)
-- OUT Repulse (OTP, WOC, GN3, PLST, CN2, JVC, ... 9 sets)
+- in  Pestermite (J25, J22, MMA, LRW)
+- in  Elementalist Adept (FDN)
+- in  Merfolk Pupil (J25, J22)
+- in  Frost Trickster (J25, STX, PLST)
+- in  Bigfin Bouncer (FDN)
+- in  Opt (TDC, J25, FDN, OTC, WOC, LTC, ... 17 sets)
 - in  Unsummon (FRA, FDN, 30A, ANB, M20, E02, ... 23 sets)
-- in  Counterspell (PF26, MAR, OMB, FCA, FDC, DSC, ... 48 sets)
-- OUT Preordain (SOA, PF26, TDC, MB2, OTC, WHO, ... 18 sets)
-- OUT Riftwing Cloudskate (TSR, PLST, JVC, DDM, MMA, DD2, ... 7 sets)
-- OUT Faerie Miscreant (M20, ORI)
-- OUT Sea Gate Oracle (GN3, KHC, PLST, JMP, C17, MM3, ... 9 sets)
-- OUT Frost Lynx (PLST, IKO, M20, BBD, IMA, M15)
-- in  Air Elemental (J25, 30A, PLST, ANB, M20, GNT, ... 29 sets)
-- OUT Mahamoti Djinn (30A, PLST, UMA, IMA, ORI, M15, ... 18 sets)
 - in  Essence Scatter (SOS, PIO, FDN, DMU, PLST, AKR, ... 14 sets)
-- OUT Exclude (CMM, PLST, JMP, MH1, A25, C14, ... 8 sets)
-- OUT Peel from Reality (CMR, PLST, JMP, DDO, M15, AVR, ... 7 sets)
-- OUT Glen Elendra Archmage (WOC, P30A, SLD, UMA, MMA, EVE)
-- OUT Coiling Oracle (BLC, RVR, DMC, 2X2, C21, CMR, ... 17 sets)
+- in  Think Twice (MSC, TDC, INR, FDN, OTC, WHO, ... 13 sets)
+- in  Vexing Gull (J25, THB)
+- in  Moonsnare Specialist (J25, NEO)
+- in  Ninja of the Deep Hours (J25, J21, TSR, PLST, SLD, C18, ... 10 sets)
+- in  Dragoon's Wyvern (FIN)
+- in  Muse Drake (J25, GRN)
+- in  Exclusion Mage (J25, FDN, JMP, M19)
+- in  Spectral Sailor (J25, FDN, LCC, J22, VOC, PLST, ... 8 sets)
+- in  Mischievous Mystic (FDN, PLST)
+- in  Quistis Trepe (FIN)
+- in  Eject (FIN)
+- in  Remand (J25, RVR, TSR, MM2, DDM, F08, ... 8 sets)
+- in  Faerie Vandal (J25, J22, SNC, ZNC, ELD)
+- in  Prosperous Thief (J25, NEO)
+- in  Summon: Shiva (FIN)
+- in  Aether Channeler (J25, BLC, DMU, SCH, PRM)
 - in  Venser, Shaper Savant (FCA, J25, 2X2, TSR, PLST, MM3, ... 8 sets)
+- in  Snapcaster Mage (FIC, INR, SIS, PR23, PLST, SLD, ... 12 sets)
+- in  Voracious Greatshark (J25, FDN, HBG, IKO, PRM)
 
 ## pool bucket_bounce (4 of 6 outside)
 
