@@ -6,6 +6,7 @@ import java.util.Map;
 
 import forge.StaticData;
 import forge.card.CardRules;
+import forge.card.ICardFace;
 import forge.card.MagicColor;
 import forge.deck.Deck;
 import forge.deck.DeckSection;
@@ -111,6 +112,24 @@ public final class BasicLandEscalation {
             }
         }
         return options.isEmpty() ? MagicColor.Constant.BASIC_LANDS : options;
+    }
+
+    /**
+     * For a choice made only of basic lands (a landless ramp card): just the ones in
+     * {@link #basicLandOptions(Player)}. Any other choice, or one with none of those, is returned unchanged.
+     */
+    public static List<ICardFace> limitBasicLandChoices(final Player player, final List<ICardFace> faces) {
+        List<String> allowed = basicLandOptions(player);
+        List<ICardFace> kept = new ArrayList<>();
+        for (ICardFace face : faces) {
+            if (!MagicColor.Constant.BASIC_LANDS.contains(face.getName())) {
+                return faces;
+            }
+            if (allowed.contains(face.getName())) {
+                kept.add(face);
+            }
+        }
+        return kept.isEmpty() ? faces : kept;
     }
 
     /** The turn-based action: conjure the player's chosen basic land if they are under the cap. */

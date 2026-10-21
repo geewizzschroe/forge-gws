@@ -19,6 +19,7 @@ import com.google.common.eventbus.Subscribe;
 import forge.ai.AITest;
 import forge.ai.LobbyPlayerAi;
 import forge.ai.PlayerControllerAi;
+import forge.card.ICardFace;
 import forge.deck.Deck;
 import forge.deck.DeckSection;
 import forge.game.ability.AbilityFactory;
@@ -147,6 +148,41 @@ public class BasicLandEscalationTest extends AITest {
             }
         });
         assertFalse("the player was asked", asked[0]);
+    }
+
+    @Test
+    public void rampChoicesFollowTheDecksColours() {
+        Game game = initAndCreateGame();
+        game.getRules().setConjureBasicLandEachTurn(true);
+        game.getRules().setMaxLandsPerPlayer(10);
+        Player p = game.getPlayers().get(1);
+        addCardToZone("Mulldrifter", p, ZoneType.Library);    // U
+        Card source = addCardToZone("Counterspell", p, ZoneType.Hand);
+        final List<String> asked = new ArrayList<>();
+        Runnable ramp = () -> {
+            SpellAbility sa = AbilityFactory.getAbility(
+                    "DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True", source);
+            sa.setActivatingPlayer(p);
+            AbilityUtils.resolve(sa);
+        };
+        PlayerControllerAi recording = new PlayerControllerAi(game, p, p.getLobbyPlayer()) {
+            @Override
+            public String chooseCardName(SpellAbility sa, List<ICardFace> faces, String message) {
+                List<String> names = new ArrayList<>();
+                for (ICardFace f : faces) {
+                    names.add(f.getName());
+                }
+                asked.add(names.toString());
+                return super.chooseCardName(sa, faces, message);
+            }
+        };
+        p.runWithController(ramp, recording);
+        assertEquals("a one-colour deck isn't asked", 0, asked.size());
+        assertEquals(1, countInZone(p, "Island", ZoneType.Battlefield));
+
+        addCardToZone("Savannah Lions", p, ZoneType.Library); // W
+        p.runWithController(ramp, recording);
+        assertEquals(List.of("[Plains, Island]"), asked);
     }
 
     @Test

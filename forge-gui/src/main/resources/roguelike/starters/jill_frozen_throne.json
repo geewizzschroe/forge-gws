@@ -1,6 +1,6 @@
 {
   "id": "jill_frozen_throne",
-  "name": "Jill: Frozen Throne (sample milestone deck)",
+  "name": "Jill: Frozen Throne",
   "commander": "Jill, Shiva's Dominant",
   "base": "wayfarers_camp.txt",
   "rewardPool": "frozen_core",

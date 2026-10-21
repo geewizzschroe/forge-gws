@@ -7,14 +7,14 @@
   "life": 30,
   "hand": 7,
   "deck": {
-    "Raging Goblin": 3,
-    "Goblin Piker": 3,
-    "Mogg Fanatic": 3,
-    "Goblin Raider": 3,
-    "Goblin Instigator": 3,
+    "Goblin Trailblazer": 3,
+    "Fanatical Firebrand": 3,
+    "Swab Goblin": 3,
+    "Boggart Brute": 3,
     "Beetleback Chief": 2,
+    "Goblin Arsonist": 3,
     "Lightning Bolt": 3,
-    "Searing Spear": 3,
-    "Hill Giant": 2
+    "Scorching Dragonfire": 3,
+    "Goblin Boarders": 2
   }
 }

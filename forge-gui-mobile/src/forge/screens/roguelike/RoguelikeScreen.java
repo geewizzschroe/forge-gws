@@ -25,6 +25,8 @@ import forge.gamemodes.roguelike.meta.MetaProfile;
 import forge.gamemodes.roguelike.meta.ProgressText;
 import forge.gamemodes.roguelike.meta.Progression;
 import forge.item.PaperCard;
+import forge.localinstance.properties.ForgePreferences;
+import forge.model.FModel;
 import forge.screens.FScreen;
 import forge.screens.home.NewGameMenu;
 import forge.toolbox.FButton;
@@ -275,8 +277,11 @@ public class RoguelikeScreen extends FScreen {
 
     private boolean showDebug;
 
-    /** Testing shortcuts, behind a toggle at the bottom of the list. */
+    /** Testing shortcuts, behind a toggle at the bottom of the list. Shown only with Forge's developer mode on. */
     private void addDebugTools(final Run run) {
+        if (!FModel.getPreferences().getPrefBoolean(ForgePreferences.FPref.DEV_MODE_ENABLED)) {
+            return;
+        }
         button(showDebug ? "Hide debug tools" : "Debug tools", e -> {
             showDebug = !showDebug;
             update();

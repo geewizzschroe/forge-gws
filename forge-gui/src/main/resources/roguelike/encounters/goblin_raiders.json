@@ -6,12 +6,12 @@
   "life": 16,
   "hand": 6,
   "deck": {
-    "Raging Goblin": 3,
-    "Goblin Piker": 3,
-    "Mogg Fanatic": 3,
-    "Goblin Raider": 3,
-    "Lightning Bolt": 2,
-    "Shock": 3,
-    "Hill Giant": 3
+    "Fanatical Firebrand": 3,
+    "Goblin Trailblazer": 3,
+    "Swab Goblin": 3,
+    "Boggart Brute": 3,
+    "Goblin Boarders": 3,
+    "Goblin Arsonist": 2,
+    "Shock": 3
   }
 }

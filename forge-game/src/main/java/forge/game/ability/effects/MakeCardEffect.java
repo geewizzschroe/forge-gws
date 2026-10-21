@@ -102,12 +102,19 @@ public class MakeCardEffect extends SpellAbilityEffect {
                     faces = filtered;
                     if (faces.isEmpty()) continue;
                 }
+                // landless play: a choice of basic lands offers only the deck's colours, and one colour needs no choice
+                final boolean deckColoursOnly = sa.hasParam("Choices") && game.getRules().isConjureBasicLandEachTurn();
+                if (deckColoursOnly) {
+                    faces = BasicLandEscalation.limitBasicLandChoices(player, faces);
+                }
                 int i = sa.hasParam("SpellbookAmount") ?
                         AbilityUtils.calculateAmount(source, sa.getParam("SpellbookAmount"), sa) : 1;
                 while (i > 0) {
                     String chosen;
                     if (sa.hasParam("AtRandom")) {
                         chosen = Aggregates.random(faces).getName();
+                    } else if (deckColoursOnly && faces.size() == 1) {
+                        chosen = faces.get(0).getName();
                     } else {
                         final String sbName = sa.hasParam("SpellbookName") ? sa.getParam("SpellbookName") :
                                 source.getTranslatedName();

@@ -6,13 +6,13 @@
   "life": 20,
   "hand": 7,
   "deck": {
-    "Walking Corpse": 3,
-    "Vampire Bats": 2,
-    "Gravedigger": 3,
-    "Dusk Legion Zealot": 3,
-    "Murder": 2,
-    "Mind Rot": 2,
     "Diregraf Ghoul": 3,
-    "Highborn Ghoul": 2
+    "Shambling Ghast": 3,
+    "Reassembling Skeleton": 2,
+    "Gravedigger": 3,
+    "Skeleton Archer": 3,
+    "Suspicious Shambler": 2,
+    "Murder": 2,
+    "Crow of Dark Tidings": 2
   }
 }
