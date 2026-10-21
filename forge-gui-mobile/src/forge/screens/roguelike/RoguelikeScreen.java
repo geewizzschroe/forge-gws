@@ -3,7 +3,6 @@ package forge.screens.roguelike;
 import java.util.ArrayList;
 import java.util.List;
 
-import forge.StaticData;
 import forge.assets.FSkinFont;
 import forge.card.CardZoom;
 import forge.gamemodes.roguelike.MapNode;
@@ -12,6 +11,8 @@ import forge.gamemodes.roguelike.OfferKind;
 import forge.gamemodes.roguelike.OfferOption;
 import forge.gamemodes.roguelike.RoguelikeController;
 import forge.gamemodes.roguelike.RoguelikeDebug;
+import forge.gamemodes.roguelike.RunPreview;
+import forge.gamemodes.roguelike.RunUpgrade;
 import forge.gamemodes.roguelike.Run;
 import forge.gamemodes.roguelike.RunStatus;
 import forge.gamemodes.roguelike.RunText;
@@ -177,14 +178,14 @@ public class RoguelikeScreen extends FScreen {
         }
 
         button("Look at your deck", e -> {
-            List<PaperCard> deck = new ArrayList<>();
-            deck.add(card(run.getState().commander));
+            List<Object> deck = new ArrayList<>();
+            deck.add(RunPreview.cardView(run, run.getState().commander, null));
             PaperCard base = run.getPlayerBase();
             if (base != null) {
                 deck.add(base);
             }
             for (String name : run.getState().deck.keySet()) {
-                deck.add(card(name));
+                deck.add(RunPreview.cardView(run, name, null));
             }
             CardZoom.show(deck, 0, null);
         });
@@ -205,7 +206,7 @@ public class RoguelikeScreen extends FScreen {
      * upgrade the one shown.
      */
     private void addCardViewer(final Run run, final Offer offer) {
-        final List<PaperCard> cards = new ArrayList<>();
+        final List<Object> cards = new ArrayList<>();
         final List<Integer> owner = new ArrayList<>();
         for (int i = 0; i < offer.options.size(); i++) {
             OfferOption o = offer.options.get(i);
@@ -217,7 +218,9 @@ public class RoguelikeScreen extends FScreen {
                 names.add(o.upgradeCard);
             }
             for (String name : names) {
-                cards.add(card(name));
+                // show the card as it would be after taking this option (its upgrade included)
+                RunUpgrade extra = name.equals(o.upgradeCard) ? o.upgrade : null;
+                cards.add(RunPreview.cardView(run, name, extra));
                 owner.add(i);
             }
         }
@@ -253,10 +256,6 @@ public class RoguelikeScreen extends FScreen {
             }
         };
         button("Look at the cards", e -> CardZoom.show(cards, 0, handler));
-    }
-
-    private static PaperCard card(final String name) {
-        return StaticData.instance().getCommonCards().getCard(name);
     }
 
     /** Run a step of the run, save, and redraw. */

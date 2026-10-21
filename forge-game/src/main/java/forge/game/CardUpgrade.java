@@ -57,7 +57,11 @@ public record CardUpgrade(int power, int toughness, List<String> keywords) {
     }
 
     public void applyTo(final Card c) {
-        final long timestamp = c.getGame().getNextTimestamp();
+        applyTo(c, c.getGame().getNextTimestamp());
+    }
+
+    /** Apply with a given timestamp, for cards outside a game (previews). */
+    public void applyTo(final Card c, final long timestamp) {
         if (power != 0 || toughness != 0) {
             add(c, new PerpetualPTBoost(timestamp, power, toughness));
         }
