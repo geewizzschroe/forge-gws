@@ -2,6 +2,7 @@
   "id": "goblin_raiders",
   "name": "Goblin Raiders",
   "minRow": 0,
+  "base": "raider_camp.txt",
   "life": 16,
   "hand": 6,
   "deck": {

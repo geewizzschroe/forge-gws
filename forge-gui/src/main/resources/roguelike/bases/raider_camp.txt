@@ -1,0 +1,5 @@
+Name:Raider Camp
+ManaCost:no cost
+Types:Base
+S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.Goblin+YouCtrl | AddKeyword$ Haste | Description$ Goblins you control have haste.
+Oracle:Goblins you control have haste.

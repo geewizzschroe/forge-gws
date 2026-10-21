@@ -72,6 +72,21 @@ public class RoguelikeContentTest extends AITest {
     }
 
     @Test
+    public void raiderCampGivesGoblinsHaste() {
+        forge.game.Game game = initAndCreateGame();
+        forge.game.player.Player p = game.getPlayers().get(1);
+        RoguelikeContent c = RoguelikeContent.load();
+        forge.game.card.Card camp = forge.game.card.Card.fromPaperCard(
+                BaseCard.fromScript(c.getBase(c.getEncounter("goblin_raiders").base)), p);
+        p.getZone(forge.game.zone.ZoneType.Command).add(camp);
+        forge.game.card.Card goblin = addCard("Goblin Piker", p);
+        forge.game.card.Card giant = addCard("Hill Giant", p);
+        game.getAction().checkStateEffects(true);
+        assertTrue(goblin.hasKeyword(forge.game.keyword.Keyword.HASTE));
+        assertFalse(giant.hasKeyword(forge.game.keyword.Keyword.HASTE));
+    }
+
+    @Test
     public void overridesParseAsTheCardsTheyReplace() {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();

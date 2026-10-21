@@ -1,6 +1,7 @@
 bases/goblin_warren.txt
 bases/mountain_pass.txt
 bases/open_graves.txt
+bases/raider_camp.txt
 bases/wayfarers_camp.txt
 config.json
 encounters/boss_krenko.json
