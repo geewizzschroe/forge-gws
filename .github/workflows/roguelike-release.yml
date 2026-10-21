@@ -1,0 +1,74 @@
+# Builds the run-mode prototype and publishes it as a GitHub release of this fork.
+# Push a tag starting with "roguelike-" to run it, for example: git tag roguelike-v0.1 && git push origin roguelike-v0.1
+name: Roguelike release
+
+on:
+  push:
+    tags:
+      - 'roguelike-*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Android tools
+        run: |
+          JAVA_HOME=${JAVA_HOME_17_X64} ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --install "build-tools;35.0.0" "platform-tools" "platforms;android-35"
+
+      - name: Install the Android maven plugin
+        run: |
+          D=~/.m2/repository/com/simpligility/maven/plugins/android-maven-plugin/4.6.2
+          mkdir -p $D
+          curl -fL -o $D/android-maven-plugin-4.6.2.jar https://github.com/Card-Forge/android-maven-plugin/releases/download/4.6.2/android-maven-plugin-4.6.2.jar
+          curl -fL -o $D/android-maven-plugin-4.6.2.pom https://github.com/Card-Forge/android-maven-plugin/releases/download/4.6.2/android-maven-plugin-4.6.2.pom
+
+      - name: Build the Android app (debug-signed, installs as "Forge (dev)")
+        run: |
+          export _JAVA_OPTIONS="-Xmx4g"
+          mvn -B -P android-dev-build verify -pl forge-gui-android -am -Dandroid.sdk.path=$ANDROID_SDK_ROOT -Dandroid.buildToolsVersion=35.0.0 -Dmaven.test.skip=true
+
+      - name: Build the PC app
+        run: |
+          export _JAVA_OPTIONS="-Xmx4g"
+          mvn -B package -pl forge-gui-mobile-dev -am -Dmaven.test.skip=true
+
+      - name: Package
+        run: |
+          mkdir upload
+          cp forge-gui-android/target/*aligned-debugSigned.apk upload/forge-roguelike-${GITHUB_REF_NAME}.apk
+
+          P=forge-roguelike-pc
+          mkdir $P
+          cp forge-gui-mobile-dev/target/forge-gui-mobile-dev-*-jar-with-dependencies.jar $P/forge.jar
+          cp -r forge-gui/res $P/res
+          printf '#!/bin/sh\ncd "$(dirname "$0")"\nexec java -Xmx4g -jar forge.jar width=1280 height=720 landscape\n' > $P/run.sh
+          chmod +x $P/run.sh
+          printf '@echo off\r\ncd /d "%%~dp0"\r\njava -Xmx4g -jar forge.jar width=1280 height=720 landscape\r\n' > $P/run.bat
+          printf 'Forge with the roguelike run mode (prototype).\n\nNeeds Java 17 or newer (for example from https://adoptium.net).\nWindows: double-click run.bat. Mac/Linux: run ./run.sh\nIn the app: New Game, then Roguelike Run.\n' > $P/README.txt
+          zip -qr upload/forge-roguelike-pc-${GITHUB_REF_NAME}.zip $P
+          ls -la upload
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: true
+          name: Roguelike run mode ${{ github.ref_name }}
+          body: |
+            A prototype of the roguelike run mode built on Forge.
+
+            - **Android:** `forge-roguelike-${{ github.ref_name }}.apk` installs as "Forge (dev)", beside the official Forge app. It is debug-signed.
+            - **PC:** unzip `forge-roguelike-pc-${{ github.ref_name }}.zip`, then run `run.bat` (Windows) or `run.sh` (Mac/Linux). Needs Java 17 or newer.
+            - In the app: New Game, then Roguelike Run.
+          files: upload/*
