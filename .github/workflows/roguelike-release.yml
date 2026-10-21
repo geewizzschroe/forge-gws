@@ -1,11 +1,16 @@
 # Builds the run-mode prototype and publishes it as a GitHub release of this fork.
-# Push a tag starting with "roguelike-" to run it, for example: git tag roguelike-v0.1 && git push origin roguelike-v0.1
+# To release, either change the version in .github/roguelike-release.txt on any branch (the release
+# is tagged roguelike-<version>), or push a tag starting with "roguelike-".
 name: Roguelike release
 
 on:
   push:
+    branches:
+      - '**'
     tags:
       - 'roguelike-*'
+    paths:
+      - '.github/roguelike-release.txt'
 
 permissions:
   contents: write
@@ -15,6 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Release name
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then TAG="$GITHUB_REF_NAME"; else TAG="roguelike-$(tr -d '[:space:]' < .github/roguelike-release.txt)"; fi
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -47,7 +57,7 @@ jobs:
       - name: Package
         run: |
           mkdir upload
-          cp forge-gui-android/target/*aligned-debugSigned.apk upload/forge-roguelike-${GITHUB_REF_NAME}.apk
+          cp forge-gui-android/target/*aligned-debugSigned.apk upload/forge-roguelike-${TAG}.apk
 
           P=forge-roguelike-pc
           mkdir $P
@@ -57,18 +67,20 @@ jobs:
           chmod +x $P/run.sh
           printf '@echo off\r\ncd /d "%%~dp0"\r\njava -Xmx4g -jar forge.jar width=1280 height=720 landscape\r\n' > $P/run.bat
           printf 'Forge with the roguelike run mode (prototype).\n\nNeeds Java 17 or newer (for example from https://adoptium.net).\nWindows: double-click run.bat. Mac/Linux: run ./run.sh\nIn the app: New Game, then Roguelike Run.\n' > $P/README.txt
-          zip -qr upload/forge-roguelike-pc-${GITHUB_REF_NAME}.zip $P
+          zip -qr upload/forge-roguelike-pc-${TAG}.zip $P
           ls -la upload
 
       - name: Publish the release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.TAG }}
+          target_commitish: ${{ github.sha }}
           prerelease: true
-          name: Roguelike run mode ${{ github.ref_name }}
+          name: Roguelike run mode ${{ env.TAG }}
           body: |
             A prototype of the roguelike run mode built on Forge.
 
-            - **Android:** `forge-roguelike-${{ github.ref_name }}.apk` installs as "Forge (dev)", beside the official Forge app. It is debug-signed.
-            - **PC:** unzip `forge-roguelike-pc-${{ github.ref_name }}.zip`, then run `run.bat` (Windows) or `run.sh` (Mac/Linux). Needs Java 17 or newer.
+            - **Android:** `forge-roguelike-${{ env.TAG }}.apk` installs as "Forge (dev)", beside the official Forge app. It is debug-signed.
+            - **PC:** unzip `forge-roguelike-pc-${{ env.TAG }}.zip`, then run `run.bat` (Windows) or `run.sh` (Mac/Linux). Needs Java 17 or newer.
             - In the app: New Game, then Roguelike Run.
           files: upload/*
