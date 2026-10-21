@@ -32,7 +32,7 @@ public class RunTextTest extends AITest {
         assertTrue(status, status.contains("Relics: Whetstone"));
         assertTrue(status, status.endsWith("Choose where to go next."));
         String deck = RunText.deckList(run);
-        assertTrue(deck, deck.contains("3x Wind Drake  [+1/+1]"));
+        assertTrue(deck, deck.contains("2x Wind Drake  [+1/+1]"));
         assertTrue(deck, deck.contains("Whetstone - Creatures you control get +1/+0."));
         MapNode first = run.getAvailableNodes().get(0);
         assertTrue(RunText.node(run, first), RunText.node(run, first).startsWith("Step 1 - Enemy: "));

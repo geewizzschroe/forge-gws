@@ -1562,7 +1562,8 @@ public class GameAction {
 
                 if ((game.getRules().hasAppliedVariant(GameType.Commander)
                         || game.getRules().hasAppliedVariant(GameType.Brawl)
-                        || game.getRules().hasAppliedVariant(GameType.Planeswalker)) && !checkAgain) {
+                        || game.getRules().hasAppliedVariant(GameType.Planeswalker)
+                        || game.getRules().getGameType() == GameType.Roguelike) && !checkAgain) {
                     for (final Card c : p.getCardsIn(ZoneType.Graveyard).threadSafeIterable()) {
                         checkAgain |= stateBasedAction_Commander(c, mapParams);
                     }
