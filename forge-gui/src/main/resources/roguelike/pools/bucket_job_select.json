@@ -1,0 +1,6 @@
+{
+  "id": "bucket_job_select",
+  "name": "Job Select!",
+  "bucket": true,
+  "cards": ["Paladin's Arms", "White Mage's Staff", "Dragoon's Lance", "Dancer's Chakrams", "Red Mage's Rapier", "Samurai's Katana", "Warrior's Sword", "Monk's Fist"]
+}

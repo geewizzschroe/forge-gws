@@ -18,7 +18,7 @@ How the scope grew on 2026-10-21:
 
 No exceptions have been added.
 
-Content cards outside the scope: 135 of 347 (counted once per file).
+Content cards outside the scope: 135 of 376 (counted once per file).
 Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 
 ## character jill (0 of 1 outside)
@@ -210,6 +210,16 @@ Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 - OUT Peel from Reality (CMR, PLST, JMP, DDO, M15, AVR, ... 7 sets)
 - OUT Aethersnipe (2X2, PLST, UMA, MM2, JVC, MMA, ... 9 sets)
 
+## pool bucket_burn (0 of 7 outside)
+
+- in  Shock (MSC, SPM, MAR, OMB, OM1, J25, ... 30 sets)
+- in  Lightning Bolt (SLZ, MSC, SOS, PW26, TLE, FCA, ... 42 sets)
+- in  Burst Lightning (SOA, PW26, FDN, PLST, MM2, P10, ... 8 sets)
+- in  Thunder Magic (FIN)
+- in  Scorching Dragonfire (FDN, DSK, J22, AJMP, M21, ELD)
+- in  Suplex (FIN)
+- in  Obliterating Bolt (FDN, BRO)
+
 ## pool bucket_fliers (5 of 7 outside)
 
 - OUT Wind Drake (PLST, KLD, TPR, DGM, M13, M10, ... 14 sets)
@@ -219,6 +229,37 @@ Scope sets: [FIN, FCA, FIC, RFIN, FDN, FDC, J25, PFDN]. Exceptions: [].
 - OUT Phantom Monster (30A, IMA, EMA, ME1, 5ED, 4ED, ... 10 sets)
 - OUT Mahamoti Djinn (30A, PLST, UMA, IMA, ORI, M15, ... 18 sets)
 - OUT Faerie Miscreant (M20, ORI)
+
+## pool bucket_haste (0 of 7 outside)
+
+- in  Brazen Scourge (FDN, UMA, KLD)
+- in  Daybreak Combatants (J25, DBL, VOW)
+- in  Fanatical Firebrand (J25, FDN, J22, JMP, RIX)
+- in  Goblin Smuggler (J25, FDN, M20)
+- in  Voldaren Duelist (INR, J25, PLST, GN2, SOI)
+- in  Ahn-Crop Crasher (J25, PLST, AKR, AKH)
+- in  Prompto Argentum (FIN)
+
+## pool bucket_job_select (0 of 8 outside)
+
+- in  Paladin's Arms (FIN)
+- in  White Mage's Staff (FIN)
+- in  Dragoon's Lance (FIN)
+- in  Dancer's Chakrams (FIC)
+- in  Red Mage's Rapier (FIN)
+- in  Samurai's Katana (FIN)
+- in  Warrior's Sword (FIN)
+- in  Monk's Fist (FIN)
+
+## pool bucket_party (0 of 7 outside)
+
+- in  Aerith Rescue Mission (FIN)
+- in  Battle Menu (FIN)
+- in  Raise the Alarm (J25, CMR, PLST, JMP, M20, CN2, ... 13 sets)
+- in  Resolute Reinforcements (FDN, DMU, PLST)
+- in  Dwarven Castle Guard (FIN)
+- in  Magitek Armor (FIN)
+- in  Release the Dogs (TDC, FDN, PLST, JMP)
 
 ## pool bucket_ramp (4 of 6 outside)
 

@@ -1,0 +1,6 @@
+{
+  "id": "bucket_burn",
+  "name": "Thunder & Fire",
+  "bucket": true,
+  "cards": ["Shock", "Lightning Bolt", "Burst Lightning", "Thunder Magic", "Scorching Dragonfire", "Suplex", "Obliterating Bolt"]
+}

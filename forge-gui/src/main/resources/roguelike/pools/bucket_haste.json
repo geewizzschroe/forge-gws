@@ -1,0 +1,6 @@
+{
+  "id": "bucket_haste",
+  "name": "Charge!",
+  "bucket": true,
+  "cards": ["Brazen Scourge", "Daybreak Combatants", "Fanatical Firebrand", "Goblin Smuggler", "Voldaren Duelist", "Ahn-Crop Crasher", "Prompto Argentum"]
+}

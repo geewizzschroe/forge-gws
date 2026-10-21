@@ -26,7 +26,11 @@ overrides/three_visits.txt
 overrides/wood_elves.txt
 pools/blue_core.json
 pools/bucket_bounce.json
+pools/bucket_burn.json
 pools/bucket_fliers.json
+pools/bucket_haste.json
+pools/bucket_job_select.json
+pools/bucket_party.json
 pools/bucket_ramp.json
 pools/frozen_core.json
 pools/rw_core.json

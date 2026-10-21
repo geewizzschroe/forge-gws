@@ -217,9 +217,25 @@ public class RunTest extends AITest {
     }
 
     @Test
+    public void lightningIsOfferedRedAndWhiteBuckets() {
+        RoguelikeContent c = content();
+        Offer offer = bucketReward(c, "lightning_rw", 0);
+        assertEquals(3, offer.options.size());
+        for (OfferOption o : offer.options) {
+            assertFalse(o.label, o.label.contains("(splash)"));
+            for (String card : o.cards.keySet()) {
+                byte identity = StaticData.instance().getCommonCards().getCard(card).getRules().getColorIdentity().getColor();
+                assertEquals(card + " is outside red-white", 0, identity & ~(MagicColor.RED | MagicColor.WHITE));
+            }
+        }
+    }
+
+    @Test
     public void withNoBucketInTheRunsColoursTheRewardIsSingleCards() {
         RoguelikeContent c = content();
-        Offer offer = bucketReward(c, "lightning_rw", 0); // the current buckets are all blue or green
+        // keep only the blue and green buckets
+        c.getPools().values().removeIf(p -> p.bucket && !List.of("bucket_fliers", "bucket_bounce", "bucket_ramp").contains(p.id));
+        Offer offer = bucketReward(c, "lightning_rw", 0);
         assertFalse(offer.options.isEmpty());
         for (OfferOption o : offer.options) {
             assertNull(o.label);
@@ -231,7 +247,13 @@ public class RunTest extends AITest {
     public void anOffColourBucketIsOfferedAsASplash() {
         RoguelikeContent c = content();
         Offer offer = bucketReward(c, "lightning_rw", 1);
-        assertEquals(1, offer.options.size());
-        assertTrue(offer.options.get(0).label, offer.options.get(0).label.endsWith("(splash)"));
+        assertEquals(3, offer.options.size());
+        int splashes = 0;
+        for (OfferOption o : offer.options) {
+            if (o.label.endsWith("(splash)")) {
+                splashes++;
+            }
+        }
+        assertEquals("one of the three is a splash", 1, splashes);
     }
 }
