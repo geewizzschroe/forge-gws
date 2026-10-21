@@ -339,23 +339,39 @@ public class Run {
     private Offer makeCardRewardOffer() {
         RunConfig cfg = content.getConfig();
         Random rnd = state.nextRandom();
-        List<CardPoolDef> buckets = new ArrayList<>();
+        byte colours = runColours();
+        List<CardPoolDef> onColour = new ArrayList<>();
+        List<CardPoolDef> offColour = new ArrayList<>();
         for (CardPoolDef p : content.getPools().values()) {
             if (p.bucket && (!p.locked || state.unlockedPools.contains(p.id))) {
-                buckets.add(p);
+                if ((colourIdentity(p.cards) & ~colours) == 0) {
+                    onColour.add(p);
+                } else {
+                    offColour.add(p);
+                }
             }
         }
         Offer offer = new Offer(OfferKind.CARD_REWARD, true);
-        if (!buckets.isEmpty() && rnd.nextDouble() < cfg.bucketRewardChance) {
-            for (CardPoolDef b : pick(buckets, cfg.bucketRewardChoices, rnd)) {
+        if (rnd.nextDouble() < cfg.bucketRewardChance) {
+            // buckets in the run's colours, plus now and then one off-colour or mixed-colour bucket to splash
+            List<CardPoolDef> offered = new ArrayList<>();
+            List<CardPoolDef> splash = new ArrayList<>();
+            if (!offColour.isEmpty() && rnd.nextDouble() < cfg.offColourBucketChance) {
+                splash.addAll(pick(offColour, 1, rnd));
+            }
+            offered.addAll(pick(onColour, cfg.bucketRewardChoices - splash.size(), rnd));
+            offered.addAll(splash);
+            for (CardPoolDef b : offered) {
                 OfferOption o = new OfferOption();
-                o.label = b.name;
+                o.label = splash.contains(b) ? b.name + " (splash)" : b.name;
                 for (String c : pickAllowingRepeats(b.cards, cfg.bucketRewardCards, rnd)) {
                     o.cards.merge(c, 1, Integer::sum);
                 }
                 offer.options.add(o);
             }
-            return offer;
+            if (!offer.options.isEmpty()) {
+                return offer;
+            }
         }
         for (String c : pick(rewardPool(), cfg.cardRewardChoices, rnd)) {
             OfferOption o = new OfferOption();
@@ -437,6 +453,24 @@ public class Run {
         List<String> pool = new ArrayList<>(starter.rewardPool == null ? state.deck.keySet() : content.getPool(starter.rewardPool).cards);
         pool.addAll(state.extraRewardCards);
         return pool;
+    }
+
+    /** The run's colours: the colour identity of the commander and every card in the deck. */
+    byte runColours() {
+        List<String> names = new ArrayList<>(state.deck.keySet());
+        names.add(state.commander);
+        return colourIdentity(names);
+    }
+
+    private static byte colourIdentity(final Iterable<String> names) {
+        byte colours = 0;
+        for (String name : names) {
+            PaperCard pc = name == null ? null : StaticData.instance().getCommonCards().getCard(name);
+            if (pc != null) {
+                colours |= pc.getRules().getColorIdentity().getColor();
+            }
+        }
+        return colours;
     }
 
     private List<String> unownedRelics() {

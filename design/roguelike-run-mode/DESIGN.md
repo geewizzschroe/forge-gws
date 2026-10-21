@@ -41,6 +41,7 @@ What makes it different from other Forge modes:
 - Node types named so far: **Enemy**, **Boss**, **Shop**, **Rest** (restore health), **Cut a card**, **Upgrade a card**.
 - Selecting an Enemy node means playing a match against it.
 - After a match: pick **1 of 3 cards** (adds **2 copies**) **or 1 of 3 buckets** (3 randomly selected cards from a themed pool, e.g. "Goblins!", "Big Sorceries", "Green Staples").
+  - **Bucket colours** (decided 2026-10-21): buckets offered are within the run's colours (the colour identity of the commander and the current deck; colourless buckets always qualify). Now and then (`offColourBucketChance`, PLACEHOLDER 25%) one slot holds an off-colour or mixed-colour bucket, labelled "(splash)", to tempt a splash. Taking it adds that colour to the deck, so the land picker then offers it too. If no bucket can be offered, the reward is single cards instead.
 - Continue from the node just played. Repeat until the only available node is the Boss.
 - Beating the Boss gives a big reward and either moves to a new, harder "floor" or ends the run. **Deferred.**
 - There is no manual deck editing anywhere in the mode.

@@ -18,6 +18,7 @@ testable. Replace it freely.
 - `encounters/`: enemies and bosses (deck, optional commander, Base, life, hand size, earliest map row).
 - `relics/`: relics. `script` lines are added to the player's Base each match; prefix SVar names with the relic id.
 - `pools/`: card lists. `"bucket": true` makes a themed bucket that can be offered as a reward.
+  A bucket is offered only if its cards' colour identity is within the run's colours, except for an occasional "(splash)" slot (`offColourBucketChance` in `config.json`).
 - `bases/`: Base card scripts (type line `Types:Base`). Abilities used from the command zone need
   `ActivationZone$ Command`, triggers `TriggerZones$ Command`, statics `EffectZone$ Command`.
 - `overrides/`: landless versions of ramp cards, used instead of the printed card in every match of the mode.

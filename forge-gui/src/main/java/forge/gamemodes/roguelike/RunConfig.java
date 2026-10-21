@@ -20,6 +20,9 @@ public class RunConfig {
     public int bucketRewardCards = 3;
     // PLACEHOLDER: how often a reward is a choice of buckets instead of single cards (when buckets exist).
     public double bucketRewardChance = 0.3;
+    // PLACEHOLDER: chance that a bucket offer includes one bucket outside the run's colours (a splash).
+    // Other buckets offered are always within the run's colours.
+    public double offColourBucketChance = 0.25;
 
     // PLACEHOLDER: D1 floors. 1 means beating the boss wins the run.
     public int floors = 1;

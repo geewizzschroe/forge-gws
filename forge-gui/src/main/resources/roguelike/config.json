@@ -8,6 +8,7 @@
   "bucketRewardChoices": 3,
   "bucketRewardCards": 3,
   "bucketRewardChance": 0.3,
+  "offColourBucketChance": 0.25,
   "floors": 1,
   "mapRows": 7,
   "mapColumns": 4,

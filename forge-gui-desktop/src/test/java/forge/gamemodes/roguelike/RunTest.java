@@ -13,7 +13,9 @@ import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
 
+import forge.StaticData;
 import forge.ai.AITest;
+import forge.card.MagicColor;
 
 /** The run's rules, one step at a time, on small hand-made maps. */
 public class RunTest extends AITest {
@@ -25,7 +27,11 @@ public class RunTest extends AITest {
 
     /** A straight line of nodes of the given types, ending in the boss. */
     private Run runWithPath(RoguelikeContent c, NodeType... types) {
-        Run run = Run.start(c, "jill_mono_blue", 7);
+        return runWithPath(c, "jill_mono_blue", types);
+    }
+
+    private Run runWithPath(RoguelikeContent c, String starter, NodeType... types) {
+        Run run = Run.start(c, starter, 7);
         RunMap map = new RunMap();
         for (int i = 0; i <= types.length; i++) {
             MapNode n = new MapNode();
@@ -184,5 +190,48 @@ public class RunTest extends AITest {
         assertEquals(gson.toJson(run.getState()), gson.toJson(loaded.getState()));
         assertNotNull(loaded.getActiveEncounter());
         assertTrue(loaded.getAvailableNodes().isEmpty());
+    }
+
+    /** The reward offered after winning the first fight, with every reward a bucket offer. */
+    private Offer bucketReward(RoguelikeContent c, String starter, double offColourChance) {
+        c.getConfig().bucketRewardChance = 1;
+        c.getConfig().offColourBucketChance = offColourChance;
+        Run run = runWithPath(c, starter, NodeType.ENEMY);
+        run.enterNode(0);
+        run.applyMatchResult(run.getActiveEncounter(), true, 20);
+        return run.getState().offer;
+    }
+
+    @Test
+    public void bucketRewardsStayInTheRunsColours() {
+        RoguelikeContent c = content();
+        Offer offer = bucketReward(c, "jill_mono_blue", 0);
+        assertFalse(offer.options.isEmpty());
+        for (OfferOption o : offer.options) {
+            assertFalse(o.label, o.label.contains("(splash)"));
+            for (String card : o.cards.keySet()) {
+                byte identity = StaticData.instance().getCommonCards().getCard(card).getRules().getColorIdentity().getColor();
+                assertEquals(card + " is outside blue", 0, identity & ~MagicColor.BLUE);
+            }
+        }
+    }
+
+    @Test
+    public void withNoBucketInTheRunsColoursTheRewardIsSingleCards() {
+        RoguelikeContent c = content();
+        Offer offer = bucketReward(c, "lightning_rw", 0); // the current buckets are all blue or green
+        assertFalse(offer.options.isEmpty());
+        for (OfferOption o : offer.options) {
+            assertNull(o.label);
+            assertEquals(1, o.cards.size());
+        }
+    }
+
+    @Test
+    public void anOffColourBucketIsOfferedAsASplash() {
+        RoguelikeContent c = content();
+        Offer offer = bucketReward(c, "lightning_rw", 1);
+        assertEquals(1, offer.options.size());
+        assertTrue(offer.options.get(0).label, offer.options.get(0).label.endsWith("(splash)"));
     }
 }
