@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.testng.annotations.Test;
@@ -139,6 +140,21 @@ public class RoguelikeContentTest extends AITest {
                     }
                 }
             }
+        }
+    }
+
+    @Test
+    public void enemyDecksFollowTheirShape() {
+        // DESIGN.md, enemy decks: 40 cards (bosses 60), 2 to 4 copies of each card, commanders only for bosses
+        RoguelikeContent c = RoguelikeContent.load();
+        for (EncounterDef e : c.getEncounters().values()) {
+            int total = 0;
+            for (Map.Entry<String, Integer> card : e.deck.entrySet()) {
+                assertTrue(e.id + ": copies of " + card.getKey(), card.getValue() >= 2 && card.getValue() <= 4);
+                total += card.getValue();
+            }
+            assertEquals(e.id + ": deck size", e.boss ? 60 : 40, total);
+            assertEquals(e.id + ": commander", e.boss, e.commander != null);
         }
     }
 }

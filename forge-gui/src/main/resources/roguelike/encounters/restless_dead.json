@@ -6,13 +6,22 @@
   "life": 20,
   "hand": 7,
   "deck": {
-    "Diregraf Ghoul": 3,
     "Shambling Ghast": 3,
-    "Reassembling Skeleton": 2,
-    "Gravedigger": 3,
     "Skeleton Archer": 3,
+    "Crow of Dark Tidings": 3,
+    "Wailing Ghoul": 3,
     "Suspicious Shambler": 2,
+    "Hungry Ghoul": 2,
+    "Crypt Feaster": 2,
+    "Soul-Shackled Zombie": 2,
+    "Moment of Craving": 2,
     "Murder": 2,
-    "Crow of Dark Tidings": 2
+    "Diregraf Ghoul": 3,
+    "Gravedigger": 3,
+    "Reassembling Skeleton": 2,
+    "Lord of the Accursed": 2,
+    "Maalfeld Twins": 2,
+    "Cemetery Reaper": 2,
+    "Liliana's Mastery": 2
   }
 }

@@ -55,7 +55,7 @@ public final class RunMatchFactory {
         if (encounter.commander != null) {
             enemy.assignCommander();
         }
-        enemy.setStartingLife(encounter.life);
+        enemy.setStartingLife(run.enemyLife(encounter, run.getActiveNode()));
         enemy.setStartingHand(encounter.hand);
         enemy.setBase(run.getEncounterBase(encounter));
         enemy.setPlayer(enemyPlayer);

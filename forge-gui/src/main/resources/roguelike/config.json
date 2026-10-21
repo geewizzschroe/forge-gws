@@ -30,6 +30,7 @@
   "upgradeChoices": 3,
   "rewardUpgradeChance": 0.25,
   "bossRelicChoices": 3,
+  "enemyLifePerRow": 1,
   "cardScopeSets": ["FIN", "FCA", "FIC", "RFIN", "FDN", "FDC", "J25", "PFDN"],
   "cardScopeExceptions": []
 }

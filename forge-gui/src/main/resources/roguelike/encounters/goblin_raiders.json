@@ -6,12 +6,21 @@
   "life": 16,
   "hand": 6,
   "deck": {
+    "Swab Goblin": 4,
     "Fanatical Firebrand": 3,
     "Goblin Trailblazer": 3,
-    "Swab Goblin": 3,
     "Boggart Brute": 3,
     "Goblin Boarders": 3,
     "Goblin Arsonist": 2,
-    "Shock": 3
+    "Mogg Flunkies": 2,
+    "Raging Redcap": 2,
+    "Shock": 3,
+    "Burst Lightning": 2,
+    "Battle Cry Goblin": 3,
+    "Frenzied Goblin": 2,
+    "Volley Veteran": 2,
+    "Abrade": 2,
+    "Searslicer Goblin": 2,
+    "Goblin Rabblemaster": 2
   }
 }

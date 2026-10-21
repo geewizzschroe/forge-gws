@@ -7,14 +7,27 @@
   "life": 30,
   "hand": 7,
   "deck": {
-    "Goblin Trailblazer": 3,
+    "Goblin Trailblazer": 4,
+    "Shock": 4,
     "Fanatical Firebrand": 3,
     "Swab Goblin": 3,
     "Boggart Brute": 3,
-    "Beetleback Chief": 2,
+    "Goblin Boarders": 3,
     "Goblin Arsonist": 3,
+    "Raging Redcap": 3,
+    "Mogg Flunkies": 3,
     "Lightning Bolt": 3,
     "Scorching Dragonfire": 3,
-    "Goblin Boarders": 2
+    "Beetleback Chief": 3,
+    "Battle Cry Goblin": 3,
+    "Frenzied Goblin": 2,
+    "General Kreat, the Boltbringer": 2,
+    "Volley Veteran": 3,
+    "Abrade": 2,
+    "Goblin Rabblemaster": 2,
+    "Dropkick Bomber": 2,
+    "Searslicer Goblin": 2,
+    "Krenko, Tin Street Kingpin": 2,
+    "Goblin Goliath": 2
   }
 }

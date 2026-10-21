@@ -6,13 +6,21 @@
   "life": 16,
   "hand": 6,
   "deck": {
-    "Axgard Cavalry": 3,
-    "Dwarven Castle Guard": 3,
-    "Giott, King of the Dwarves": 2,
-    "Shock": 3,
-    "Coeurl": 2,
+    "Axgard Cavalry": 4,
+    "Dwarven Castle Guard": 4,
     "Warrior's Sword": 3,
+    "Paladin's Arms": 2,
+    "Coeurl": 2,
+    "Daybreak Combatants": 2,
+    "Raise the Alarm": 3,
+    "Shock": 3,
     "Suplex": 2,
-    "Daybreak Combatants": 2
+    "Giott, King of the Dwarves": 2,
+    "Samurai's Katana": 2,
+    "Dragoon's Lance": 2,
+    "Lion Heart": 2,
+    "Battle Menu": 3,
+    "Sram, Senior Edificer": 2,
+    "Machinist's Arsenal": 2
   }
 }
