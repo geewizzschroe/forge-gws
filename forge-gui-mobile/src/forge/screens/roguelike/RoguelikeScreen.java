@@ -11,6 +11,7 @@ import forge.gamemodes.roguelike.Offer;
 import forge.gamemodes.roguelike.OfferKind;
 import forge.gamemodes.roguelike.OfferOption;
 import forge.gamemodes.roguelike.RoguelikeController;
+import forge.gamemodes.roguelike.RoguelikeDebug;
 import forge.gamemodes.roguelike.Run;
 import forge.gamemodes.roguelike.RunStatus;
 import forge.gamemodes.roguelike.RunText;
@@ -99,6 +100,7 @@ public class RoguelikeScreen extends FScreen {
         }
         if (run == null) {
             showRunStart();
+            addDebugTools(null);
             revalidate();
             return;
         }
@@ -111,6 +113,7 @@ public class RoguelikeScreen extends FScreen {
                 update();
             });
             text("Run log:\n" + String.join("\n", run.getState().log));
+            addDebugTools(run);
             revalidate();
             return;
         }
@@ -193,6 +196,7 @@ public class RoguelikeScreen extends FScreen {
                         update();
                     }
                 }));
+        addDebugTools(run);
         revalidate();
     }
 
@@ -266,6 +270,63 @@ public class RoguelikeScreen extends FScreen {
         ctrl().save();
         update();
         showMessages();
+    }
+
+    // ---------------------------------------------------------------- debug tools
+
+    private boolean showDebug;
+
+    /** Testing shortcuts, behind a toggle at the bottom of the list. */
+    private void addDebugTools(final Run run) {
+        button(showDebug ? "Hide debug tools" : "Debug tools", e -> {
+            showDebug = !showDebug;
+            update();
+        });
+        if (!showDebug) {
+            return;
+        }
+        RoguelikeContent content = ctrl().getContent();
+        MetaProfile profile = ctrl().getProfile();
+        if (run == null) {
+            List<CharacterDef> chars = chosenCharacter != null ? List.of(chosenCharacter) : new ArrayList<>(content.getCharacters().values());
+            for (CharacterDef ch : chars) {
+                button("Debug: " + ch.name + " +500 experience", e -> debug(RoguelikeDebug.grantXp(content, profile, ch.id, 500)));
+                button("Debug: " + ch.name + " to level " + RoguelikeDebug.maxLevel(ch),
+                        e -> debug(RoguelikeDebug.raiseToLevel(content, profile, ch.id, RoguelikeDebug.maxLevel(ch))));
+                if (!ch.milestones.isEmpty()) {
+                    button("Debug: " + ch.name + " complete milestones", e -> debug(RoguelikeDebug.completeMilestones(content, profile, ch)));
+                }
+            }
+            button("Debug: next account level", e -> debug(RoguelikeDebug.nextAccountLevel(content, profile)));
+            button("Debug: reset all progress", e -> FOptionPane.showConfirmDialog("Reset every character's and the account's progress?",
+                    "Reset progress", yes -> {
+                        if (yes) {
+                            profile.characters.clear();
+                            profile.accountXp = 0;
+                            debug(List.of("Progress reset (debug)."));
+                        }
+                    }));
+            return;
+        }
+        if (run.getState().status != RunStatus.IN_PROGRESS) {
+            return;
+        }
+        if (run.getActiveEncounter() != null) {
+            button("Debug: win this fight", e -> debug(RoguelikeDebug.winFight(run, profile)));
+        }
+        button("Debug: +100 gold", e -> debug(List.of(RoguelikeDebug.addGold(run, 100))));
+        button("Debug: heal to full", e -> debug(List.of(RoguelikeDebug.heal(run))));
+        button("Debug: add a relic", e -> debug(List.of(RoguelikeDebug.addRelic(run))));
+    }
+
+    private void debug(final List<String> messages) {
+        ctrl().afterStep();
+        ctrl().saveProfile();
+        ctrl().save();
+        update();
+        List<String> all = new ArrayList<>(messages);
+        all.addAll(ctrl().takeMessages());
+        FOptionPane.showMessageDialog(String.join("\n\n", all), "Debug");
     }
 
     // ---------------------------------------------------------------- starting a run

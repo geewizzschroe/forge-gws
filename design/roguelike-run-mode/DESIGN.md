@@ -57,6 +57,7 @@ What makes it different from other Forge modes:
 - Starter decks are centred on the Commander's colour identity, **not as a hard rule**. Off-identity splashes are allowed.
 - Boss fights also use Commanders.
 - **Deck-shape restrictions are essentially nonexistent**: no singleton rule, no fixed size.
+- **Card scope** (decided 2026-10-21): to keep things digestible, starter and enemy decks draw from **Final Fantasy (FIN) and Foundations (FDN)** by default. The scope widens when warranted or needed, or when a particular card really belongs in a particular deck (an explicit exception).
 - **Starter deck template** (decided 2026-10-21): 16 different cards, 2 copies each (32 cards): **8 commons, 6 uncommons, 2 rares** (by original printing). A two-colour starter splits each tier in half per colour: 4 commons, 3 uncommons and 1 rare of each colour.
 - Worked example: **Jill, Shiva's Dominant** (Final Fantasy set, mono-blue). Her enter trigger bounces any one other nonland permanent. Her starter deck pairs blue with white flicker/bounce effects and good enter-the-battlefield (ETB) payoffs. Jill gets a mono-blue starter deck, then two blue+X starter decks that **unlock through progress**.
 

@@ -192,17 +192,25 @@ public class Run {
                 endLife = p.getLife();
             }
         }
+        return applyMatchResult(match.encounter(), won, endLife);
+    }
+
+    /** Apply the result of the active node's match (also used by debug tools, without a game). */
+    public boolean applyMatchResult(final EncounterDef encounter, final boolean won, final int endLife) {
+        if (getActiveEncounter() == null) {
+            throw new IllegalStateException("No match is being played");
+        }
         MapNode node = getActiveNode();
         RunConfig cfg = content.getConfig();
         if (won) {
             state.xpEarned += Math.round((node.type == NodeType.BOSS ? cfg.xpPerBoss : cfg.xpPerFight) * cfg.xpMultiplier);
             state.matchesWon++;
-            state.beaten.add(match.encounter().name);
+            state.beaten.add(encounter.name);
             state.life = Math.max(1, Math.min(endLife, state.maxLife));
             boolean boss = node.type == NodeType.BOSS;
             int gold = boss ? content.getConfig().goldPerBoss : content.getConfig().goldPerEnemy;
             state.gold += gold;
-            state.log.add("Beat " + match.encounter().name + " with " + endLife + " life; run life " + state.life
+            state.log.add("Beat " + encounter.name + " with " + endLife + " life; run life " + state.life
                     + ", +" + gold + " gold");
             state.offer = boss ? makeBossRelicOffer() : makeCardRewardOffer();
             if (state.offer.options.isEmpty()) {
@@ -214,12 +222,12 @@ public class Run {
             state.matchesLost++;
             state.retriesLeft--;
             state.life = state.lifeBeforeMatch;
-            state.log.add("Lost to " + match.encounter().name + "; retrying (" + state.retriesLeft + " retries left)");
+            state.log.add("Lost to " + encounter.name + "; retrying (" + state.retriesLeft + " retries left)");
         } else {
             state.xpEarned += Math.round(cfg.xpLostMatch * cfg.xpMultiplier);
             state.matchesLost++;
             state.status = RunStatus.LOST;
-            state.log.add("Lost to " + match.encounter().name + "; the run is over");
+            state.log.add("Lost to " + encounter.name + "; the run is over");
         }
         return won;
     }
