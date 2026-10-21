@@ -256,15 +256,4 @@ public class RunTest extends AITest {
         }
         assertEquals("one of the three is a splash", 1, splashes);
     }
-
-    @Test
-    public void normalEnemiesGainLifeByRowAndBossesDoNot() {
-        RoguelikeContent c = content();
-        Run run = runWithPath(c, NodeType.REST, NodeType.REST, NodeType.ENEMY);
-        EncounterDef goblins = c.getEncounter("goblin_raiders");
-        assertEquals(goblins.life, run.enemyLife(goblins, null));
-        assertEquals(goblins.life + 2 * c.getConfig().enemyLifePerRow, run.enemyLife(goblins, run.getState().map.get(2)));
-        EncounterDef krenko = c.getEncounter("boss_krenko");
-        assertEquals(krenko.life, run.enemyLife(krenko, run.getState().map.get(3)));
-    }
 }

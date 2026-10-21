@@ -57,8 +57,6 @@ public class RunConfig {
     // PLACEHOLDER: experience for a lost match.
     public int xpLostMatch = 0;
     public double xpMultiplier = 1.0;
-    // Decided (DESIGN.md, enemy decks): normal enemies' life grows by row. PLACEHOLDER: by how much.
-    public int enemyLifePerRow = 1;
     // PLACEHOLDER: relic choices after a boss.
     public int bossRelicChoices = 3;
 

@@ -100,17 +100,6 @@ public class Run {
         return out;
     }
 
-    /**
-     * An enemy's starting life at a map node: its listed life, plus {@link RunConfig#enemyLifePerRow} for
-     * each row into the map. Bosses keep their listed life.
-     */
-    public int enemyLife(final EncounterDef encounter, final MapNode node) {
-        if (encounter.boss || node == null) {
-            return encounter.life;
-        }
-        return encounter.life + content.getConfig().enemyLifePerRow * node.row;
-    }
-
     public MapNode getActiveNode() {
         return state.activeNodeId == null ? null : state.map.get(state.activeNodeId);
     }

@@ -49,7 +49,7 @@ public final class RunText {
         }
         EncounterDef enc = run.getActiveEncounter();
         if (enc != null) {
-            return (enc.boss ? "Boss: " : "Next fight: ") + enc.name + " (" + run.enemyLife(enc, run.getActiveNode()) + " life)";
+            return (enc.boss ? "Boss: " : "Next fight: ") + enc.name + " (" + enc.life + " life)";
         }
         return "Choose where to go next.";
     }
@@ -66,7 +66,7 @@ public final class RunText {
                 EncounterDef e = run.getContent().getEncounter(n.encounterId);
                 StringBuilder sb = new StringBuilder();
                 sb.append(n.type == NodeType.BOSS ? "Boss: " : "Enemy: ").append(e.name).append('\n');
-                sb.append(run.enemyLife(e, n)).append(" life, ").append(e.hand).append("-card hand");
+                sb.append(e.life).append(" life, ").append(e.hand).append("-card hand");
                 if (e.commander != null) {
                     sb.append(", commander ").append(e.commander);
                 }
