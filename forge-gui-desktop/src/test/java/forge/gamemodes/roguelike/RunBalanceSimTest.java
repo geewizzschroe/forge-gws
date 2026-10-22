@@ -31,11 +31,13 @@ import forge.gamemodes.roguelike.sim.SimReport;
  * xvfb-run -a mvn -pl forge-gui-desktop -am test -Dtest=RunBalanceSimTest -Dsurefire.failIfNoSpecifiedTests=false \
  *     -Droguelike.sim.runs=20 [-Droguelike.sim.fights=10] [-Droguelike.sim.starter=jill_mono_blue] \
  *     [-Droguelike.sim.rows=7] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true] [-Droguelike.sim.progress=true]
- *     [-Droguelike.sim.policy=greedy]
+ *     [-Droguelike.sim.policy=greedy] [-Droguelike.sim.xp=N]
  * </pre>
  *
  * The report and a CSV of every match are written to forge-gui-desktop/target/roguelike-sim/; with
- * roguelike.sim.logs, every match's game log goes to its logs/ folder.
+ * roguelike.sim.logs, every match's game log goes to its logs/ folder. With roguelike.sim.xp, every run and
+ * single encounter starts with N experience on the character and the account (their unlocks, all switched on),
+ * and nothing is recorded, so all of them start at the same levels.
  */
 public class RunBalanceSimTest extends AITest {
 
@@ -61,6 +63,16 @@ public class RunBalanceSimTest extends AITest {
         String log = Files.readString(written[written.length - 1].toPath());
         assertTrue(log, log.contains("Goblin Raiders") && log.contains("TURN: Turn 1"));
 
+        // a read-only profile at Jill level 2 (+2 run max life) reaches single encounters too
+        MetaProfile levelTwo = new MetaProfile();
+        levelTwo.character("jill").xp = 30;
+        sim.setProfile(levelTwo, false);
+        sim.setLogDir(null);
+        MatchRecord unlocked = sim.simulateEncounter("jill_mono_blue", "troop_of_dwarves", 22, 3);
+        assertEquals(22, unlocked.heroLifeBefore);
+        assertEquals(30, levelTwo.character("jill").xp); // read, not recorded
+        sim.setProfile(null);
+
         String report = SimReport.markdown("Smoke", List.of(run), List.of(fight));
         assertTrue(report, report.contains("## Whole runs"));
         assertTrue(report, report.contains("## Single encounters"));
@@ -84,6 +96,16 @@ public class RunBalanceSimTest extends AITest {
         sim.setMatchTimeoutSeconds(Integer.getInteger("roguelike.sim.timeout", 120));
         MetaProfile profile = Boolean.getBoolean("roguelike.sim.progress") ? new MetaProfile() : null;
         sim.setProfile(profile);
+        long fixedXp = Long.getLong("roguelike.sim.xp", -1L);
+        if (fixedXp >= 0) {
+            MetaProfile fixed = new MetaProfile();
+            fixed.accountXp = fixedXp;
+            CharacterDef ch = forge.gamemodes.roguelike.meta.Progression.characterForStarter(c, starter);
+            if (ch != null) {
+                fixed.character(ch.id).xp = fixedXp;
+            }
+            sim.setProfile(fixed, false);
+        }
         if (Boolean.getBoolean("roguelike.sim.logs")) {
             sim.setLogDir(new File("target/roguelike-sim/logs"));
         }
@@ -107,7 +129,8 @@ public class RunBalanceSimTest extends AITest {
 
         File dir = new File("target/roguelike-sim");
         dir.mkdirs();
-        String report = SimReport.markdown("Run-mode simulation: " + starter + ", " + runs + " runs", records, encounterTests);
+        String report = SimReport.markdown("Run-mode simulation: " + starter + ", " + runs + " runs"
+                + (fixedXp >= 0 ? ", hero at " + fixedXp + " XP" : ""), records, encounterTests);
         if (profile != null) {
             StringBuilder sb = new StringBuilder(report).append("\n## Progression (runs played with a fresh profile, all unlocks on)\n\n");
             for (CharacterDef ch : c.getCharacters().values()) {

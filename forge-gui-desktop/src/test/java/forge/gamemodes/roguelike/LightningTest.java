@@ -53,6 +53,28 @@ public class LightningTest extends AITest {
     }
 
     @Test
+    public void upgradesThatChangeNothingAreNotOffered() {
+        initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        Run run = lightningRun(c, 0);
+        String lightning = "Lightning, Army of One"; // printed: first strike, trample, lifelink
+        java.util.List<String> offered = new java.util.ArrayList<>();
+        for (RunUpgrade u : run.usefulUpgrades(lightning)) {
+            offered.add(u.describe());
+        }
+        assertTrue(offered.toString(), !offered.contains("Trample") && !offered.contains("Lifelink"));
+        assertTrue(offered.toString(), offered.contains("Haste") && offered.contains("Ward 1") && offered.contains("+1/+1"));
+
+        run.getState().upgrades.put(lightning, new java.util.ArrayList<>(java.util.List.of(new RunUpgrade(0, 0, java.util.List.of("Haste")))));
+        offered.clear();
+        for (RunUpgrade u : run.usefulUpgrades(lightning)) {
+            offered.add(u.describe());
+        }
+        assertTrue("Haste from an earlier upgrade counts: " + offered, !offered.contains("Haste"));
+        assertTrue("Ward stacks, so it stays: " + offered, offered.contains("Ward 1"));
+    }
+
+    @Test
     public void equippedTokensHaveHaste() {
         Game game = initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();

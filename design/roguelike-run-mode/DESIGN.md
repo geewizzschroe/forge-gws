@@ -400,7 +400,7 @@ Placeholders and new questions raised by building it (all in `config.json`):
 - **N7. Card vs bucket rewards:** which is offered when? Placeholder: 30% of rewards are a choice of buckets (when buckets exist), otherwise a choice of single cards (curated and Full Pool slots, 2.1). Bucket contents are rolled and shown when offered.
 - **N8. Shop contents and prices** (part of D2): placeholder 3 relics at 60 gold and 3 cards (2 copies, from the curated pool) at 30, plus card removal (2.1); gold is 25 per enemy and 100 per boss.
 - **N9. Rest:** placeholder heals 30% of run max life.
-- **N10. Upgrade node:** placeholder offers 3 random (creature name, upgrade) pairs, pick one; reward cards come upgraded 25% of the time. Upgrade pool: +1/+1, +1/+0, +0/+2, Haste, Vigilance, Trample, Lifelink, Ward 1.
+- **N10. Upgrade node:** placeholder offers 3 random (creature name, upgrade) pairs, pick one; each single-card reward option that is a creature comes upgraded 25% of the time (spells and bucket cards never do, so about 11 to 19% of options). Since 2026-10-22 an upgrade that would change nothing (a keyword the card already has, printed or from an earlier upgrade; Ward excepted, since it stacks) is never offered. Upgrade pool: +1/+1, +1/+0, +0/+2, Haste, Vigilance, Trample, Lifelink, Ward 1.
 - **N11. Starter deck size:** *resolved* by the starter template (2.3): 32 cards.
 - **N12. Quitting mid-match:** closing the app during a match lets you replay that match from the start with no penalty.
 - **D1** placeholder: one floor (the boss ends the run). **D8** placeholder: 7 rows, 4 columns, 3 paths from the start, node weights in the config.

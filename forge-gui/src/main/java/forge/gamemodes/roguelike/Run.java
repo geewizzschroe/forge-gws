@@ -8,11 +8,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -443,9 +445,10 @@ public class Run {
             OfferOption o = new OfferOption();
             o.source = fromCurated ? "curated" : "full pool";
             o.cards.put(c, cfg.cardRewardCopies);
-            if (isCreature(c) && rnd.nextDouble() < cfg.rewardUpgradeChance && !content.getUpgrades().isEmpty()) {
+            List<RunUpgrade> useful = isCreature(c) ? usefulUpgrades(c) : List.of();
+            if (!useful.isEmpty() && rnd.nextDouble() < cfg.rewardUpgradeChance) {
                 o.upgradeCard = c;
-                o.upgrade = content.getUpgrades().get(rnd.nextInt(content.getUpgrades().size()));
+                o.upgrade = useful.get(rnd.nextInt(useful.size()));
             }
             offer.options.add(o);
         }
@@ -501,10 +504,12 @@ public class Run {
         if (content.getUpgrades().isEmpty()) {
             return offer;
         }
+        creatures.removeIf(c -> usefulUpgrades(c).isEmpty());
         for (String c : pick(creatures, content.getConfig().upgradeChoices, rnd)) {
+            List<RunUpgrade> useful = usefulUpgrades(c);
             OfferOption o = new OfferOption();
             o.upgradeCard = c;
-            o.upgrade = content.getUpgrades().get(rnd.nextInt(content.getUpgrades().size()));
+            o.upgrade = useful.get(rnd.nextInt(useful.size()));
             offer.options.add(o);
         }
         return offer;
@@ -555,6 +560,34 @@ public class Run {
         for (String id : content.getRelics().keySet()) {
             if (!state.relics.contains(id) && (state.relicPool == null || state.relicPool.contains(id))) {
                 out.add(id);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * The pool's upgrades that would change this card. A keyword-only upgrade is left out when the card
+     * already has each of its keywords, printed or from this run's upgrades (Ward stacks, so it always counts).
+     */
+    List<RunUpgrade> usefulUpgrades(final String name) {
+        Set<String> has = new HashSet<>();
+        PaperCard pc = StaticData.instance().getCommonCards().getCard(name);
+        if (pc != null) {
+            for (String k : pc.getRules().getMainPart().getKeywords()) {
+                has.add(k);
+            }
+        }
+        for (RunUpgrade u : state.upgrades.getOrDefault(name, List.of())) {
+            has.addAll(u.keywords);
+        }
+        List<RunUpgrade> out = new ArrayList<>();
+        for (RunUpgrade u : content.getUpgrades()) {
+            boolean changes = u.power != 0 || u.toughness != 0;
+            for (String k : u.keywords) {
+                changes |= k.startsWith("Ward") || !has.contains(k);
+            }
+            if (changes) {
+                out.add(u);
             }
         }
         return out;

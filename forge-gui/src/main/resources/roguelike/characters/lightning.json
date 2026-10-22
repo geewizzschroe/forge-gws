@@ -21,7 +21,7 @@
         {
           "kind": "baseAbility",
           "name": "Sunforger",
-          "description": "Lightning comes into play with a Sunforger equipped.",
+          "description": "Whenever Lightning enters, conjure a Sunforger attached to her (the full card, its instant-casting ability included).",
           "script": [
             "T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Creature.IsCommander+YouOwn | TriggerZones$ Command | Execute$ lightning_Sunforger | TriggerDescription$ Sunforger: Whenever your commander enters, conjure a Sunforger onto the battlefield attached to it.",
             "SVar:lightning_Sunforger:DB$ MakeCard | Name$ Sunforger | Zone$ Battlefield | AttachedTo$ TriggeredCard | Conjure$ True"

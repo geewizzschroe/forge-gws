@@ -47,6 +47,7 @@ public class RunSimulator {
     private File logDir;
     private int logCount;
     private MetaProfile profile;
+    private boolean recordProgress = true;
     private MatchStatsTracker tracker;
 
     public RunSimulator(final RoguelikeContent content) {
@@ -62,7 +63,31 @@ public class RunSimulator {
      * switched on) and its experience and counters are recorded into it. Null for plain runs.
      */
     public void setProfile(final MetaProfile profile) {
+        setProfile(profile, true);
+    }
+
+    /**
+     * As {@link #setProfile(MetaProfile)}; with {@code record} false the profile is only read, so every run
+     * and encounter starts at the same levels (for comparing content against a hero at a given level).
+     * Single encounters use the profile's unlocks too.
+     */
+    public void setProfile(final MetaProfile profile, final boolean record) {
         this.profile = profile;
+        this.recordProgress = record;
+    }
+
+    /** The run setup from the profile's unlocks for this starter's character, or null without a profile. */
+    private RunSetup setupFor(final String starterId) {
+        if (profile == null) {
+            return null;
+        }
+        CharacterDef ch = Progression.characterForStarter(content, starterId);
+        if (ch == null) {
+            return null;
+        }
+        Loadout loadout = new Loadout();
+        loadout.starterId = starterId;
+        return Progression.setup(content, profile, ch, loadout);
     }
 
     /** Write each match's game log to a numbered file in this folder (null to stop). */
@@ -74,16 +99,7 @@ public class RunSimulator {
     }
 
     public RunRecord simulateRun(final String starterId, final long seed, final RunPolicy policy) {
-        RunSetup setup = null;
-        if (profile != null) {
-            CharacterDef ch = Progression.characterForStarter(content, starterId);
-            if (ch != null) {
-                Loadout loadout = new Loadout();
-                loadout.starterId = starterId;
-                setup = Progression.setup(content, profile, ch, loadout);
-            }
-        }
-        Run run = Run.start(content, starterId, seed, setup);
+        Run run = Run.start(content, starterId, seed, setupFor(starterId));
         RunState s = run.getState();
         RunRecord rec = new RunRecord();
         rec.seed = seed;
@@ -105,7 +121,7 @@ public class RunSimulator {
                 RunMatch match = run.createMatch(new LobbyPlayerAi("Hero", null), new LobbyPlayerAi(enc.name, null));
                 long xpBefore = s.xpEarned;
                 boolean won = run.finishMatch(match, play(match, m));
-                if (profile != null) {
+                if (profile != null && recordProgress) {
                     rec.progressMessages.addAll(RunProgress.afterMatch(content, profile, run, enc, won, xpBefore,
                             tracker == null ? null : tracker.getCounters()));
                 }
@@ -122,7 +138,7 @@ public class RunSimulator {
                 rec.nodesEntered.merge(node.type.name(), 1, Integer::sum);
                 run.enterNode(node.id);
             }
-            if (profile != null) {
+            if (profile != null && recordProgress) {
                 rec.progressMessages.addAll(RunProgress.afterStep(content, profile, run));
             }
             for (; logSeen < s.log.size(); logSeen++) {
@@ -143,9 +159,9 @@ public class RunSimulator {
         return rec;
     }
 
-    /** The starter deck fights one enemy, starting at the given life, without any run progress. */
+    /** The starter deck fights one enemy, starting at the given life, without any run progress (but with the profile's unlocks, if set). */
     public MatchRecord simulateEncounter(final String starterId, final String encounterId, final int heroLife, final long seed) {
-        Run run = Run.start(content, starterId, seed);
+        Run run = Run.start(content, starterId, seed, setupFor(starterId));
         RunState s = run.getState();
         s.life = Math.min(heroLife, s.maxLife);
         EncounterDef enc = content.getEncounter(encounterId);
