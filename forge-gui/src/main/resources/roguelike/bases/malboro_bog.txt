@@ -1,0 +1,6 @@
+Name:Malboro Bog
+ManaCost:no cost
+Types:Base
+T:Mode$ ChangesZone | Origin$ Battlefield | Destination$ Graveyard | ValidCard$ Creature.OppCtrl | TriggerZones$ Command | Execute$ bog_Rot | TriggerDescription$ Rot — Whenever a creature an opponent controls dies, that player loses 1 life.
+SVar:bog_Rot:DB$ LoseLife | Defined$ TriggeredCardController | LifeAmount$ 1
+Oracle:Rot — Whenever a creature an opponent controls dies, that player loses 1 life.

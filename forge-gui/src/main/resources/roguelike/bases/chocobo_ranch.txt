@@ -1,0 +1,6 @@
+Name:Chocobo Ranch
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ End of Turn | ValidPlayer$ You | TriggerZones$ Command | IsPresent$ Bird.YouCtrl | PresentCompare$ EQ0 | Execute$ ranch_Bird | TriggerDescription$ Stable Hands — At the beginning of your end step, if you control no Bird, create a 2/2 green Bird creature token with "Whenever a land you control enters, this token gets +1/+0 until end of turn."
+SVar:ranch_Bird:DB$ Token | TokenScript$ g_2_2_bird_landfall
+Oracle:Stable Hands — At the beginning of your end step, if you control no Bird, create a 2/2 green Bird creature token with "Whenever a land you control enters, this token gets +1/+0 until end of turn."

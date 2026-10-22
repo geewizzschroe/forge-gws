@@ -1,0 +1,28 @@
+{
+  "id": "elf_grove",
+  "name": "Elf Grove",
+  "tier": 3,
+  "base": "ancient_grove.txt",
+  "life": 20,
+  "hand": 7,
+  "deck": {
+    "Llanowar Elves": 3,
+    "Elvish Mystic": 3,
+    "Fyndhorn Elves": 2,
+    "Imperious Perfect": 2,
+    "Elvish Archdruid": 2,
+    "Dwynen's Elite": 3,
+    "Dwynen, Gilt-Leaf Daen": 2,
+    "Elderfang Disciple": 2,
+    "Skemfar Shadowsage": 2,
+    "Infestation Sage": 2,
+    "Elvish Visionary": 2,
+    "Elvish Regrower": 2,
+    "Llanowar Tribe": 2,
+    "Thornweald Archer": 2,
+    "Leaf-Crowned Visionary": 2,
+    "Moment of Craving": 2,
+    "Reclamation Sage": 2,
+    "Llanowar Visionary": 3
+  }
+}

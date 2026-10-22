@@ -1,0 +1,26 @@
+{
+  "id": "chocobo_stables",
+  "name": "Chocobo Stables",
+  "tier": 1,
+  "base": "chocobo_ranch.txt",
+  "life": 20,
+  "hand": 6,
+  "deck": {
+    "Gysahl Greens": 3,
+    "Sazh's Chocobo": 2,
+    "Sidequest: Raise a Chocobo": 2,
+    "Summon: Fat Chocobo": 3,
+    "Chocobo Racetrack": 2,
+    "Snapping Gnarlid": 3,
+    "Territorial Scythecat": 3,
+    "Grazing Gladehart": 3,
+    "Kazandu Nectarpot": 2,
+    "Canopy Baloth": 3,
+    "Loporrit Scout": 2,
+    "Gigantoad": 2,
+    "Groundswell": 3,
+    "Chocobo Kick": 2,
+    "Ride the Shoopuf": 2,
+    "Bear Cub": 3
+  }
+}

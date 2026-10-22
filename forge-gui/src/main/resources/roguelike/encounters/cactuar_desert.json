@@ -1,0 +1,27 @@
+{
+  "id": "cactuar_desert",
+  "name": "Cactuar Desert",
+  "tier": 2,
+  "base": "cactuar_island.txt",
+  "life": 20,
+  "hand": 6,
+  "deck": {
+    "Cactuar": 4,
+    "Jumbo Cactuar": 2,
+    "Gran Pulse Ochu": 3,
+    "Goobbue Gardener": 3,
+    "Ilysian Caryatid": 2,
+    "Sabotender": 3,
+    "Snapping Gnarlid": 2,
+    "Gigantoad": 2,
+    "Groundswell": 2,
+    "Shock": 3,
+    "Spitfire Lagac": 2,
+    "Canopy Baloth": 2,
+    "Territorial Scythecat": 2,
+    "Wary Thespian": 2,
+    "Bear Cub": 2,
+    "Ambush Wolf": 2,
+    "Pridemalkin": 2
+  }
+}

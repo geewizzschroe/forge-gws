@@ -1,0 +1,27 @@
+{
+  "id": "vampire_court",
+  "name": "Vampire Court",
+  "tier": 2,
+  "base": "crimson_court.txt",
+  "life": 20,
+  "hand": 6,
+  "deck": {
+    "Sanguine Syphoner": 3,
+    "Bishop's Soldier": 3,
+    "Marauding Blight-Priest": 3,
+    "Pulse Tracker": 3,
+    "Creeping Bloodsucker": 2,
+    "Bloodthirsty Aerialist": 2,
+    "Falkenrath Noble": 2,
+    "Vampire Nighthawk": 2,
+    "Elenda, Saint of Dusk": 2,
+    "Kalastria Highborn": 2,
+    "Arrogant Outlaw": 2,
+    "Epicure of Blood": 2,
+    "Paladin of the Bloodstained": 2,
+    "Moment of Craving": 3,
+    "Sanguine Indulgence": 2,
+    "Vampire Spawn": 3,
+    "Vampire Neonate": 2
+  }
+}

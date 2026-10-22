@@ -1,0 +1,5 @@
+Name:Big Bridge
+ManaCost:no cost
+Types:Base
+S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.equipped+YouCtrl | AddKeyword$ First Strike | Description$ Sword Collector — Equipped creatures you control have first strike.
+Oracle:Sword Collector — Equipped creatures you control have first strike.

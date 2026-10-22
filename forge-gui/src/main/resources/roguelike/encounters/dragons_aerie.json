@@ -1,0 +1,26 @@
+{
+  "id": "dragons_aerie",
+  "name": "Dragon's Aerie",
+  "tier": 3,
+  "base": "wyrm_roost.txt",
+  "life": 20,
+  "hand": 7,
+  "deck": {
+    "Dragonlord's Servant": 3,
+    "Dragon Hatchling": 3,
+    "Firespitter Whelp": 3,
+    "Rapacious Dragon": 3,
+    "Sparktongue Dragon": 3,
+    "Dragon Whelp": 2,
+    "Hellkite Whelp": 2,
+    "Dragon Trainer": 2,
+    "Kargan Dragonrider": 3,
+    "Shivan Dragon": 2,
+    "Hoarding Dragon": 2,
+    "Shock": 3,
+    "Scorching Dragonfire": 3,
+    "Dragonspeaker Shaman": 2,
+    "Burst Lightning": 2,
+    "Thundermane Dragon": 2
+  }
+}

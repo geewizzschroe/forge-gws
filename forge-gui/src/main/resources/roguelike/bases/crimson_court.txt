@@ -1,0 +1,7 @@
+Name:Crimson Court
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ End of Turn | ValidPlayer$ You | TriggerZones$ Command | CheckSVar$ court_Gained | SVarCompare$ GE1 | Execute$ court_Counter | TriggerDescription$ Blood Tithe — At the beginning of your end step, if you gained life this turn, put a +1/+1 counter on target Vampire you control.
+SVar:court_Counter:DB$ PutCounter | ValidTgts$ Vampire.YouCtrl | TgtPrompt$ Select target Vampire you control | CounterType$ P1P1 | CounterNum$ 1
+SVar:court_Gained:Count$LifeYouGainedThisTurn
+Oracle:Blood Tithe — At the beginning of your end step, if you gained life this turn, put a +1/+1 counter on target Vampire you control.

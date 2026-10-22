@@ -1,0 +1,7 @@
+Name:Kefka's Tower
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ End of Turn | ValidPlayer$ You | TriggerZones$ Command | Execute$ tower_Discard | TriggerDescription$ Light of Judgment — At the beginning of your end step, each player discards a card, then draws a card.
+SVar:tower_Discard:DB$ Discard | Defined$ Player | NumCards$ 1 | Mode$ TgtChoose | SubAbility$ tower_Draw
+SVar:tower_Draw:DB$ Draw | Defined$ Player | NumCards$ 1
+Oracle:Light of Judgment — At the beginning of your end step, each player discards a card, then draws a card.

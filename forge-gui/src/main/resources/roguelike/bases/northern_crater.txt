@@ -1,0 +1,6 @@
+Name:Northern Crater
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ BeginCombat | ValidPlayer$ You | TriggerZones$ Command | Execute$ crater_Cell | TriggerDescription$ Jenova Cells — At the beginning of combat on your turn, create a 1/1 black Horror creature token.
+SVar:crater_Cell:DB$ Token | TokenScript$ b_1_1_horror
+Oracle:Jenova Cells — At the beginning of combat on your turn, create a 1/1 black Horror creature token.

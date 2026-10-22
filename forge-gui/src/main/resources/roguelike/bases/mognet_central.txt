@@ -1,0 +1,6 @@
+Name:Mognet Central
+ManaCost:no cost
+Types:Base
+T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Creature.Moogle+YouCtrl | TriggerZones$ Command | Execute$ mognet_Life | TriggerDescription$ Kupo! — Whenever a Moogle you control enters, you gain 1 life.
+SVar:mognet_Life:DB$ GainLife | LifeAmount$ 1
+Oracle:Kupo! — Whenever a Moogle you control enters, you gain 1 life.

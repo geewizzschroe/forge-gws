@@ -1,0 +1,6 @@
+Name:Dragoon Barracks
+ManaCost:no cost
+Types:Base
+T:Mode$ Attacks | ValidCard$ Creature.Knight+YouCtrl | TriggerZones$ Command | Execute$ barracks_Pump | TriggerDescription$ Dragoon's Charge — Whenever a Knight you control attacks, it gets +1/+0 until end of turn.
+SVar:barracks_Pump:DB$ Pump | Defined$ TriggeredAttackerLKICopy | NumAtt$ +1
+Oracle:Dragoon's Charge — Whenever a Knight you control attacks, it gets +1/+0 until end of turn.

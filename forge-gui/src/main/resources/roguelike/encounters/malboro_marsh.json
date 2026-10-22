@@ -1,0 +1,27 @@
+{
+  "id": "malboro_marsh",
+  "name": "Malboro Marsh",
+  "tier": 2,
+  "base": "malboro_bog.txt",
+  "life": 20,
+  "hand": 6,
+  "deck": {
+    "Tonberry": 3,
+    "Malboro": 3,
+    "Gran Pulse Ochu": 3,
+    "Typhoid Rats": 3,
+    "Pharika's Chosen": 2,
+    "Thornweald Archer": 3,
+    "Treetop Snarespinner": 2,
+    "Ukud Cobra": 2,
+    "Venomous Hierophant": 2,
+    "Ahriman": 2,
+    "Diregraf Scavenger": 2,
+    "Hooded Blightfang": 2,
+    "Feed the Swarm": 2,
+    "Tragic Slip": 2,
+    "Venom Connoisseur": 2,
+    "Midnight Assassin": 2,
+    "Gutless Plunderer": 3
+  }
+}

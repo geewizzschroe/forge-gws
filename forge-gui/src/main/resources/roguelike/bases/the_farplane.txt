@@ -1,0 +1,5 @@
+Name:The Farplane
+ManaCost:no cost
+Types:Base
+S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.Saga+YouCtrl | AddPower$ 1 | AddToughness$ 1 | Description$ Aeons — Saga creatures you control get +1/+1.
+Oracle:Aeons — Saga creatures you control get +1/+1.

@@ -1,0 +1,27 @@
+{
+  "id": "moogle_post",
+  "name": "Moogle Post",
+  "tier": 1,
+  "base": "mognet_central.txt",
+  "life": 20,
+  "hand": 6,
+  "deck": {
+    "Cloudbound Moogle": 3,
+    "Delivery Moogle": 2,
+    "Summon: Choco/Mog": 3,
+    "Moogles' Valor": 2,
+    "Healer's Hawk": 3,
+    "Sungrace Pegasus": 3,
+    "Segovian Angel": 2,
+    "Starnheim Courser": 2,
+    "Sunmane Pegasus": 2,
+    "White Mage's Staff": 3,
+    "Phoenix Down": 2,
+    "Daybreak Chaplain": 2,
+    "Pacifism": 2,
+    "Moment of Triumph": 2,
+    "Inspiring Overseer": 2,
+    "Dazzling Angel": 2,
+    "Spirited Companion": 3
+  }
+}

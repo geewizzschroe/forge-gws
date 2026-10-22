@@ -1,0 +1,28 @@
+{
+  "id": "summoners_circle",
+  "name": "Summoner's Circle",
+  "tier": 2,
+  "base": "chamber_of_the_fayth.txt",
+  "life": 20,
+  "hand": 6,
+  "deck": {
+    "Summon: Choco/Mog": 3,
+    "Summon: Primal Garuda": 2,
+    "Summon: Fat Chocobo": 3,
+    "Summon: Fenrir": 2,
+    "Summon: Ixion": 2,
+    "Garnet, Princess of Alexandria": 2,
+    "Clash of the Eikons": 3,
+    "Summon: Magus Sisters": 2,
+    "Loporrit Scout": 2,
+    "Coeurl": 2,
+    "Pacifism": 2,
+    "Quina, Qu Gourmet": 2,
+    "Vanille, Cheerful l'Cie": 2,
+    "Inspiring Overseer": 2,
+    "Prideful Parent": 2,
+    "Canopy Baloth": 3,
+    "Mesa Unicorn": 2,
+    "Bear Cub": 2
+  }
+}
