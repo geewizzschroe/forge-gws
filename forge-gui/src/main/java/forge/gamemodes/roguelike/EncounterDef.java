@@ -8,8 +8,8 @@ public class EncounterDef {
     public String id;
     public String name;
     public boolean boss;
-    /** Earliest map row (0-based) this enemy can appear on. */
-    public int minRow;
+    /** Difficulty tier, 1 (early) to 3 (late), for the map's ladder (proposal 1.3). Bosses ignore it. */
+    public int tier = 1;
     public String commander;
     public Map<String, Integer> deck = new LinkedHashMap<>();
     /** File name in {@code bases/} of the enemy's Base, or null. */

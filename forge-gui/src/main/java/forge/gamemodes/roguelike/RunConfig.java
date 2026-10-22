@@ -35,7 +35,8 @@ public class RunConfig {
     // Decided (proposal 1.1): touchstones every path goes through (an Upgrade after the first fight, a Shop, a
     // campfire before the boss) with branching stretches between them. See RunMap for the entries.
     // PLACEHOLDER: the stretch lengths and the number of lanes.
-    public List<String> mapLayout = List.of("FIGHTS", "UPGRADE", "STRETCH 2", "SHOP", "STRETCH 3", "REST", "BOSS");
+    // Each entry may end with the enemy tiers its fights draw from (T1, T2-3 ...).
+    public List<String> mapLayout = List.of("FIGHTS T1", "UPGRADE", "STRETCH 2 T1-2", "SHOP", "STRETCH 3 T2-3", "REST", "BOSS");
     public int mapLanes = 3;
     // Node weights inside stretches. PLACEHOLDER: the numbers (shop and rest are lower since touchstones guarantee them).
     public double weightEnemy = 0.55;

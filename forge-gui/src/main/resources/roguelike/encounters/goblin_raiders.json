@@ -1,7 +1,7 @@
 {
   "id": "goblin_raiders",
   "name": "Goblin Raiders",
-  "minRow": 0,
+  "tier": 2,
   "base": "raider_camp.txt",
   "life": 20,
   "hand": 6,

@@ -1,7 +1,7 @@
 {
   "id": "restless_dead",
   "name": "The Restless Dead",
-  "minRow": 2,
+  "tier": 2,
   "base": "open_graves.txt",
   "life": 20,
   "hand": 7,

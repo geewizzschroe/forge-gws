@@ -44,7 +44,11 @@ public class RunMapTest extends AITest {
                     assertNotNull(n.encounterId);
                     EncounterDef e = c.getEncounter(n.encounterId);
                     assertEquals(n.type == NodeType.BOSS, e.boss);
-                    assertTrue(e.boss || e.minRow <= n.row);
+                    if (!e.boss) { // the default layout's ladder: T1 at the start, T1-2 then T2-3 in the stretches
+                        int lo = n.row >= 5 ? 2 : 1;
+                        int hi = n.row == 0 ? 1 : n.row >= 5 ? 3 : 2;
+                        assertTrue(e.id + " (tier " + e.tier + ") on row " + n.row, e.tier >= lo && e.tier <= hi);
+                    }
                 } else {
                     assertEquals(null, n.encounterId);
                 }
@@ -72,7 +76,7 @@ public class RunMapTest extends AITest {
     public void everyPathGoesThroughTheTouchstonesAndStretchesBranch() {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();
-        assertEquals(List.of("FIGHTS", "UPGRADE", "STRETCH 2", "SHOP", "STRETCH 3", "REST", "BOSS"), c.getConfig().mapLayout);
+        assertEquals(List.of("FIGHTS T1", "UPGRADE", "STRETCH 2 T1-2", "SHOP", "STRETCH 3 T2-3", "REST", "BOSS"), c.getConfig().mapLayout);
         Random walk = new Random(1);
         int choices = 0;
         int walks = 0;
@@ -108,6 +112,41 @@ public class RunMapTest extends AITest {
         }
         double perRun = (double) choices / walks;
         assertTrue("real choices per run " + perRun, perRun >= 4.5);
+    }
+
+    /** With enough enemies in every tier, no enemy is met twice on any path. */
+    @Test
+    public void noEnemyTwiceOnAPathWhenThereAreEnough() {
+        initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        Gson gson = new Gson();
+        EncounterDef template = c.getEncounter("troop_of_dwarves");
+        for (int tier = 1; tier <= 3; tier++) {
+            for (int i = 0; i < 6; i++) {
+                EncounterDef copy = gson.fromJson(gson.toJson(template), EncounterDef.class);
+                copy.id = "copy_" + tier + "_" + i;
+                copy.tier = tier;
+                c.getEncounters().put(copy.id, copy);
+            }
+        }
+        for (long seed = 0; seed < 100; seed++) {
+            RunMap map = RunMap.generate(c.getConfig(), c, new Random(seed));
+            for (int start : map.startIds) {
+                assertNoRepeat(map, start, new ArrayList<>());
+            }
+        }
+    }
+
+    private static void assertNoRepeat(RunMap map, int id, List<String> met) {
+        MapNode n = map.get(id);
+        List<String> here = new ArrayList<>(met);
+        if (n.encounterId != null && n.type == NodeType.ENEMY) {
+            assertFalse(n.encounterId + " twice on a path", here.contains(n.encounterId));
+            here.add(n.encounterId);
+        }
+        for (int next : n.next) {
+            assertNoRepeat(map, next, here);
+        }
     }
 
     @Test
