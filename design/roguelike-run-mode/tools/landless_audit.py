@@ -9,7 +9,7 @@ treat it as a starting point for curating the mode's card pools, not as a verdic
 usage: python3 -I landless_audit.py <repo root> <output .md> [<quarantine list .txt>]
 
 With a third argument it also writes the quarantine list: every nonland card in a group whose land-related
-part can never work (QUARANTINED_GROUPS), minus the ramp cards that have landless overrides. The run mode keeps those cards out of its pools until each is fixed.
+part can never work (QUARANTINED_GROUPS), minus the cards that have landless overrides. The run mode keeps those cards out of its pools until each is fixed.
 """
 import json
 import os
@@ -39,7 +39,7 @@ def lines_with_api(card, api):
 
 
 @category("land_search_battlefield", "Searches the library for lands to put onto the battlefield (ramp)",
-          "Finds nothing in a landless deck. Candidates for a landless override (the mode has 10 so far).")
+          "Finds nothing in a landless deck. Candidates for a landless override (see the content's overrides/ folder).")
 def land_search_bf(card):
     for l in lines_with_api(card, "ChangeZone(?:All)?"):
         if "Origin$ Library" in l and "Destination$ Battlefield" in l and re.search(r"ChangeType\$ [^|]*" + LAND_TYPES, l):
@@ -240,7 +240,7 @@ def main():
              "not a set of decisions.\n")
     o.append("- Cards scanned (excluding Vanguard, planes, schemes and other non-deck cards): %d" % len(deck_cards))
     o.append("- Lands (removed from every deck by the land stripper): %d" % len(lands))
-    o.append("- Ramp cards already converted (overrides): %s\n" % (", ".join(sorted(overrides)) or "none"))
+    o.append("- Cards already converted (overrides): %s\n" % (", ".join(sorted(overrides)) or "none"))
     o.append("A card can appear in more than one group.\n")
     o.append("| Group | Cards | What happens in landless play |")
     o.append("|---|---|---|")

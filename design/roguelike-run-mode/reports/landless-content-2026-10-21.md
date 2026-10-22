@@ -1,5 +1,7 @@
 # Landless check of current content, 2026-10-21
 
+> **Superseded (2026-10-22).** This is a snapshot from before the quarantine and the rewrites. World Map is no longer in `rw_core` (Giott replaced it), and Call the Mountain Chocobo, Cloudbound Moogle, Hill Gigas and Sandworm now have landless overrides (DESIGN.md 2.5.1). The current state is in `landless-audit.md` and `roguelike/quarantine.txt`.
+
 Every card in the current starters, enemy decks and reward pools, checked two ways:
 
 1. `tools/landless_audit.py` (pattern groups; regenerated `landless-audit.md`).

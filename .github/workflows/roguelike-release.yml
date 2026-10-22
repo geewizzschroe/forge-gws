@@ -1,6 +1,7 @@
 # Builds the run-mode prototype and publishes it as a GitHub release of this fork.
 # To release, either change the version in .github/roguelike-release.txt on any branch (the release
 # is tagged roguelike-<version>), or push a tag starting with "roguelike-".
+# The release text ends with .github/roguelike-release-notes.md; update it with each version.
 name: Roguelike release
 
 on:
@@ -71,6 +72,17 @@ jobs:
           zip -qr upload/forge-roguelike-pc-${VERSION}.zip $P
           ls -la upload
 
+          # Release text: install notes, then what's new (.github/roguelike-release-notes.md)
+          {
+            echo "A prototype of the roguelike run mode built on Forge."
+            echo
+            echo "- **Android:** \`forge-roguelike-${VERSION}.apk\` installs as \"Forge (dev)\", beside the official Forge app. It is debug-signed."
+            echo "- **PC:** unzip \`forge-roguelike-pc-${VERSION}.zip\`, then run \`run.bat\` (Windows) or \`run.sh\` (Mac/Linux). Needs Java 17 or newer."
+            echo "- In the app: New Game, then Roguelike Run."
+            echo
+            cat .github/roguelike-release-notes.md
+          } > release-body.md
+
       - name: Publish the release
         uses: softprops/action-gh-release@v2
         with:
@@ -78,10 +90,5 @@ jobs:
           target_commitish: ${{ github.sha }}
           prerelease: true
           name: Roguelike run mode ${{ env.TAG }}
-          body: |
-            A prototype of the roguelike run mode built on Forge.
-
-            - **Android:** `forge-roguelike-${{ env.VERSION }}.apk` installs as "Forge (dev)", beside the official Forge app. It is debug-signed.
-            - **PC:** unzip `forge-roguelike-pc-${{ env.VERSION }}.zip`, then run `run.bat` (Windows) or `run.sh` (Mac/Linux). Needs Java 17 or newer.
-            - In the app: New Game, then Roguelike Run.
+          body_path: release-body.md
           files: upload/*
