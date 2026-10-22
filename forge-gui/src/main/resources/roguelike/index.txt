@@ -13,6 +13,11 @@ encounters/boss_krenko.json
 encounters/goblin_raiders.json
 encounters/restless_dead.json
 encounters/troop_of_dwarves.json
+events/blood_altar.json
+events/dropped_purse.json
+events/mysterious_figure.json
+events/traveling_merchant.json
+events/wandering_smith.json
 meta.json
 overrides/balamb_t_rexaur.txt
 overrides/burnished_hart.txt
@@ -61,6 +66,7 @@ pools/ub_core.json
 pools/uw_core.json
 quarantine.txt
 relics/healing_herb.json
+relics/hellish_fortitude.json
 relics/iron_heart.json
 relics/lucky_coin.json
 relics/war_drum.json

@@ -136,14 +136,14 @@ public class RoguelikeScreen extends FScreen {
                         run.choose(index);
                     }
                 }));
-                if ((offer.kind.isStore() || offer.returnToShop != null) && (o.bought || o.price > run.getState().gold)) {
+                if ((offer.kind.isStore() || offer.returnToShop != null || offer.kind == OfferKind.EVENT) && (o.bought || !run.canAfford(o))) {
                     b.setEnabled(false);
                 }
             }
             if (offer.canSkip) {
                 String back = offer.returnToShop != null && offer.returnToShop.kind == OfferKind.WORKSHOP ? "Back to the Workshop" : "Back to the shop";
                 button(offer.kind == OfferKind.SHOP ? "Leave the shop" : offer.kind == OfferKind.WORKSHOP ? "Leave the Workshop"
-                        : offer.returnToShop != null ? back : "Skip", e -> act(run::skip));
+                        : offer.kind == OfferKind.EVENT ? "Walk away" : offer.returnToShop != null ? back : "Skip", e -> act(run::skip));
             }
         } else if (run.getActiveEncounter() != null) {
             button("Fight: " + run.getActiveEncounter().name, e -> ctrl().startMatch());
@@ -239,6 +239,7 @@ public class RoguelikeScreen extends FScreen {
                 return switch (offer.kind) {
                     case SHOP, WORKSHOP -> o.bought || o.price > run.getState().gold ? null : "Buy for " + o.price + " gold";
                     case CUT -> "Cut " + o.cutCard;
+                    case EVENT -> !run.canAfford(o) ? null : "Take " + RunText.option(run, o);
                     case UPGRADE -> o.price > run.getState().gold ? null
                             : "Upgrade: " + o.upgrade.describe() + (o.price > 0 ? " for " + o.price + " gold" : "");
                     default -> o.label != null ? "Take " + o.label : "Take " + RunText.option(run, o);

@@ -39,8 +39,9 @@ public class RunConfig {
     public double weightEnemy = 0.55;
     public double weightShop = 0.12;
     public double weightRest = 0.13;
-    public double weightCut = 0.10;
-    public double weightUpgrade = 0.10;
+    // Decided 2026-10-22: no more standalone Cut and Upgrade nodes; their jobs went to the Workshop, the shop and events.
+    // PLACEHOLDER: the Event node's weight.
+    public double weightEvent = 0.12;
     // Decided (proposal 1.4): the Workshop appears in the map's stretches, never guaranteed. PLACEHOLDER: the weight.
     public double weightWorkshop = 0.08;
     // PLACEHOLDER: D2 currency and prices.

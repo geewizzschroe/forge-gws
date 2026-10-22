@@ -35,6 +35,7 @@ import forge.localinstance.properties.ForgeConstants;
  * starters/*.json    StarterDef
  * encounters/*.json  EncounterDef
  * relics/*.json      RelicDef
+ * events/*.json      EventDef
  * pools/*.json       CardPoolDef
  * bases/*.txt        Base card scripts
  * overrides/*.txt    replacement card scripts (landless ramp) used in every match of the mode
@@ -65,6 +66,7 @@ public class RoguelikeContent {
     private final Map<String, StarterDef> starters = new LinkedHashMap<>();
     private final Map<String, EncounterDef> encounters = new LinkedHashMap<>();
     private final Map<String, RelicDef> relics = new LinkedHashMap<>();
+    private final Map<String, EventDef> events = new LinkedHashMap<>();
     private final Map<String, CardPoolDef> pools = new LinkedHashMap<>();
     private final Map<String, List<String>> bases = new LinkedHashMap<>();
     private final List<CardRules> overrides = new ArrayList<>();
@@ -110,6 +112,10 @@ public class RoguelikeContent {
         for (String f : src.list("relics", ".json")) {
             RelicDef d = parse(src.read(f), RelicDef.class, f);
             c.relics.put(d.id, d);
+        }
+        for (String f : src.list("events", ".json")) {
+            EventDef d = parse(src.read(f), EventDef.class, f);
+            c.events.put(d.id, d);
         }
         for (String f : src.list("pools", ".json")) {
             CardPoolDef d = parse(src.read(f), CardPoolDef.class, f);
@@ -234,6 +240,7 @@ public class RoguelikeContent {
     public Map<String, StarterDef> getStarters() { return starters; }
     public Map<String, EncounterDef> getEncounters() { return encounters; }
     public Map<String, RelicDef> getRelics() { return relics; }
+    public Map<String, EventDef> getEvents() { return events; }
     public Map<String, CardPoolDef> getPools() { return pools; }
     public List<CardRules> getOverrides() { return overrides; }
     /** The mode's rewritten version of a card, or null if it is played as printed. */

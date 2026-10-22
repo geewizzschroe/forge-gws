@@ -1,0 +1,7 @@
+{
+  "id": "wandering_smith",
+  "title": "A Wandering Smith",
+  "text": "A smith with a cart full of tools offers to work on your gear, cheap.",
+  "kind": "upgrade",
+  "price": 20
+}

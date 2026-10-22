@@ -38,7 +38,8 @@ What makes it different from other Forge modes:
 
 - Pick a character (Commander) and a starter deck.
 - Pick from the available nodes to move forward on a board-style map.
-- Node types named so far: **Enemy**, **Boss**, **Shop**, **Rest** (restore health), **Cut a card**, **Upgrade a card**, **Workshop** (2026-10-22, below).
+- Node types: **Enemy**, **Boss**, **Shop**, **Rest** (restore health), **Workshop** and **Event** (both 2026-10-22, below). The standalone **Cut a card** and **Upgrade a card** nodes were removed from new maps on 2026-10-22 (their jobs moved to the Workshop, the shop and events); the code stays so older saved runs still load.
+  - **Event node** (decided and built 2026-10-22): picks one event, weighted, among those the run qualifies for. Events are data (`events/*.json`) of five kinds: gold; a discounted upgrade (refusable); one of three single cards (refusable); life for a random relic (refusable, never lethal); and selling a retry for an event-only relic (only while a retry is banked). The first set is listed in `proposals/refinement-2026-10-22.md` 1.5. `weightEvent` PLACEHOLDER 0.12.
 - Selecting an Enemy node means playing a match against it.
 - After a match: pick **1 of 3 cards** (adds **2 copies**) **or 1 of 3 buckets** (3 randomly selected cards from a themed pool, e.g. "Goblins!", "Big Sorceries", "Green Staples").
   - **Bucket colours** (decided 2026-10-21): buckets offered are within the run's colours (the colour identity of the commander and the current deck; colourless buckets always qualify). Now and then (`offColourBucketChance`, PLACEHOLDER 25%) one slot holds an off-colour or mixed-colour bucket, labelled "(splash)", to tempt a splash. Taking it adds that colour to the deck, so the land picker then offers it too. If no bucket can be offered, the reward is single cards instead.

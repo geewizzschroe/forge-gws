@@ -1,0 +1,8 @@
+{
+  "id": "blood_altar",
+  "title": "A Blood Altar",
+  "text": "Something is sealed beneath a stained altar. It wants a little of your blood.",
+  "kind": "relicForLife",
+  "lifeCost": 5,
+  "accept": "Bleed on the altar (5 life) for a random relic"
+}

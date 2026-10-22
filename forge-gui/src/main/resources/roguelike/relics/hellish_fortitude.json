@@ -1,0 +1,7 @@
+{
+  "id": "hellish_fortitude",
+  "name": "Hellish Fortitude",
+  "description": "+10 run max life. A stranger holds your second chance now.",
+  "maxLifeBonus": 10,
+  "eventOnly": true
+}

@@ -1,0 +1,9 @@
+{
+  "id": "mysterious_figure",
+  "title": "A Mysterious Figure",
+  "text": "A smiling stranger in a long coat steps out of the dark. \"That second chance of yours... I'd pay handsomely for it. You won't miss it. Probably.\"",
+  "kind": "sellRetry",
+  "relic": "hellish_fortitude",
+  "accept": "Hand over your retry",
+  "weight": 0.5
+}

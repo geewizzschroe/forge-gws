@@ -146,6 +146,13 @@ public class Run {
             }
             case CUT -> state.offer = makeCutOffer();
             case WORKSHOP -> state.offer = makeWorkshopOffer();
+            case EVENT -> {
+                state.offer = makeEventOffer();
+                if (state.offer == null) {
+                    state.log.add("Nothing happened");
+                    completeNode();
+                }
+            }
         }
     }
 
@@ -315,6 +322,9 @@ public class Run {
             state.offer = offer.returnToShop;
             return;
         }
+        if (offer.kind == OfferKind.EVENT) {
+            payEventCosts(o);
+        }
         state.log.add("Chose " + RunText.option(this, o));
         apply(o);
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
@@ -382,7 +392,12 @@ public class Run {
         }
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
         state.offer = null;
-        state.log.add(offer.kind == OfferKind.SHOP ? "Left the shop" : offer.kind == OfferKind.WORKSHOP ? "Left the Workshop" : "Skipped the choice");
+        state.log.add(switch (offer.kind) {
+            case SHOP -> "Left the shop";
+            case WORKSHOP -> "Left the Workshop";
+            case EVENT -> "Walked away";
+            default -> "Skipped the choice";
+        });
         if (matchReward) {
             afterMatchReward();
         } else {
@@ -397,7 +412,22 @@ public class Run {
         return state.offer;
     }
 
+    /** Whether the player can pay an option's gold, life and retry costs (life must stay above 0). */
+    public boolean canAfford(final OfferOption o) {
+        return state.gold >= o.price && state.life > o.lifeCost && state.retriesLeft >= o.retryCost;
+    }
+
+    private void payEventCosts(final OfferOption o) {
+        if (!canAfford(o)) {
+            throw new IllegalStateException("Can't pay for " + o);
+        }
+        state.gold -= o.price;
+        state.life -= o.lifeCost;
+        state.retriesLeft -= o.retryCost;
+    }
+
     private void apply(final OfferOption o) {
+        state.gold += o.gold;
         for (Map.Entry<String, Integer> e : o.cards.entrySet()) {
             state.deck.merge(e.getKey(), e.getValue(), Integer::sum);
         }
@@ -469,7 +499,13 @@ public class Run {
                 return offer;
             }
         }
-        // one slot curated, one from the Full Pool, the rest either at even odds, in random order
+        addSingleCardOptions(offer, rnd, colours);
+        return offer;
+    }
+
+    /** Single-card options: one slot curated, one from the Full Pool, the rest either at even odds, in random order. */
+    private void addSingleCardOptions(final Offer offer, final Random rnd, final byte colours) {
+        RunConfig cfg = content.getConfig();
         List<Boolean> curatedSlots = new ArrayList<>();
         for (int i = 0; i < cfg.cardRewardChoices; i++) {
             curatedSlots.add(i == 0 || (i > 1 && rnd.nextBoolean()));
@@ -501,7 +537,6 @@ public class Run {
             }
             offer.options.add(o);
         }
-        return offer;
     }
 
     private Offer makeBossRelicOffer() {
@@ -581,6 +616,83 @@ public class Run {
         return offer;
     }
 
+    /** Whether the run qualifies for an event (see {@link EventDef} for each kind's needs). */
+    private boolean eligible(final EventDef e) {
+        return switch (e.kind) {
+            case "relicForLife" -> !unownedRelics().isEmpty() && state.life > e.lifeCost;
+            case "sellRetry" -> state.retriesLeft >= 1 && e.relic != null && !state.relics.contains(e.relic);
+            case "upgrade" -> !makeUpgradeOffer().options.isEmpty();
+            default -> true;
+        };
+    }
+
+    /** An event picked at random (by weight) among those the run qualifies for; null if there is none. */
+    private Offer makeEventOffer() {
+        Random rnd = state.nextRandom();
+        List<EventDef> events = new ArrayList<>();
+        double total = 0;
+        for (EventDef e : content.getEvents().values()) {
+            if (eligible(e)) {
+                events.add(e);
+                total += e.weight;
+            }
+        }
+        if (events.isEmpty()) {
+            return null;
+        }
+        double roll = rnd.nextDouble() * total;
+        EventDef e = events.get(events.size() - 1);
+        for (EventDef x : events) {
+            roll -= x.weight;
+            if (roll < 0) {
+                e = x;
+                break;
+            }
+        }
+        Offer offer = new Offer(OfferKind.EVENT, !"gold".equals(e.kind));
+        offer.title = e.title;
+        offer.text = e.text;
+        state.log.add("Event: " + e.title);
+        switch (e.kind) {
+            case "gold" -> {
+                OfferOption o = new OfferOption();
+                o.gold = e.amount;
+                o.label = e.accept != null ? e.accept : "Take " + e.amount + " gold";
+                offer.options.add(o);
+            }
+            case "upgrade" -> {
+                for (OfferOption o : makeUpgradeOffer().options) {
+                    o.price = e.price;
+                    offer.options.add(o);
+                }
+            }
+            case "card" -> {
+                Offer cards = new Offer(OfferKind.CARD_REWARD, true);
+                addSingleCardOptions(cards, rnd, runColours());
+                offer.options.addAll(cards.options);
+            }
+            case "relicForLife" -> {
+                OfferOption o = new OfferOption();
+                o.relicId = pick(unownedRelics(), 1, rnd).get(0);
+                o.lifeCost = e.lifeCost;
+                o.secret = true;
+                o.label = e.accept != null ? e.accept : "Pay " + e.lifeCost + " life for a random relic";
+                offer.options.add(o);
+            }
+            case "sellRetry" -> {
+                OfferOption o = new OfferOption();
+                o.relicId = e.relic;
+                o.retryCost = 1;
+                o.secret = true;
+                RelicDef r = content.getRelic(e.relic);
+                o.label = (e.accept != null ? e.accept : "Hand over a retry") + ": " + r.name + " (" + r.description + ")";
+                offer.options.add(o);
+            }
+            default -> throw new IllegalStateException("Unknown event kind " + e.kind + " in " + e.id);
+        }
+        return offer;
+    }
+
     private Offer makeUpgradeOffer() {
         Random rnd = state.nextRandom();
         Offer offer = new Offer(OfferKind.UPGRADE, true);
@@ -647,8 +759,9 @@ public class Run {
 
     private List<String> unownedRelics() {
         List<String> out = new ArrayList<>();
-        for (String id : content.getRelics().keySet()) {
-            if (!state.relics.contains(id) && (state.relicPool == null || state.relicPool.contains(id))) {
+        for (RelicDef r : content.getRelics().values()) {
+            String id = r.id;
+            if (!r.eventOnly && !state.relics.contains(id) && (state.relicPool == null || state.relicPool.contains(id))) {
                 out.add(id);
             }
         }

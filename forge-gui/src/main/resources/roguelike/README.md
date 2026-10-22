@@ -18,7 +18,8 @@ the rest is draft or sample content, there to make the run playable and testable
 - `starters/`: characters (commander, landless starter deck, Base, reward pool).
   A character's `core` (in `characters/`) must appear 2x in each of its starters, except a starter with `"independentOfCore": true`, which must contain none of it.
 - `encounters/`: enemies and bosses (deck, optional commander, Base, life, hand size, earliest map row).
-- `relics/`: relics. `script` lines are added to the player's Base each match; prefix SVar names with the relic id.
+- `events/`: events for Event nodes: a title, scene text, a `kind` (gold, upgrade, card, relicForLife, sellRetry; see `EventDef.java`) and its numbers, plus a `weight`.
+- `relics/`: relics. `"eventOnly": true` keeps a relic out of shops and boss rewards (only an event gives it). `script` lines are added to the player's Base each match; prefix SVar names with the relic id.
 - `pools/`: card lists. `"bucket": true` makes a themed bucket that can be offered as a reward.
   A bucket is offered only if its cards' colour identity is within the run's colours, except for an occasional "(splash)" slot (`offColourBucketChance` in `config.json`).
   A bucket with `"fromSet": "<set code>"` instead offers cards of that set within the run's colours (its `cards` list is ignored).

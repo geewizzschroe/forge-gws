@@ -441,6 +441,122 @@ public class RunTest extends AITest {
         assertTrue(RunText.status(run), RunText.status(run).contains("Base supplies: 6"));
     }
 
+    /** A run whose only event is the given one, standing on an Event node. */
+    private Run atEvent(RoguelikeContent c, String eventId) {
+        EventDef only = c.getEvents().get(eventId);
+        assertNotNull(eventId, only);
+        c.getEvents().clear();
+        c.getEvents().put(only.id, only);
+        Run run = runWithPath(c, NodeType.EVENT);
+        run.enterNode(0);
+        return run;
+    }
+
+    @Test
+    public void everyEventHasAKnownKind() {
+        RoguelikeContent c = content();
+        assertTrue(c.getEvents().size() >= 5);
+        for (EventDef e : c.getEvents().values()) {
+            assertTrue(e.id + ": " + e.kind, List.of("gold", "upgrade", "card", "relicForLife", "sellRetry").contains(e.kind));
+            assertNotNull(e.id, e.title);
+            if (e.relic != null) {
+                assertTrue(e.id, c.getRelic(e.relic).eventOnly);
+            }
+        }
+    }
+
+    @Test
+    public void goldEvent() {
+        Run run = atEvent(content(), "dropped_purse");
+        Offer offer = run.getState().offer;
+        assertEquals(OfferKind.EVENT, offer.kind);
+        assertFalse("nothing to refuse", offer.canSkip);
+        run.choose(0);
+        assertEquals(40, run.getState().gold);
+        assertNull(run.getState().offer);
+    }
+
+    @Test
+    public void discountedUpgradeEventCanBeRefused() {
+        Run run = atEvent(content(), "wandering_smith");
+        run.getState().gold = 10;
+        Offer offer = run.getState().offer;
+        assertEquals(20, offer.options.get(0).price);
+        assertFalse(run.canAfford(offer.options.get(0)));
+        try {
+            run.choose(0);
+            throw new AssertionError("upgraded without the gold");
+        } catch (IllegalStateException expected) {
+            // fine
+        }
+        run.getState().gold = 30;
+        OfferOption pick = offer.options.get(0);
+        run.choose(0);
+        assertEquals(10, run.getState().gold);
+        assertTrue(run.getState().upgrades.get(pick.upgradeCard).contains(pick.upgrade));
+
+        Run refused = atEvent(content(), "wandering_smith");
+        refused.skip();
+        assertNull(refused.getState().offer);
+        assertTrue(refused.getState().upgrades.isEmpty() || refused.getState().upgrades.values().stream().allMatch(List::isEmpty));
+    }
+
+    @Test
+    public void cardEventOffersThreeAndCanBeRefused() {
+        Run run = atEvent(content(), "traveling_merchant");
+        Offer offer = run.getState().offer;
+        assertEquals(3, offer.options.size());
+        assertTrue(offer.canSkip);
+        int before = run.getState().deckSize();
+        run.choose(1);
+        assertEquals(before + 2, run.getState().deckSize());
+    }
+
+    @Test
+    public void bloodAltarTradesLifeForARelic() {
+        Run run = atEvent(content(), "blood_altar");
+        assertEquals(20, run.getState().life);
+        run.choose(0);
+        assertEquals(15, run.getState().life);
+        assertEquals(1, run.getState().relics.size());
+        assertFalse(content().getRelic(run.getState().relics.get(0)).eventOnly);
+
+        RoguelikeContent c = content();
+        EventDef altar = c.getEvents().get("blood_altar");
+        c.getEvents().clear();
+        c.getEvents().put(altar.id, altar);
+        Run weak = runWithPath(c, NodeType.EVENT);
+        weak.getState().life = 5; // paying would kill: the altar doesn't appear
+        weak.enterNode(0);
+        assertNull(weak.getState().offer);
+    }
+
+    @Test
+    public void theMysteriousFigureBuysARetry() {
+        Run run = atEvent(content(), "mysterious_figure");
+        assertEquals(1, run.getState().retriesLeft);
+        int maxLife = run.getState().maxLife;
+        run.choose(0);
+        assertEquals(0, run.getState().retriesLeft);
+        assertTrue(run.getState().relics.contains("hellish_fortitude"));
+        assertEquals(maxLife + 10, run.getState().maxLife);
+
+        RoguelikeContent c = content();
+        EventDef figure = c.getEvents().get("mysterious_figure");
+        c.getEvents().clear();
+        c.getEvents().put(figure.id, figure);
+        Run broke = runWithPath(c, NodeType.EVENT, NodeType.SHOP);
+        broke.getState().retriesLeft = 0; // nothing to sell: the figure doesn't appear
+        broke.enterNode(0);
+        assertNull(broke.getState().offer);
+        // and Hellish Fortitude is never for sale
+        broke.getState().gold = 999;
+        broke.enterNode(1);
+        for (OfferOption o : broke.getState().offer.options) {
+            assertFalse(String.valueOf(o.relicId), "hellish_fortitude".equals(o.relicId));
+        }
+    }
+
     private static int removalOption(Offer shop) {
         for (int i = 0; i < shop.options.size(); i++) {
             if (shop.options.get(i).removal) {

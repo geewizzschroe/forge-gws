@@ -18,4 +18,6 @@ public class RelicDef {
     public int maxLifeBonus;
     /** Not offered until unlocked at an account level. */
     public boolean locked;
+    /** Only an event gives it: never in shops, boss rewards or random relic events. */
+    public boolean eventOnly;
 }

@@ -24,6 +24,12 @@ public class OfferOption {
     public boolean upgradeService;
     /** The Workshop's Base supplies: adds this many SUPPLY counters to the run's Base. Repeatable. */
     public int supply;
+    /** Event costs and gains, paid or received when the option is taken. */
+    public int gold;
+    public int lifeCost;
+    public int retryCost;
+    /** Show only the label (an event's random relic stays a surprise until taken). */
+    public boolean secret;
     /** Where a single-card reward came from: "curated" or "full pool" (shown as a debug tag). */
     public String source;
 

@@ -8,6 +8,9 @@ public class Offer {
     public OfferKind kind;
     public List<OfferOption> options = new ArrayList<>();
     public boolean canSkip;
+    /** For an event: its title and scene text. */
+    public String title;
+    public String text;
     /** For a store's card removal or upgrade service: the store to return to once paid for, or backed out of. */
     public Offer returnToShop;
 

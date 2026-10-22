@@ -13,7 +13,9 @@ public enum OfferKind {
     /** Cut node: pick one card name to remove copies of. */
     CUT,
     /** Workshop: buy artifacts, upgrades and Base supplies, any number of times while gold lasts, then leave. */
-    WORKSHOP;
+    WORKSHOP,
+    /** Event node: take one option (some cost gold, life or a retry) or, where allowed, walk away. */
+    EVENT;
 
     /** A place to buy things with gold (bought with {@code Run.buy}, left with {@code Run.skip}). */
     public boolean isStore() {

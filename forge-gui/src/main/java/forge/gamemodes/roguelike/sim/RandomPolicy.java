@@ -1,5 +1,6 @@
 package forge.gamemodes.roguelike.sim;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +48,18 @@ public class RandomPolicy implements RunPolicy {
                 }
             }
             run.skip();
+        } else if (offer.kind == OfferKind.EVENT) {
+            List<Integer> affordable = new ArrayList<>();
+            for (int i = 0; i < offer.options.size(); i++) {
+                if (run.canAfford(offer.options.get(i))) {
+                    affordable.add(i);
+                }
+            }
+            if (affordable.isEmpty() || (offer.canSkip && rnd.nextBoolean())) {
+                run.skip();
+            } else {
+                run.choose(affordable.get(rnd.nextInt(affordable.size())));
+            }
         } else if (offer.kind == OfferKind.CUT || offer.options.isEmpty()) {
             run.skip();
         } else {

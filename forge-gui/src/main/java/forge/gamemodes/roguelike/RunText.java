@@ -47,6 +47,7 @@ public final class RunText {
                 case BOSS_RELIC -> lastLine(s) + "\nThe boss is beaten! Choose a relic.";
                 case SHOP -> "Shop. You have " + s.gold + " gold.";
                 case WORKSHOP -> "Workshop. You have " + s.gold + " gold.";
+                case EVENT -> s.offer.title + "\n" + s.offer.text;
                 case UPGRADE -> s.offer.returnToShop != null ? "Choose an upgrade to pay for." : "Choose a card to upgrade.";
                 case CUT -> s.offer.returnToShop != null ? "Choose a card to remove every copy of." : "Choose a card to cut from your deck.";
             };
@@ -84,6 +85,7 @@ public final class RunText {
             case CUT -> "Cut a card: remove a card from your deck.";
             case UPGRADE -> "Upgrade a card: choose one of " + cfg.upgradeChoices + " upgrades.";
             case WORKSHOP -> "Workshop: buy artifacts, upgrades and supplies for your Base with gold.";
+            case EVENT -> "Event: something happens on the road.";
         };
     }
 
@@ -136,6 +138,7 @@ public final class RunText {
             case CUT -> "Cut a card";
             case UPGRADE -> "Upgrade a card";
             case WORKSHOP -> "Workshop";
+            case EVENT -> "Event";
         };
         if (n.encounterId != null) {
             type += ": " + run.getContent().getEncounter(n.encounterId).name;
@@ -145,7 +148,9 @@ public final class RunText {
 
     public static String option(final Run run, final OfferOption o) {
         StringBuilder sb = new StringBuilder();
-        if (o.relicId != null) {
+        if (o.secret || o.gold > 0) {
+            sb.append(o.label);
+        } else if (o.relicId != null) {
             RelicDef r = run.getContent().getRelic(o.relicId);
             sb.append(r.name).append(" - ").append(r.description);
         } else if (o.cutCard != null) {

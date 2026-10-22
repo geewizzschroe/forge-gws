@@ -57,6 +57,8 @@ How it compares (my Python replica of the generator, 20,000 maps, random walks):
 
 ### 1.2 The campfire (multi-option rest)
 
+*After review (2026-10-22): the standalone Upgrade and Cut nodes are gone from new maps (Open E, option (i)). The campfire itself is not built yet. Until it is, upgrades come from the Workshop, events and rewards, and cuts only from the shop's paid removal. Event nodes are built: see 1.5.*
+
 At a campfire you pick **one** of these:
 - **Rest:** heal a share of max life (today 30%, which is 6 of 20).
 - **Train:** upgrade a card (pick 1 of 3, like today's Upgrade node).
@@ -126,6 +128,21 @@ Your idea is a node with its own theme: a blacksmith, war camp, artisan caravan 
 - both simulator policies
 - tests: buying each service, counters persisting across two matches, upgrade repeats, the screen compiles
 
+
+### 1.5 Event nodes (built 2026-10-22)
+
+An Event node picks one event at random, weighted, among those the run qualifies for. Each event is a small JSON file in `events/`, so you can write more without code, as long as it uses one of these kinds:
+
+| Event | Kind | What it offers | Refusable |
+|---|---|---|---|
+| A Dropped Purse | gold | 40 gold | no (nothing to refuse) |
+| A Wandering Smith | upgrade | the Upgrade offer of three, at 20 gold (half the Workshop's price) | yes |
+| A Traveling Merchant | card | one of three single cards, 2 copies | yes |
+| A Blood Altar | relicForLife | 5 life for a random relic, shown only after you take it | yes; it doesn't appear if 5 life would kill you |
+| A Mysterious Figure | sellRetry | your retry for **Hellish Fortitude** ("+10 run max life. A stranger holds your second chance now."), a relic only this event gives | yes; it appears only while you have a retry, at half the others' odds |
+
+New kinds (a curse with a downside, a choice between two boons) need a little code each. Event weight on the map is `weightEvent`, a PLACEHOLDER of 0.12. It replaced the Cut and Upgrade weights.
+
 ---
 
 ## 2. Enemy decks and bosses
@@ -149,9 +166,9 @@ Design notes from the audit that shaped these:
 | The Restless Dead *(existing)* | 2 | B | Zombie grind | as now (fixed today) |
 | Vampire Court | 2 | WB | life drain | life gained grows Vampires |
 | Summoner's Circle | 2 | GW | Summon Sagas | a Summon ending gives value |
-| Malboro Marsh | 2 | BG | deathtouch horrors | "Chef's Knife" for everyone |
+| Malboro Marsh | 2 | BG | deathtouch horrors | "Bad Breath": a -1/-1 each combat (revised) |
 | Cactuar Desert | 2 | G | a puzzle fight | small; the deck is the gimmick |
-| **Random Encounter!** | any | R + FF monsters | chaos | everyone casts Random Encounter |
+| ~~Random Encounter!~~ (shelved) | any | R + FF monsters | chaos | everyone casts Random Encounter |
 | Dragon's Aerie | 3 | R | fliers that get there fast | Dragons cost less |
 | Elf Grove | 3 | G(B) | mana elves outrun the land curve | Elf tokens once the grove is big |
 | **Boss: Sephiroth** | boss | B | sacrifice and drain, transforms | Jenova Cells: free fodder |
@@ -191,7 +208,9 @@ Design notes from the audit that shaped these:
 - *Watch:* Summon: Titan is a poor fit here. Its chapter II returns lands from the graveyard, which does nothing without lands.
 
 **Malboro Marsh** (black-green). Swamp horrors and plants: Tonberry's knife, Malboro's breath. An attrition fight where every block is scary.
-- *Base, "Chef's Knife":* creatures you control have deathtouch during your turn (Tonberry's own ability, given to everyone).
+- ~~*Base, "Chef's Knife":* creatures you control have deathtouch during your turn.~~ Dropped after review: the deck is already full of deathtouch, so it would change little.
+- *Base, revised, "Bad Breath":* at the beginning of combat on your turn, target creature an opponent controls gets -1/-1 until end of turn. Malboro's breath every turn: it shrinks blockers before the deathtouch attackers arrive and picks off X/1s.
+- *Alternative, "Rot":* whenever a creature an opponent controls dies, that player loses 1 life. Every deathtouch trade stings, which suits an attrition deck.
 - *Key cards:* Tonberry, Malboro, Gran Pulse Ochu, plus black and green deathtouch or removal creatures.
 
 **Cactuar Desert** (mono-green, out there). Cactuars are cheap 3/3 tramplers that hop back to hand at end step. The real threat is **Jumbo Cactuar**: a 1/7 that gets +9,999/+0 when it attacks.
@@ -202,7 +221,7 @@ Design notes from the audit that shaped these:
 
 ### The chaos encounter
 
-**Random Encounter!** This is your idea.
+**Random Encounter!** This is your idea. **Shelved after review (2026-10-22)**; kept here for later.
 - *Base, "Wandering Monsters":* at the beginning of each player's upkeep, that player casts a copy of Random Encounter without paying its mana cost.
   - Random Encounter shuffles your library, mills four, puts each creature card milled onto the battlefield with haste, and returns them to hand at the next end step.
   - The engine can cast a copy of a named card (Tibalt, the Chaotic does it). I haven't tried it from a Base yet.

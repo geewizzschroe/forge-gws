@@ -1,0 +1,8 @@
+{
+  "id": "dropped_purse",
+  "title": "A Dropped Purse",
+  "text": "A coin purse lies in the road, its owner long gone.",
+  "kind": "gold",
+  "amount": 40,
+  "accept": "Take the 40 gold"
+}
