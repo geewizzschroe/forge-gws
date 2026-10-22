@@ -25,6 +25,9 @@ public final class RunText {
             }
             sb.append("Relics: ").append(String.join(", ", names)).append('\n');
         }
+        if (s.baseSupply > 0) {
+            sb.append("Base supplies: ").append(s.baseSupply).append('\n');
+        }
         sb.append('\n').append(prompt(run));
         return sb.toString();
     }
@@ -43,7 +46,8 @@ public final class RunText {
                 case CARD_REWARD -> lastLine(s) + "\nChoose a reward.";
                 case BOSS_RELIC -> lastLine(s) + "\nThe boss is beaten! Choose a relic.";
                 case SHOP -> "Shop. You have " + s.gold + " gold.";
-                case UPGRADE -> "Choose a card to upgrade.";
+                case WORKSHOP -> "Workshop. You have " + s.gold + " gold.";
+                case UPGRADE -> s.offer.returnToShop != null ? "Choose an upgrade to pay for." : "Choose a card to upgrade.";
                 case CUT -> s.offer.returnToShop != null ? "Choose a card to remove every copy of." : "Choose a card to cut from your deck.";
             };
         }
@@ -79,6 +83,7 @@ public final class RunText {
             case REST -> "Rest: heal " + Math.round(cfg.restHealFraction * 100) + "% of your max life.";
             case CUT -> "Cut a card: remove a card from your deck.";
             case UPGRADE -> "Upgrade a card: choose one of " + cfg.upgradeChoices + " upgrades.";
+            case WORKSHOP -> "Workshop: buy artifacts, upgrades and supplies for your Base with gold.";
         };
     }
 
@@ -130,6 +135,7 @@ public final class RunText {
             case REST -> "Rest";
             case CUT -> "Cut a card";
             case UPGRADE -> "Upgrade a card";
+            case WORKSHOP -> "Workshop";
         };
         if (n.encounterId != null) {
             type += ": " + run.getContent().getEncounter(n.encounterId).name;
@@ -159,7 +165,7 @@ public final class RunText {
         } else if (o.upgrade != null) {
             sb.append(o.upgradeCard).append(": ").append(o.upgrade.describe());
         }
-        if (o.removal) {
+        if (o.removal || o.upgradeService || o.supply > 0) {
             sb.append(o.label);
         }
         if (o.price > 0) {

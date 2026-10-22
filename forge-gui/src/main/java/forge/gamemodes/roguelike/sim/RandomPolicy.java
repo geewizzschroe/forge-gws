@@ -28,15 +28,19 @@ public class RandomPolicy implements RunPolicy {
     @Override
     public void resolveOffer(final Run run) {
         Offer offer = run.getState().offer;
-        if (offer.kind == OfferKind.SHOP) {
+        if (offer.kind.isStore()) {
             boolean bought = true;
+            boolean suppliesBought = false;
             while (bought) {
                 bought = false;
                 for (boolean relicsFirst : new boolean[] {true, false}) {
                     for (int i = 0; i < offer.options.size() && !bought; i++) {
                         OfferOption o = offer.options.get(i);
-                        if (!o.bought && !o.removal && o.price <= run.getState().gold && (o.relicId != null) == relicsFirst) {
+                        // never the removal or upgrade services (they open a second choice); supplies only once a visit
+                        if (!o.bought && !o.removal && !o.upgradeService && !(o.supply > 0 && suppliesBought)
+                                && o.price <= run.getState().gold && (o.relicId != null) == relicsFirst) {
                             run.buy(i);
+                            suppliesBought |= o.supply > 0;
                             bought = true;
                         }
                     }

@@ -47,6 +47,8 @@ public class RunState {
     public Integer activeNodeId;
     /** Times the shop's card removal was bought this run; each use costs more. */
     public int removalsBought;
+    /** SUPPLY counters the player's Base holds (Workshop supplies); spent ones are gone for the rest of the run. */
+    public int baseSupply;
     /** Set codes in this run's Full Pool; empty means the config's starting sets. */
     public List<String> fullPoolSets = new ArrayList<>();
     /** Life when the active match was entered, restored by a retry. */

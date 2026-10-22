@@ -73,8 +73,8 @@ public class RunMap {
     }
 
     private static NodeType pickType(final RunConfig cfg, final Random rnd) {
-        double[] w = {cfg.weightEnemy, cfg.weightShop, cfg.weightRest, cfg.weightCut, cfg.weightUpgrade};
-        NodeType[] t = {NodeType.ENEMY, NodeType.SHOP, NodeType.REST, NodeType.CUT, NodeType.UPGRADE};
+        double[] w = {cfg.weightEnemy, cfg.weightShop, cfg.weightRest, cfg.weightCut, cfg.weightUpgrade, cfg.weightWorkshop};
+        NodeType[] t = {NodeType.ENEMY, NodeType.SHOP, NodeType.REST, NodeType.CUT, NodeType.UPGRADE, NodeType.WORKSHOP};
         double total = 0;
         for (double x : w) {
             total += x;

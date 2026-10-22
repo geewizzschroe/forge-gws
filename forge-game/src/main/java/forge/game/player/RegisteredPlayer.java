@@ -28,6 +28,7 @@ public class RegisteredPlayer {
     private int startingLife = 20;
     private int maxLife = 0;
     private PaperCard base = null;
+    private final Map<String, Integer> baseCounters = new LinkedHashMap<>();
     private final Map<String, List<CardUpgrade>> cardUpgrades = new LinkedHashMap<>();
     private int startingHand = 7;
     private int manaShards = 0;
@@ -84,6 +85,18 @@ public class RegisteredPlayer {
     }
     public final void setBase(PaperCard base) {
         this.base = base;
+    }
+
+    /** Counters the Base starts the game with, by counter type name (for example "SUPPLY"). */
+    public final Map<String, Integer> getBaseCounters() {
+        return baseCounters;
+    }
+    public final void setBaseCounters(String counterType, int amount) {
+        if (amount > 0) {
+            baseCounters.put(counterType, amount);
+        } else {
+            baseCounters.remove(counterType);
+        }
     }
 
     /** Upgrades applied at game start to every card of the given name this player owns. */

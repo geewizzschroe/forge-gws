@@ -85,7 +85,7 @@ Add "no enemy twice on one path". Optionally, show which boss waits at the top f
 
 This is small plumbing. It is not built, because the tiers themselves come from part 2.
 
-### 1.4 The workshop node (added after review; scoping, not built)
+### 1.4 The workshop node (built 2026-10-22 with your answers: per run, own creatures only, a second purchase adds 3, stretch-only, named Workshop; upgrade price flat 40)
 
 Your idea is a node with its own theme: a blacksmith, war camp, artisan caravan or similar. The name is open; "Workshop" below is a placeholder. You buy three kinds of thing there, any number of times while you have gold:
 

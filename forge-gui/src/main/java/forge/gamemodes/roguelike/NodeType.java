@@ -2,7 +2,7 @@ package forge.gamemodes.roguelike;
 
 /** Node types named in DESIGN.md 2.1. */
 public enum NodeType {
-    ENEMY, BOSS, SHOP, REST, CUT, UPGRADE;
+    ENEMY, BOSS, SHOP, REST, CUT, UPGRADE, WORKSHOP;
 
     public boolean isMatch() {
         return this == ENEMY || this == BOSS;

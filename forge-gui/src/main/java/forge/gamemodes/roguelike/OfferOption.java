@@ -20,6 +20,10 @@ public class OfferOption {
     public boolean bought;
     /** The shop's card removal service: buying it opens a choice of a card to cut every copy of. */
     public boolean removal;
+    /** The Workshop's upgrade service: buying it opens a choice of upgrades, paid for when one is taken. Repeatable. */
+    public boolean upgradeService;
+    /** The Workshop's Base supplies: adds this many SUPPLY counters to the run's Base. Repeatable. */
+    public int supply;
     /** Where a single-card reward came from: "curated" or "full pool" (shown as a debug tag). */
     public String source;
 

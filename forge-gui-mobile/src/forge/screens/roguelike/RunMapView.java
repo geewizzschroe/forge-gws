@@ -83,6 +83,7 @@ public class RunMapView extends FDisplayObject {
             case REST -> new Color(0.2f, 0.6f, 0.3f, 1f);
             case CUT -> new Color(0.45f, 0.45f, 0.45f, 1f);
             case UPGRADE -> new Color(0.2f, 0.4f, 0.8f, 1f);
+            case WORKSHOP -> new Color(0.55f, 0.35f, 0.2f, 1f);
         };
     }
 
@@ -94,6 +95,7 @@ public class RunMapView extends FDisplayObject {
             case REST -> "R";
             case CUT -> "C";
             case UPGRADE -> "U";
+            case WORKSHOP -> "W";
         };
     }
 

@@ -2987,6 +2987,9 @@ public class Player extends GameEntity implements Comparable<Player> {
         if (registeredPlayer.getBase() != null) {
             Card c = Card.fromPaperCard(registeredPlayer.getBase(), this);
             c.setCollectible(true);
+            for (Map.Entry<String, Integer> e : registeredPlayer.getBaseCounters().entrySet()) {
+                c.addCounterInternal(CounterType.getType(e.getKey()), e.getValue(), this, false, null, null);
+            }
             com.add(c);
         }
 

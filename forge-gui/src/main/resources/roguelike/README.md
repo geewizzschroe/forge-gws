@@ -13,6 +13,7 @@ the rest is draft or sample content, there to make the run playable and testable
 - `config.json`: run numbers (`RunConfig`). Fields marked PLACEHOLDER in `RunConfig.java` stand in for open design questions.
   `cardScopeSets` and `cardScopeExceptions` set the card scope; `CardScopeTest` lists deck and pool cards outside it.
   `fullPoolSets` are the Full Pool's starting sets (the uncurated source of reward slots); `shopRemovalPrice` is the first price of the shop's card removal.
+  `workshop*` set the Workshop node (artifact choices and prices, upgrade price, Base supplies and the ability they give).
 - `upgrades.json`: the pool card upgrades are drawn from (power/toughness and keywords).
 - `starters/`: characters (commander, landless starter deck, Base, reward pool).
   A character's `core` (in `characters/`) must appear 2x in each of its starters, except a starter with `"independentOfCore": true`, which must contain none of it.

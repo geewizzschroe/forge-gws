@@ -11,5 +11,12 @@ public enum OfferKind {
     /** Upgrade node: pick one (card, upgrade) pair. */
     UPGRADE,
     /** Cut node: pick one card name to remove copies of. */
-    CUT
+    CUT,
+    /** Workshop: buy artifacts, upgrades and Base supplies, any number of times while gold lasts, then leave. */
+    WORKSHOP;
+
+    /** A place to buy things with gold (bought with {@code Run.buy}, left with {@code Run.skip}). */
+    public boolean isStore() {
+        return this == SHOP || this == WORKSHOP;
+    }
 }

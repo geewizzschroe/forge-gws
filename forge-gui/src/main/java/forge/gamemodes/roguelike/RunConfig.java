@@ -41,6 +41,8 @@ public class RunConfig {
     public double weightRest = 0.13;
     public double weightCut = 0.10;
     public double weightUpgrade = 0.10;
+    // Decided (proposal 1.4): the Workshop appears in the map's stretches, never guaranteed. PLACEHOLDER: the weight.
+    public double weightWorkshop = 0.08;
     // PLACEHOLDER: D2 currency and prices.
     public int startingGold = 0;
     public int goldPerEnemy = 25;
@@ -52,6 +54,21 @@ public class RunConfig {
     // Decided (DESIGN.md 2.5): the shop's card removal costs this, times one more than the times bought before
     // (75, 150, 225 ...). PLACEHOLDER: the amount.
     public int shopRemovalPrice = 75;
+    // Decided (proposal 1.4): the Workshop sells artifacts (2 copies each), upgrades for gold (repeatable)
+    // and Base supplies: a Base ability with uses that last the whole run. PLACEHOLDER: every number here.
+    public int workshopArtifactChoices = 3;
+    public int workshopArtifactPrice = 30;
+    // Chance that each artifact slot is Equipment (when the run's colours have any).
+    public double workshopEquipmentChance = 0.67;
+    public int workshopUpgradePrice = 40;
+    public int workshopSupplyPrice = 50;
+    public int workshopSupplyAmount = 3;
+    // The ability Base supplies give; it spends one SUPPLY counter from the Base each time.
+    public List<String> workshopSupplyScript = List.of(
+            "A:AB$ PutCounter | Cost$ SubCounter<1/SUPPLY> | ActivationZone$ Command | SorcerySpeed$ True"
+                    + " | ValidTgts$ Creature.YouCtrl | TgtPrompt$ Select target creature you control | CounterType$ P1P1"
+                    + " | CounterNum$ 1 | SpellDescription$ Supplies: put a +1/+1 counter on target creature you control."
+                    + " Activate only as a sorcery. (Spent supplies are gone for the rest of the run.)");
     // PLACEHOLDER: how much a Rest node heals, as a fraction of run max life.
     public double restHealFraction = 0.3;
     // PLACEHOLDER: how many copies a Cut node removes from the chosen card name (0 = all of them).

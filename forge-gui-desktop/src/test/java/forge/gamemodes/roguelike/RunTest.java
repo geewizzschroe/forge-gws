@@ -361,6 +361,86 @@ public class RunTest extends AITest {
         assertEquals(150, run.getState().offer.options.get(removalOption(run.getState().offer)).price);
     }
 
+    @Test
+    public void theWorkshopSellsArtifactsInTheRunsColours() {
+        RoguelikeContent c = content();
+        Run run = runWithPath(c, NodeType.WORKSHOP);
+        run.enterNode(0);
+        Offer offer = run.getState().offer;
+        assertEquals(OfferKind.WORKSHOP, offer.kind);
+        int artifacts = 0;
+        for (OfferOption o : offer.options) {
+            for (String name : o.cards.keySet()) {
+                forge.item.PaperCard pc = forge.StaticData.instance().getCommonCards().getCard(name);
+                assertTrue(name, pc.getRules().getType().isArtifact());
+                assertTrue(name + " is outside mono-blue", (pc.getRules().getColorIdentity().getColor() & ~forge.card.MagicColor.BLUE) == 0);
+                assertEquals(30, o.price);
+                artifacts++;
+            }
+        }
+        assertEquals(3, artifacts);
+        assertTrue(offer.options.stream().anyMatch(o -> o.upgradeService && o.price == 40));
+        assertTrue(offer.options.stream().anyMatch(o -> o.supply == 3 && o.price == 50));
+    }
+
+    @Test
+    public void theWorkshopUpgradesForGoldAsOftenAsYouCanPay() {
+        RoguelikeContent c = content();
+        Run run = runWithPath(c, NodeType.WORKSHOP);
+        run.getState().gold = 100;
+        run.enterNode(0);
+        int service = -1;
+        for (int i = 0; i < run.getState().offer.options.size(); i++) {
+            if (run.getState().offer.options.get(i).upgradeService) {
+                service = i;
+            }
+        }
+        run.buy(service); // opens the choice; backing out is free
+        assertEquals(OfferKind.UPGRADE, run.getState().offer.kind);
+        run.skip();
+        assertEquals(OfferKind.WORKSHOP, run.getState().offer.kind);
+        assertEquals(100, run.getState().gold);
+
+        for (int bought = 1; bought <= 2; bought++) {
+            run.buy(service);
+            OfferOption pick = run.getState().offer.options.get(0);
+            run.choose(0);
+            assertEquals(OfferKind.WORKSHOP, run.getState().offer.kind);
+            assertEquals(100 - 40 * bought, run.getState().gold);
+            assertTrue(run.getState().upgrades.get(pick.upgradeCard).contains(pick.upgrade));
+        }
+        try { // 20 gold left
+            run.buy(service);
+            throw new AssertionError("opened the upgrade service without the gold");
+        } catch (IllegalStateException expected) {
+            // fine
+        }
+        assertEquals(OfferKind.WORKSHOP, run.getState().offer.kind);
+    }
+
+    @Test
+    public void workshopSuppliesGoOnTheBase() {
+        RoguelikeContent c = content();
+        Run run = runWithPath(c, NodeType.WORKSHOP);
+        run.getState().gold = 100;
+        String before = String.join("\n", run.getPlayerBase().getRules().getMainPart().getAbilities());
+        assertFalse(before, before.contains("SUPPLY"));
+        run.enterNode(0);
+        int supplies = -1;
+        for (int i = 0; i < run.getState().offer.options.size(); i++) {
+            if (run.getState().offer.options.get(i).supply > 0) {
+                supplies = i;
+            }
+        }
+        run.buy(supplies);
+        run.buy(supplies); // a second purchase adds three more
+        assertEquals(6, run.getState().baseSupply);
+        assertEquals(0, run.getState().gold);
+        String after = String.join("\n", run.getPlayerBase().getRules().getMainPart().getAbilities());
+        assertTrue(after, after.contains("SubCounter<1/SUPPLY>"));
+        assertTrue(RunText.status(run), RunText.status(run).contains("Base supplies: 6"));
+    }
+
     private static int removalOption(Offer shop) {
         for (int i = 0; i < shop.options.size(); i++) {
             if (shop.options.get(i).removal) {

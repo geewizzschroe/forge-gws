@@ -23,7 +23,10 @@ import forge.LobbyPlayer;
 import forge.StaticData;
 import forge.game.BaseCard;
 import forge.game.Game;
+import forge.game.card.Card;
+import forge.game.card.CounterEnumType;
 import forge.game.player.Player;
+import forge.game.zone.ZoneType;
 import forge.gamemodes.roguelike.RunMatchFactory.RunMatch;
 import forge.item.PaperCard;
 
@@ -142,6 +145,7 @@ public class Run {
                 }
             }
             case CUT -> state.offer = makeCutOffer();
+            case WORKSHOP -> state.offer = makeWorkshopOffer();
         }
     }
 
@@ -171,8 +175,11 @@ public class Run {
             relics.add(content.getRelic(id));
         }
         String baseFile = state.baseOverride != null ? state.baseOverride : content.getStarter(state.starterId).base;
-        List<String> script = BaseAssembler.assemble(baseFile == null ? null : content.getBase(baseFile), relics,
-                state.baseAbilities);
+        List<BaseAbility> abilities = new ArrayList<>(state.baseAbilities);
+        if (state.baseSupply > 0) {
+            abilities.add(new BaseAbility("Supplies", "", content.getConfig().workshopSupplyScript));
+        }
+        List<String> script = BaseAssembler.assemble(baseFile == null ? null : content.getBase(baseFile), relics, abilities);
         return script == null ? null : BaseCard.fromScript(script);
     }
 
@@ -200,9 +207,22 @@ public class Run {
         for (Player p : game.getRegisteredPlayers()) {
             if (p.getRegisteredPlayer() == match.hero()) {
                 endLife = p.getLife();
+                if (won && state.baseSupply > 0) { // a lost match is retried or ends the run, so its spending doesn't count
+                    state.baseSupply = baseSupplyLeft(p);
+                }
             }
         }
         return applyMatchResult(match.encounter(), won, endLife);
+    }
+
+    /** The SUPPLY counters left on the player's Base at the end of a game. */
+    private static int baseSupplyLeft(final Player p) {
+        for (Card c : p.getCardsIn(ZoneType.Command)) {
+            if (c.getType().hasStringType("Base")) {
+                return c.getCounters(CounterEnumType.SUPPLY);
+            }
+        }
+        return 0;
     }
 
     /** Apply the result of the active node's match (also used by debug tools, without a game). */
@@ -262,13 +282,23 @@ public class Run {
 
     // ---------------------------------------------------------------- choices
 
-    /** Take one option of the open offer (not for shops; use {@link #buy(int)}). */
+    /** Take one option of the open offer (not for stores; use {@link #buy(int)}). */
     public void choose(final int index) {
         Offer offer = requireOffer();
-        if (offer.kind == OfferKind.SHOP) {
-            throw new IllegalStateException("Use buy() in a shop");
+        if (offer.kind.isStore()) {
+            throw new IllegalStateException("Use buy() in a store");
         }
         OfferOption o = offer.options.get(index);
+        if (offer.returnToShop != null && o.upgradeCard != null) { // the Workshop's upgrade service
+            if (state.gold < o.price) {
+                throw new IllegalStateException("Can't pay " + o.price + " gold with " + state.gold);
+            }
+            state.log.add("Paid " + o.price + " gold to upgrade " + o.upgradeCard + ": " + o.upgrade.describe());
+            state.gold -= o.price;
+            apply(o);
+            state.offer = offer.returnToShop;
+            return;
+        }
         if (offer.returnToShop != null) {
             if (state.gold < o.price) {
                 throw new IllegalStateException("Can't pay " + o.price + " gold with " + state.gold);
@@ -298,8 +328,8 @@ public class Run {
 
     public void buy(final int index) {
         Offer offer = requireOffer();
-        if (offer.kind != OfferKind.SHOP) {
-            throw new IllegalStateException("Not in a shop");
+        if (!offer.kind.isStore()) {
+            throw new IllegalStateException("Not in a store");
         }
         OfferOption o = offer.options.get(index);
         if (o.bought || state.gold < o.price) {
@@ -313,6 +343,25 @@ public class Run {
                 c.price = o.price;
             }
             state.offer = cut;
+            return;
+        }
+        if (o.upgradeService) {
+            // paid for when an upgrade is chosen; backing out returns to the Workshop for free
+            Offer upgrade = makeUpgradeOffer();
+            if (upgrade.options.isEmpty()) {
+                return;
+            }
+            upgrade.returnToShop = offer;
+            for (OfferOption u : upgrade.options) {
+                u.price = o.price;
+            }
+            state.offer = upgrade;
+            return;
+        }
+        if (o.supply > 0) { // repeatable: each purchase adds more
+            state.log.add("Bought " + o.supply + " Base supplies (" + o.price + " gold)");
+            state.gold -= o.price;
+            state.baseSupply += o.supply;
             return;
         }
         state.log.add("Bought " + RunText.option(this, o));
@@ -333,7 +382,7 @@ public class Run {
         }
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
         state.offer = null;
-        state.log.add(offer.kind == OfferKind.SHOP ? "Left the shop" : "Skipped the choice");
+        state.log.add(offer.kind == OfferKind.SHOP ? "Left the shop" : offer.kind == OfferKind.WORKSHOP ? "Left the Workshop" : "Skipped the choice");
         if (matchReward) {
             afterMatchReward();
         } else {
@@ -488,6 +537,47 @@ public class Run {
         removal.label = "Remove a card (every copy)";
         removal.price = cfg.shopRemovalPrice * (state.removalsBought + 1);
         offer.options.add(removal);
+        return offer;
+    }
+
+    /**
+     * The Workshop: artifacts from the Full Pool in the run's colours (each slot Equipment at some odds), the
+     * upgrade service and Base supplies.
+     */
+    private Offer makeWorkshopOffer() {
+        RunConfig cfg = content.getConfig();
+        Random rnd = state.nextRandom();
+        Offer offer = new Offer(OfferKind.WORKSHOP, true);
+        List<String> equipment = new ArrayList<>();
+        List<String> otherArtifacts = new ArrayList<>();
+        for (String c : FullPool.cards(fullPoolSets(), runColours(), content.getQuarantine())) {
+            PaperCard pc = StaticData.instance().getCommonCards().getCard(c);
+            if (pc == null || !pc.getRules().getType().isArtifact()) {
+                continue;
+            }
+            (pc.getRules().getType().hasSubtype("Equipment") ? equipment : otherArtifacts).add(c);
+        }
+        Collections.shuffle(equipment, rnd);
+        Collections.shuffle(otherArtifacts, rnd);
+        for (int i = 0; i < cfg.workshopArtifactChoices && !(equipment.isEmpty() && otherArtifacts.isEmpty()); i++) {
+            boolean wantEquipment = rnd.nextDouble() < cfg.workshopEquipmentChance;
+            List<String> from = wantEquipment && !equipment.isEmpty() || otherArtifacts.isEmpty() ? equipment : otherArtifacts;
+            OfferOption o = new OfferOption();
+            o.cards.put(from.remove(0), cfg.cardRewardCopies);
+            o.price = cfg.workshopArtifactPrice;
+            offer.options.add(o);
+        }
+        OfferOption upgrade = new OfferOption();
+        upgrade.upgradeService = true;
+        upgrade.label = "Upgrade a card";
+        upgrade.price = cfg.workshopUpgradePrice;
+        offer.options.add(upgrade);
+        OfferOption supply = new OfferOption();
+        supply.supply = cfg.workshopSupplyAmount;
+        supply.label = "Stock up your Base: " + cfg.workshopSupplyAmount + " supplies (each puts a +1/+1 counter on"
+                + " a creature you control, at sorcery speed; spent supplies don't come back)";
+        supply.price = cfg.workshopSupplyPrice;
+        offer.options.add(supply);
         return offer;
     }
 

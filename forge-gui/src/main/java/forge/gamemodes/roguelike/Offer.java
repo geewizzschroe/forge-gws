@@ -8,7 +8,7 @@ public class Offer {
     public OfferKind kind;
     public List<OfferOption> options = new ArrayList<>();
     public boolean canSkip;
-    /** For the shop's card removal: the shop to return to once a card is cut, or the choice is backed out of. */
+    /** For a store's card removal or upgrade service: the store to return to once paid for, or backed out of. */
     public Offer returnToShop;
 
     public Offer() {

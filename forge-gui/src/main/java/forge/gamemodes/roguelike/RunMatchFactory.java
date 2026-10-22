@@ -50,6 +50,7 @@ public final class RunMatchFactory {
         }
         Run run = new Run(content, state);
         hero.setBase(run.getPlayerBase());
+        hero.setBaseCounters("SUPPLY", state.baseSupply);
         hero.setPlayer(heroPlayer);
 
         RegisteredPlayer enemy = new RegisteredPlayer(deck(encounter.name, encounter.deck, encounter.commander));

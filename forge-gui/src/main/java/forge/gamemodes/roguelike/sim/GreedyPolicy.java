@@ -34,6 +34,7 @@ public class GreedyPolicy implements RunPolicy {
                 case UPGRADE -> 50;
                 case ENEMY, BOSS -> 40;
                 case CUT -> 1;
+                case WORKSHOP -> gold >= run.getContent().getConfig().workshopArtifactPrice ? 55 : 0;
             };
             if (score > bestScore) {
                 best = n;
@@ -46,7 +47,7 @@ public class GreedyPolicy implements RunPolicy {
     @Override
     public void resolveOffer(final Run run) {
         Offer offer = run.getState().offer;
-        if (offer.kind == OfferKind.SHOP) {
+        if (offer.kind.isStore()) {
             new RandomPolicy(0).resolveOffer(run); // buys relics first, then cards, while affordable
             return;
         }

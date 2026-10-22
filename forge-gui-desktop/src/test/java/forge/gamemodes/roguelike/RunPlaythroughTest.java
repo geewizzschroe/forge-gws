@@ -123,6 +123,60 @@ public class RunPlaythroughTest extends AITest {
         assertEquals("[]", problems.toString());
     }
 
+    /** Base supplies start each match as counters on the Base, and what a won match spends stays spent. */
+    @Test(timeOut = 300000)
+    public void baseSuppliesLastTheWholeRun() throws Exception {
+        initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        Run run = Run.start(c, "jill_mono_blue", 3);
+        run.getState().baseSupply = 3;
+        for (int fight = 0; fight < 2; fight++) {
+            final int expected = 3 - fight;
+            if (run.getState().offer != null) {
+                run.choose(0); // the card reward
+            }
+            MapNode next = run.getAvailableNodes().get(0);
+            next.type = NodeType.ENEMY; // whatever the map rolled, make it a fight
+            next.encounterId = "troop_of_dwarves";
+            run.enterNode(next.id);
+            RunMatch m = run.createMatch(new LobbyPlayerAi("Hero", null), new LobbyPlayerAi("Enemy", null));
+            final Game game = m.match().createGame();
+            game.setNoGUIUser();
+            final List<String> problems = new ArrayList<>();
+            TimeLimitedCodeBlock.runWithTimeout(() -> m.match().startGame(game, () -> {
+                try {
+                    Player hero = null;
+                    Player enemy = null;
+                    for (Player p : game.getPlayers()) {
+                        if (p.getRegisteredPlayer() == m.hero()) {
+                            hero = p;
+                        } else {
+                            enemy = p;
+                        }
+                    }
+                    Card base = null;
+                    for (Card card : hero.getCardsIn(ZoneType.Command)) {
+                        if (card.getType().hasStringType("Base")) {
+                            base = card;
+                        }
+                    }
+                    int supply = base.getCounters(forge.game.card.CounterEnumType.SUPPLY);
+                    check(problems, supply == expected, "supply at the start " + supply + ", expected " + expected);
+                    String text = base.getAbilityText(base.getCurrentState());
+                    check(problems, text.contains("Supplies: put a +1/+1 counter"), "Base text " + text);
+                    base.subtractCounter(forge.game.card.CounterEnumType.SUPPLY, 1, hero); // as if the ability was used
+                    enemy.concede();
+                    game.getAction().checkGameOverCondition();
+                } catch (Throwable t) {
+                    problems.add(t.toString());
+                }
+            }), 120, TimeUnit.SECONDS);
+            assertEquals("[]", problems.toString());
+            assertTrue(run.finishMatch(m, game));
+            assertEquals(expected - 1, run.getState().baseSupply);
+        }
+    }
+
     private static void check(List<String> problems, boolean ok, String what) {
         if (!ok) {
             problems.add(what);
