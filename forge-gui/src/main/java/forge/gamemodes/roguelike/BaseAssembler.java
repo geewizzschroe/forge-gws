@@ -7,7 +7,7 @@ import java.util.Set;
 
 /**
  * Builds the script of a player's Base for one match: the Base's own lines plus the script lines of
- * every relic the player holds, with rules text listing the relics.
+ * every relic the player holds and every unlocked Base ability, with rules text listing the relics.
  */
 public final class BaseAssembler {
 
@@ -54,27 +54,17 @@ public final class BaseAssembler {
             relicText.add(r.name + ": " + r.description);
         }
 
-        List<String> abilityText = new ArrayList<>();
+        // An unlocked ability shows only as its own line of rules text (its script's description); only relics are listed
         for (BaseAbility a : abilities) {
             for (String line : a.script) {
                 addSVarName(line, svars, "Base ability " + a.name);
                 out.add(line);
             }
-            abilityText.add(a.name + ": " + a.description);
         }
 
-        List<String> text = new ArrayList<>();
-        if (!abilityText.isEmpty()) {
-            text.add("Unlocked:\\r\\n" + String.join("\\r\\n", abilityText));
-        }
         if (!relicText.isEmpty()) {
-            text.add("Relics:\\r\\n" + String.join("\\r\\n", relicText));
-        }
-        if (!text.isEmpty()) {
-            out.add("Text:" + String.join("\\r\\n", text));
-            List<String> all = new ArrayList<>(abilityText);
-            all.addAll(relicText);
-            String list = String.join("\\n", all);
+            out.add("Text:Relics:\\r\\n" + String.join("\\r\\n", relicText));
+            String list = String.join("\\n", relicText);
             oracle = oracle.isEmpty() ? list : oracle + "\\n" + list;
         }
         out.add("Oracle:" + oracle);

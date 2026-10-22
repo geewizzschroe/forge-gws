@@ -85,7 +85,12 @@ public class LightningTest extends AITest {
         game.getPhaseHandler().devModeSet(PhaseType.MAIN1, p);
         Run run = lightningRun(c, 5600); // level 8: both Sunforger unlocks
         String text = run.getPlayerBase().getRules().getMainPart().getNonAbilityText();
-        assertTrue(text, text.contains("Sunforger: Lightning comes into play with a Sunforger equipped."));
+        assertTrue("unlocked abilities are not listed apart from their own text: " + text, !text.contains("Unlocked"));
+        Card shown = Card.fromPaperCard(run.getPlayerBase(), game.getPlayers().get(1));
+        String full = shown.getView().getText(shown.getView().getCurrentState(), null);
+        assertTrue(full, full.contains("Sunforger: Whenever your commander enters, conjure a Sunforger"));
+        assertTrue(full, full.contains("Sunforger Drill: Sunforgers you control have equip Soldier"));
+        assertTrue(full, !full.contains("Unlocked"));
         putBase(game, p, run);
 
         Card lightning = addCardToZone("Lightning, Army of One", p, ZoneType.Command);
