@@ -53,6 +53,31 @@ public class LightningTest extends AITest {
     }
 
     @Test
+    public void equippedTokensHaveHaste() {
+        Game game = initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        Player p = game.getPlayers().get(1);
+        game.getPhaseHandler().devModeSet(PhaseType.MAIN1, p);
+        putBase(game, p, lightningRun(c, 0));
+
+        Card token = addCard("Savannah Lions", p);
+        token.setTokenCard(true);
+        Card plain = addCard("Savannah Lions", p);
+        Card sword = addCard("Short Sword", p);
+        game.getAction().checkStateEffects(true);
+        assertTrue("an unequipped token has no haste", !token.hasKeyword("Haste"));
+
+        sword.attachToEntity(token, null);
+        game.getAction().checkStateEffects(true);
+        assertTrue("an equipped token has haste", token.hasKeyword("Haste"));
+
+        sword.attachToEntity(plain, null);
+        game.getAction().checkStateEffects(true);
+        assertTrue("an equipped nontoken has no haste", !plain.hasKeyword("Haste"));
+        assertTrue("the token lost it when unequipped", !token.hasKeyword("Haste"));
+    }
+
+    @Test
     public void sunforgerArrivesWithLightningAndGetsSoldierEquip() {
         Game game = initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();
