@@ -7,8 +7,8 @@
   "life": 30,
   "hand": 7,
   "deck": {
-    "Goblin Trailblazer": 4,
-    "Shock": 4,
+    "Goblin Trailblazer": 3,
+    "Shock": 3,
     "Fanatical Firebrand": 3,
     "Swab Goblin": 3,
     "Boggart Brute": 3,
@@ -28,6 +28,7 @@
     "Dropkick Bomber": 2,
     "Searslicer Goblin": 2,
     "Krenko, Tin Street Kingpin": 2,
+    "Krenko's Command": 2,
     "Goblin Goliath": 2
   }
 }

@@ -197,7 +197,7 @@ Design notes from the audit that shaped these:
 - *Watch:* only about five Moogle cards exist in scope, so the rest is white filler (fliers, soldiers). Lifegain makes fights longer.
 
 **A Troop of Dwarves** (existing). The audit found that its Base touches only the 12 Dwarves, while the deck's real theme is its 13 Equipment.
-- *Option:* re-aim the Base at Equipment, for example "Whenever an Equipment you control enters, create a Treasure."
+- *Done 2026-10-22:* the Base is now "Whenever an Equipment you control enters, create a Treasure." The deck gained Goldvein Pick (3 copies), which also makes a Treasure when the equipped creature hits you; Coeurl and one Raise the Alarm made room.
 - It's the most beatable enemy today (44% in the audit sweep), so it is a natural tier 1.
 
 ### Tier 2
