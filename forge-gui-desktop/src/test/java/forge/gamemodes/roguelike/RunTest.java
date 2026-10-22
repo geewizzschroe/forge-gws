@@ -69,20 +69,59 @@ public class RunTest extends AITest {
     }
 
     @Test
-    public void restHealsUpToMaxAndMovesOn() {
+    public void campfireRestHealsUpToMaxAndMovesOn() {
         RoguelikeContent c = content();
         Run run = runWithPath(c, NodeType.REST);
         run.getState().life = 10;
         run.enterNode(0);
-        assertEquals(16, run.getState().life); // 30% of 20
+        Offer fire = run.getState().offer;
+        assertEquals(OfferKind.CAMPFIRE, fire.kind);
+        assertFalse("pick one of the three", fire.canSkip);
+        assertEquals(3, fire.options.size());
+        assertEquals(6, fire.options.get(0).heal); // 30% of 20
+        run.choose(0);
+        assertEquals(16, run.getState().life);
         assertEquals(Integer.valueOf(0), run.getState().currentNodeId);
         assertEquals(List.of(0), run.getState().visited);
-        assertTrue(run.getState().log.toString(), run.getState().log.contains("Entered Step 1 - Rest"));
+        assertTrue(run.getState().log.toString(), run.getState().log.contains("Entered Step 1 - Campfire"));
         assertEquals(1, run.getAvailableNodes().size());
         run.getState().life = 19;
         run.getState().currentNodeId = null;
         run.enterNode(0);
+        run.choose(0);
         assertEquals(20, run.getState().life);
+    }
+
+    @Test
+    public void campfireTrainUpgradesAndBackingOutReturnsToTheFire() {
+        RoguelikeContent c = content();
+        Run run = runWithPath(c, NodeType.REST);
+        run.enterNode(0);
+        run.choose(1); // train
+        assertEquals(OfferKind.UPGRADE, run.getState().offer.kind);
+        run.skip(); // back to the fire, nothing spent
+        assertEquals(OfferKind.CAMPFIRE, run.getState().offer.kind);
+        run.choose(1);
+        OfferOption pick = run.getState().offer.options.get(0);
+        run.choose(0);
+        assertTrue(run.getState().upgrades.get(pick.upgradeCard).contains(pick.upgrade));
+        assertNull(run.getState().offer);
+        assertEquals(List.of(0), run.getState().visited);
+        assertEquals(0, run.getState().gold);
+    }
+
+    @Test
+    public void campfirePurgeRemovesEveryCopy() {
+        RoguelikeContent c = content();
+        Run run = runWithPath(c, NodeType.REST);
+        run.enterNode(0);
+        run.choose(2); // purge
+        assertEquals(OfferKind.CUT, run.getState().offer.kind);
+        String cut = run.getState().offer.options.get(0).cutCard;
+        run.choose(0);
+        assertFalse(run.getState().deck.containsKey(cut));
+        assertNull(run.getState().offer);
+        assertEquals(List.of(0), run.getState().visited);
     }
 
     @Test
@@ -170,7 +209,9 @@ public class RunTest extends AITest {
             // fine
         }
         run.enterNode(0);
+        run.choose(0); // rest
         run.enterNode(1);
+        run.choose(0);
         assertEquals(1, run.getAvailableNodes().size());
         assertEquals(NodeType.BOSS, run.getAvailableNodes().get(0).type);
     }
@@ -470,10 +511,14 @@ public class RunTest extends AITest {
         Run run = atEvent(content(), "dropped_purse");
         Offer offer = run.getState().offer;
         assertEquals(OfferKind.EVENT, offer.kind);
-        assertFalse("nothing to refuse", offer.canSkip);
+        assertTrue("even free gold can be refused", offer.canSkip);
         run.choose(0);
         assertEquals(40, run.getState().gold);
         assertNull(run.getState().offer);
+
+        Run nervous = atEvent(content(), "dropped_purse");
+        nervous.skip();
+        assertEquals(0, nervous.getState().gold);
     }
 
     @Test

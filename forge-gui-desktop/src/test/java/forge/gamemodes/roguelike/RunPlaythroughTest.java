@@ -187,7 +187,7 @@ public class RunPlaythroughTest extends AITest {
     public void wholeRunsEndInAWinOrALoss() {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();
-        c.getConfig().mapRows = 3; // keep the test short
+        c.getConfig().mapLayout = List.of("FIGHTS", "STRETCH 2", "BOSS"); // keep the test short
         int runs = Integer.getInteger("roguelike.playthroughs", 2);
         for (long seed = 1; seed <= runs; seed++) {
             Run run = Run.start(c, "jill_mono_blue", seed);

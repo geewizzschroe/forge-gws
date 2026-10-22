@@ -50,7 +50,7 @@ public class RunMapView extends FDisplayObject {
         for (MapNode n : map().nodes) {
             max = Math.max(max, n.column);
         }
-        return Math.max(max + 1, run.getContent().getConfig().mapColumns);
+        return Math.max(max + 1, run.getContent().getConfig().mapLanes);
     }
 
     private float x(final MapNode n) {

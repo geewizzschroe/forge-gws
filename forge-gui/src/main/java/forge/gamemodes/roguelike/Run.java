@@ -130,12 +130,7 @@ public class Run {
         state.log.add("Entered " + RunText.node(this, node));
         switch (node.type) {
             case ENEMY, BOSS -> state.lifeBeforeMatch = state.life;
-            case REST -> {
-                int heal = (int) Math.round(state.maxLife * content.getConfig().restHealFraction);
-                state.life = Math.min(state.maxLife, state.life + heal);
-                state.log.add("Rested to " + state.life + " life");
-                completeNode();
-            }
+            case REST -> state.offer = makeCampfireOffer();
             case SHOP -> state.offer = makeShopOffer();
             case UPGRADE -> {
                 state.offer = makeUpgradeOffer();
@@ -296,30 +291,38 @@ public class Run {
             throw new IllegalStateException("Use buy() in a store");
         }
         OfferOption o = offer.options.get(index);
-        if (offer.returnToShop != null && o.upgradeCard != null) { // the Workshop's upgrade service
-            if (state.gold < o.price) {
-                throw new IllegalStateException("Can't pay " + o.price + " gold with " + state.gold);
-            }
-            state.log.add("Paid " + o.price + " gold to upgrade " + o.upgradeCard + ": " + o.upgrade.describe());
-            state.gold -= o.price;
-            apply(o);
-            state.offer = offer.returnToShop;
+        if (offer.kind == OfferKind.CAMPFIRE) {
+            chooseAtCampfire(offer, o);
             return;
         }
-        if (offer.returnToShop != null) {
+        if (offer.returnToShop != null) { // a second choice opened from a store or a campfire
+            Offer parent = offer.returnToShop;
             if (state.gold < o.price) {
                 throw new IllegalStateException("Can't pay " + o.price + " gold with " + state.gold);
             }
-            state.log.add("Paid " + o.price + " gold to remove every " + o.cutCard);
             state.gold -= o.price;
-            state.deck.remove(o.cutCard); // every copy, whatever cutCopies says
-            state.removalsBought++;
-            for (OfferOption shopOption : offer.returnToShop.options) {
-                if (shopOption.removal) {
-                    shopOption.bought = true;
+            String paid = o.price > 0 ? "Paid " + o.price + " gold to " : parent.kind == OfferKind.CAMPFIRE ? "At the campfire: " : "";
+            if (o.cutCard != null) {
+                state.log.add(paid + "remove every " + o.cutCard);
+                state.deck.remove(o.cutCard); // every copy, whatever cutCopies says
+                if (parent.kind == OfferKind.SHOP) {
+                    state.removalsBought++;
+                    for (OfferOption shopOption : parent.options) {
+                        if (shopOption.removal) {
+                            shopOption.bought = true;
+                        }
+                    }
                 }
+            } else {
+                state.log.add(paid + "upgrade " + o.upgradeCard + ": " + o.upgrade.describe());
+                apply(o);
             }
-            state.offer = offer.returnToShop;
+            if (parent.kind == OfferKind.CAMPFIRE) {
+                state.offer = null;
+                completeNode();
+            } else {
+                state.offer = parent;
+            }
             return;
         }
         if (offer.kind == OfferKind.EVENT) {
@@ -410,6 +413,23 @@ public class Run {
             throw new IllegalStateException("Nothing to choose now");
         }
         return state.offer;
+    }
+
+    /** Rest heals and moves on; train and purge open their choice, and backing out of it returns to the fire. */
+    private void chooseAtCampfire(final Offer campfire, final OfferOption o) {
+        if (o.heal > 0) {
+            state.life = Math.min(state.maxLife, state.life + o.heal);
+            state.log.add("Rested to " + state.life + " life");
+            state.offer = null;
+            completeNode();
+            return;
+        }
+        Offer next = o.train ? makeUpgradeOffer() : makeCutOffer();
+        if (next.options.isEmpty()) {
+            throw new IllegalStateException("Nothing to " + (o.train ? "train" : "purge"));
+        }
+        next.returnToShop = campfire;
+        state.offer = next;
     }
 
     /** Whether the player can pay an option's gold, life and retry costs (life must stay above 0). */
@@ -616,6 +636,28 @@ public class Run {
         return offer;
     }
 
+    /** A campfire: rest, train or purge (train and purge only when there is something to choose). */
+    private Offer makeCampfireOffer() {
+        Offer offer = new Offer(OfferKind.CAMPFIRE, false);
+        OfferOption rest = new OfferOption();
+        rest.heal = Math.max(1, (int) Math.round(state.maxLife * content.getConfig().restHealFraction));
+        rest.label = "Rest: heal " + rest.heal + " life" + (state.life >= state.maxLife ? " (you're at full life)" : "");
+        offer.options.add(rest);
+        if (!makeUpgradeOffer().options.isEmpty()) {
+            OfferOption train = new OfferOption();
+            train.train = true;
+            train.label = "Train: upgrade a card (choose 1 of " + content.getConfig().upgradeChoices + ")";
+            offer.options.add(train);
+        }
+        if (!state.deck.isEmpty()) {
+            OfferOption purge = new OfferOption();
+            purge.purge = true;
+            purge.label = "Purge: remove a card (every copy)";
+            offer.options.add(purge);
+        }
+        return offer;
+    }
+
     /** Whether the run qualifies for an event (see {@link EventDef} for each kind's needs). */
     private boolean eligible(final EventDef e) {
         return switch (e.kind) {
@@ -649,7 +691,7 @@ public class Run {
                 break;
             }
         }
-        Offer offer = new Offer(OfferKind.EVENT, !"gold".equals(e.kind));
+        Offer offer = new Offer(OfferKind.EVENT, true); // even free gold can be refused
         offer.title = e.title;
         offer.text = e.text;
         state.log.add("Event: " + e.title);

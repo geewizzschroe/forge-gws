@@ -8,6 +8,8 @@ A proposal, not decisions. It answers the audit (`reports/audit-2026-10-22.md`) 
 
 ### 1.1 Shape: touchstones with branching stretches between them
 
+*Built 2026-10-22 with the leans: 2+3 stretch rows, a shop row everyone passes, the upgrade right after the first fight, a choice of three first fights. Paths never cross, so an edge lane sometimes has only one way up; the test asks for at least 4.5 real choices per run. The difficulty ladder (1.3) is not built yet.*
+
 Three nodes every path goes through (touchstones), with free-choice stretches between them:
 
 ```
@@ -56,6 +58,8 @@ How it compares (my Python replica of the generator, 20,000 maps, random walks):
 **Open D, row 0.** Do you pick from 2 or 3 previewed tier-1 enemies, or is there one fixed start? Picking gives you a choice from the first step.
 
 ### 1.2 The campfire (multi-option rest)
+
+*Built 2026-10-22: every Rest node, the touchstone and any in the stretches, is a campfire. Healing is still 30%.*
 
 *After review (2026-10-22): the standalone Upgrade and Cut nodes are gone from new maps (Open E, option (i)). The campfire itself is not built yet. Until it is, upgrades come from the Workshop, events and rewards, and cuts only from the shop's paid removal. Event nodes are built: see 1.5.*
 
@@ -135,7 +139,7 @@ An Event node picks one event at random, weighted, among those the run qualifies
 
 | Event | Kind | What it offers | Refusable |
 |---|---|---|---|
-| A Dropped Purse | gold | 40 gold | no (nothing to refuse) |
+| A Dropped Purse | gold | 40 gold | yes (for the nervous) |
 | A Wandering Smith | upgrade | the Upgrade offer of three, at 20 gold (half the Workshop's price) | yes |
 | A Traveling Merchant | card | one of three single cards, 2 copies | yes |
 | A Blood Altar | relicForLife | 5 life for a random relic, shown only after you take it | yes; it doesn't appear if 5 life would kill you |
@@ -166,7 +170,7 @@ Design notes from the audit that shaped these:
 | The Restless Dead *(existing)* | 2 | B | Zombie grind | as now (fixed today) |
 | Vampire Court | 2 | WB | life drain | life gained grows Vampires |
 | Summoner's Circle | 2 | GW | Summon Sagas | a Summon ending gives value |
-| Malboro Marsh | 2 | BG | deathtouch horrors | "Bad Breath": a -1/-1 each combat (revised) |
+| Malboro Marsh | 2 | BG | deathtouch horrors | "Rot": your creatures dying costs you life (chosen) |
 | Cactuar Desert | 2 | G | a puzzle fight | small; the deck is the gimmick |
 | ~~Random Encounter!~~ (shelved) | any | R + FF monsters | chaos | everyone casts Random Encounter |
 | Dragon's Aerie | 3 | R | fliers that get there fast | Dragons cost less |
@@ -209,8 +213,8 @@ Design notes from the audit that shaped these:
 
 **Malboro Marsh** (black-green). Swamp horrors and plants: Tonberry's knife, Malboro's breath. An attrition fight where every block is scary.
 - ~~*Base, "Chef's Knife":* creatures you control have deathtouch during your turn.~~ Dropped after review: the deck is already full of deathtouch, so it would change little.
-- *Base, revised, "Bad Breath":* at the beginning of combat on your turn, target creature an opponent controls gets -1/-1 until end of turn. Malboro's breath every turn: it shrinks blockers before the deathtouch attackers arrive and picks off X/1s.
-- *Alternative, "Rot":* whenever a creature an opponent controls dies, that player loses 1 life. Every deathtouch trade stings, which suits an attrition deck.
+- *Base, chosen, "Rot":* whenever a creature an opponent controls dies, that player loses 1 life. Blocking the deathtouch creatures saves damage but costs life anyway, so the fight both invites and punishes blocking.
+- ~~*"Bad Breath":* at the beginning of combat on your turn, target creature an opponent controls gets -1/-1 until end of turn.~~ Not chosen.
 - *Key cards:* Tonberry, Malboro, Gran Pulse Ochu, plus black and green deathtouch or removal creatures.
 
 **Cactuar Desert** (mono-green, out there). Cactuars are cheap 3/3 tramplers that hop back to hand at end step. The real threat is **Jumbo Cactuar**: a 1/7 that gets +9,999/+0 when it attacks.

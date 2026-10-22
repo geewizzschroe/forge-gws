@@ -141,7 +141,11 @@ public class RoguelikeScreen extends FScreen {
                 }
             }
             if (offer.canSkip) {
-                String back = offer.returnToShop != null && offer.returnToShop.kind == OfferKind.WORKSHOP ? "Back to the Workshop" : "Back to the shop";
+                String back = offer.returnToShop == null ? "" : switch (offer.returnToShop.kind) {
+                    case WORKSHOP -> "Back to the Workshop";
+                    case CAMPFIRE -> "Back to the campfire";
+                    default -> "Back to the shop";
+                };
                 button(offer.kind == OfferKind.SHOP ? "Leave the shop" : offer.kind == OfferKind.WORKSHOP ? "Leave the Workshop"
                         : offer.kind == OfferKind.EVENT ? "Walk away" : offer.returnToShop != null ? back : "Skip", e -> act(run::skip));
             }

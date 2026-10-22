@@ -2,12 +2,20 @@ package forge.gamemodes.roguelike;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
- * A board-style map: {@code rows} rows of nodes joined by paths that only go upward, then one Boss
- * node that every node in the last row leads to. Paths start at random columns of the first row and
- * step to the same or a neighbouring column each row, as in Slay the Spire.
+ * A board-style map built from the {@code mapLayout} setting, bottom to top (proposal 1.1). Each entry is:
+ * <ul>
+ * <li>{@code FIGHTS}: a row of {@code mapLanes} Enemy nodes (the start, when first);</li>
+ * <li>{@code STRETCH n}: n rows of {@code mapLanes} nodes of rolled types (by the node weights), where every node
+ * leads straight up and to one diagonal neighbour, so every step inside a stretch is a choice;</li>
+ * <li>a node type ({@code UPGRADE}, {@code SHOP}, {@code REST}, ...): a single touchstone node every path goes
+ * through;</li>
+ * <li>{@code BOSS}: the boss, last.</li>
+ * </ul>
+ * A row of lanes leads to every node of a single-node row, and a single node leads to every lane above it.
  */
 public class RunMap {
     public List<MapNode> nodes = new ArrayList<>();
@@ -19,50 +27,42 @@ public class RunMap {
     }
 
     public static RunMap generate(final RunConfig cfg, final RoguelikeContent content, final Random rnd) {
-        final int rows = Math.max(1, cfg.mapRows);
-        final int cols = Math.max(1, cfg.mapColumns);
+        final int lanes = Math.max(1, cfg.mapLanes);
         RunMap map = new RunMap();
-        MapNode[][] grid = new MapNode[rows][cols];
-
-        for (int p = 0; p < Math.max(1, cfg.mapPathsFromStart); p++) {
-            int col = rnd.nextInt(cols);
-            MapNode prev = null;
-            for (int row = 0; row < rows; row++) {
-                if (row > 0) {
-                    col = Math.max(0, Math.min(cols - 1, col + rnd.nextInt(3) - 1));
-                }
-                MapNode node = grid[row][col];
-                if (node == null) {
-                    node = new MapNode();
-                    node.id = map.nodes.size();
-                    node.row = row;
-                    node.column = col;
-                    node.type = row == 0 ? NodeType.ENEMY : pickType(cfg, rnd);
-                    map.nodes.add(node);
-                    grid[row][col] = node;
-                    if (row == 0) {
-                        map.startIds.add(node.id);
+        List<MapNode> below = null;
+        int row = 0;
+        for (String entry : cfg.mapLayout) {
+            String[] parts = entry.trim().toUpperCase(Locale.ROOT).split("\\s+");
+            List<List<MapNode>> rows = new ArrayList<>();
+            switch (parts[0]) {
+                case "FIGHTS" -> rows.add(laneRow(map, row, lanes, rnd, cfg, true));
+                case "STRETCH" -> {
+                    int n = parts.length > 1 ? Integer.parseInt(parts[1]) : 1;
+                    for (int i = 0; i < n; i++) {
+                        rows.add(laneRow(map, row + i, lanes, rnd, cfg, false));
                     }
                 }
-                if (prev != null && !prev.next.contains(node.id)) {
-                    prev.next.add(node.id);
+                default -> {
+                    MapNode touchstone = add(map, row, (lanes - 1) / 2, NodeType.valueOf(parts[0]));
+                    rows.add(List.of(touchstone));
                 }
-                prev = node;
+            }
+            for (List<MapNode> current : rows) {
+                if (below == null) {
+                    for (MapNode n : current) {
+                        map.startIds.add(n.id);
+                    }
+                } else {
+                    link(below, current, rnd);
+                }
+                below = current;
+                row++;
             }
         }
-
-        MapNode boss = new MapNode();
-        boss.id = map.nodes.size();
-        boss.row = rows;
-        boss.column = cols / 2;
-        boss.type = NodeType.BOSS;
-        map.nodes.add(boss);
-        map.bossId = boss.id;
-        for (MapNode n : map.nodes) {
-            if (n.row == rows - 1) {
-                n.next.add(boss.id);
-            }
+        if (below == null || below.size() != 1 || below.get(0).type != NodeType.BOSS) {
+            throw new IllegalStateException("mapLayout must end with BOSS: " + cfg.mapLayout);
         }
+        map.bossId = below.get(0).id;
 
         for (MapNode n : map.nodes) {
             if (n.type.isMatch()) {
@@ -70,6 +70,65 @@ public class RunMap {
             }
         }
         return map;
+    }
+
+    private static MapNode add(final RunMap map, final int row, final int column, final NodeType type) {
+        MapNode node = new MapNode();
+        node.id = map.nodes.size();
+        node.row = row;
+        node.column = column;
+        node.type = type;
+        map.nodes.add(node);
+        return node;
+    }
+
+    /** A row of lanes: all fights, or rolled types where a non-fight type already in the row is rerolled once. */
+    private static List<MapNode> laneRow(final RunMap map, final int row, final int lanes, final Random rnd,
+                                         final RunConfig cfg, final boolean fights) {
+        List<MapNode> out = new ArrayList<>();
+        List<NodeType> types = new ArrayList<>();
+        for (int c = 0; c < lanes; c++) {
+            NodeType t = fights ? NodeType.ENEMY : pickType(cfg, rnd);
+            if (t != NodeType.ENEMY && types.contains(t)) {
+                t = pickType(cfg, rnd);
+            }
+            types.add(t);
+            out.add(add(map, row, c, t));
+        }
+        return out;
+    }
+
+    private static void link(final List<MapNode> below, final List<MapNode> above, final Random rnd) {
+        if (below.size() == 1 || above.size() == 1) {
+            for (MapNode b : below) {
+                for (MapNode a : above) {
+                    b.next.add(a.id);
+                }
+            }
+            return;
+        }
+        boolean previousWentRight = false; // paths don't cross: after a step up-right, the next lane can't step up-left
+        for (int c = 0; c < below.size(); c++) {
+            MapNode b = below.get(c);
+            int straight = Math.min(c, above.size() - 1);
+            b.next.add(above.get(straight).id);
+            int d = rnd.nextBoolean() ? 1 : -1;
+            if (straight + d < 0 || straight + d >= above.size() || (d < 0 && previousWentRight)) {
+                d = -d;
+            }
+            boolean fits = straight + d >= 0 && straight + d < above.size() && !(d < 0 && previousWentRight);
+            if (fits) {
+                b.next.add(above.get(straight + d).id);
+            }
+            previousWentRight = fits && d > 0;
+        }
+        // no node in the upper row is left unreachable
+        for (int c = 0; c < above.size(); c++) {
+            int id = above.get(c).id;
+            if (below.stream().noneMatch(b -> b.next.contains(id))) {
+                below.get(Math.min(c, below.size() - 1)).next.add(id);
+            }
+        }
     }
 
     private static NodeType pickType(final RunConfig cfg, final Random rnd) {

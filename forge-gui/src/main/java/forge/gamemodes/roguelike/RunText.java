@@ -48,7 +48,9 @@ public final class RunText {
                 case SHOP -> "Shop. You have " + s.gold + " gold.";
                 case WORKSHOP -> "Workshop. You have " + s.gold + " gold.";
                 case EVENT -> s.offer.title + "\n" + s.offer.text;
-                case UPGRADE -> s.offer.returnToShop != null ? "Choose an upgrade to pay for." : "Choose a card to upgrade.";
+                case CAMPFIRE -> "A campfire. Life " + s.life + "/" + s.maxLife + ". Rest, train or purge.";
+                case UPGRADE -> s.offer.returnToShop == null || s.offer.returnToShop.kind == OfferKind.CAMPFIRE
+                        ? "Choose a card to upgrade." : "Choose an upgrade to pay for.";
                 case CUT -> s.offer.returnToShop != null ? "Choose a card to remove every copy of." : "Choose a card to cut from your deck.";
             };
         }
@@ -81,7 +83,8 @@ public final class RunText {
                 yield sb.toString();
             }
             case SHOP -> "Shop: buy relics and cards with gold.";
-            case REST -> "Rest: heal " + Math.round(cfg.restHealFraction * 100) + "% of your max life.";
+            case REST -> "Campfire: rest (heal " + Math.round(cfg.restHealFraction * 100) + "% of your max life), train (upgrade a card)"
+                    + " or purge (remove a card).";
             case CUT -> "Cut a card: remove a card from your deck.";
             case UPGRADE -> "Upgrade a card: choose one of " + cfg.upgradeChoices + " upgrades.";
             case WORKSHOP -> "Workshop: buy artifacts, upgrades and supplies for your Base with gold.";
@@ -134,7 +137,7 @@ public final class RunText {
             case ENEMY -> "Enemy";
             case BOSS -> "Boss";
             case SHOP -> "Shop";
-            case REST -> "Rest";
+            case REST -> "Campfire";
             case CUT -> "Cut a card";
             case UPGRADE -> "Upgrade a card";
             case WORKSHOP -> "Workshop";
@@ -148,7 +151,7 @@ public final class RunText {
 
     public static String option(final Run run, final OfferOption o) {
         StringBuilder sb = new StringBuilder();
-        if (o.secret || o.gold > 0) {
+        if (o.secret || o.gold > 0 || o.heal > 0 || o.train || o.purge) {
             sb.append(o.label);
         } else if (o.relicId != null) {
             RelicDef r = run.getContent().getRelic(o.relicId);

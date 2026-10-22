@@ -15,7 +15,9 @@ public enum OfferKind {
     /** Workshop: buy artifacts, upgrades and Base supplies, any number of times while gold lasts, then leave. */
     WORKSHOP,
     /** Event node: take one option (some cost gold, life or a retry) or, where allowed, walk away. */
-    EVENT;
+    EVENT,
+    /** Rest node (a campfire): rest, or train or purge, which open their own choice. */
+    CAMPFIRE;
 
     /** A place to buy things with gold (bought with {@code Run.buy}, left with {@code Run.skip}). */
     public boolean isStore() {

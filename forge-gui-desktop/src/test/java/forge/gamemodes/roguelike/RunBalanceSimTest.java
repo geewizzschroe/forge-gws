@@ -30,7 +30,7 @@ import forge.gamemodes.roguelike.sim.SimReport;
  * <pre>
  * xvfb-run -a mvn -pl forge-gui-desktop -am test -Dtest=RunBalanceSimTest -Dsurefire.failIfNoSpecifiedTests=false \
  *     -Droguelike.sim.runs=20 [-Droguelike.sim.fights=10] [-Droguelike.sim.starter=jill_mono_blue] \
- *     [-Droguelike.sim.rows=7] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true] [-Droguelike.sim.progress=true]
+ *     [-Droguelike.sim.layout=FIGHTS,UPGRADE,STRETCH 2,BOSS] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true] [-Droguelike.sim.progress=true]
  *     [-Droguelike.sim.policy=greedy] [-Droguelike.sim.xp=N]
  * </pre>
  *
@@ -45,7 +45,7 @@ public class RunBalanceSimTest extends AITest {
     public void simulatorProducesAReport() throws Exception {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();
-        c.getConfig().mapRows = 2;
+        c.getConfig().mapLayout = List.of("FIGHTS", "STRETCH 1", "BOSS");
         RunSimulator sim = new RunSimulator(c);
         sim.setMatchTimeoutSeconds(90);
         RunRecord run = sim.simulateRun("jill_mono_blue", 1, new RandomPolicy(1));
@@ -90,7 +90,10 @@ public class RunBalanceSimTest extends AITest {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();
         String starter = System.getProperty("roguelike.sim.starter", c.getStarters().keySet().iterator().next());
-        c.getConfig().mapRows = Integer.getInteger("roguelike.sim.rows", c.getConfig().mapRows);
+        String layout = System.getProperty("roguelike.sim.layout");
+        if (layout != null) {
+            c.getConfig().mapLayout = List.of(layout.split(","));
+        }
         int fights = Integer.getInteger("roguelike.sim.fights", 0);
         RunSimulator sim = new RunSimulator(c);
         sim.setMatchTimeoutSeconds(Integer.getInteger("roguelike.sim.timeout", 120));

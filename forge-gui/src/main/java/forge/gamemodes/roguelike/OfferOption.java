@@ -28,6 +28,10 @@ public class OfferOption {
     public int gold;
     public int lifeCost;
     public int retryCost;
+    /** Campfire options: heal this much, or open a choice of upgrades (train) or of cards to remove (purge). */
+    public int heal;
+    public boolean train;
+    public boolean purge;
     /** Show only the label (an event's random relic stays a surprise until taken). */
     public boolean secret;
     /** Where a single-card reward came from: "curated" or "full pool" (shown as a debug tag). */

@@ -32,18 +32,20 @@ public class RunConfig {
 
     // PLACEHOLDER: D1 floors. 1 means beating the boss wins the run.
     public int floors = 1;
-    // PLACEHOLDER: D8 map shape.
-    public int mapRows = 7;
-    public int mapColumns = 4;
-    public int mapPathsFromStart = 3;
+    // Decided (proposal 1.1): touchstones every path goes through (an Upgrade after the first fight, a Shop, a
+    // campfire before the boss) with branching stretches between them. See RunMap for the entries.
+    // PLACEHOLDER: the stretch lengths and the number of lanes.
+    public List<String> mapLayout = List.of("FIGHTS", "UPGRADE", "STRETCH 2", "SHOP", "STRETCH 3", "REST", "BOSS");
+    public int mapLanes = 3;
+    // Node weights inside stretches. PLACEHOLDER: the numbers (shop and rest are lower since touchstones guarantee them).
     public double weightEnemy = 0.55;
-    public double weightShop = 0.12;
-    public double weightRest = 0.13;
+    public double weightShop = 0.05;
+    public double weightRest = 0.12;
     // Decided 2026-10-22: no more standalone Cut and Upgrade nodes; their jobs went to the Workshop, the shop and events.
     // PLACEHOLDER: the Event node's weight.
-    public double weightEvent = 0.12;
+    public double weightEvent = 0.16;
     // Decided (proposal 1.4): the Workshop appears in the map's stretches, never guaranteed. PLACEHOLDER: the weight.
-    public double weightWorkshop = 0.08;
+    public double weightWorkshop = 0.12;
     // PLACEHOLDER: D2 currency and prices.
     public int startingGold = 0;
     public int goldPerEnemy = 25;
@@ -70,7 +72,8 @@ public class RunConfig {
                     + " | ValidTgts$ Creature.YouCtrl | TgtPrompt$ Select target creature you control | CounterType$ P1P1"
                     + " | CounterNum$ 1 | SpellDescription$ Supplies: put a +1/+1 counter on target creature you control."
                     + " Activate only as a sorcery. (Spent supplies are gone for the rest of the run.)");
-    // PLACEHOLDER: how much a Rest node heals, as a fraction of run max life.
+    // Decided (proposal 1.2): every Rest node is a campfire: rest (heal), train (upgrade a card) or purge (remove a card).
+    // PLACEHOLDER: how much resting heals, as a fraction of run max life.
     public double restHealFraction = 0.3;
     // PLACEHOLDER: how many copies a Cut node removes from the chosen card name (0 = all of them).
     public int cutCopies = 0;

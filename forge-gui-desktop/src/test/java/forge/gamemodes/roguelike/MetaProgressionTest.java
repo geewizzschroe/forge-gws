@@ -171,7 +171,7 @@ public class MetaProgressionTest extends AITest {
     @Test(timeOut = 1800000)
     public void simulatedRunsRecordExperienceAndCounters() {
         RoguelikeContent c = content();
-        c.getConfig().mapRows = 2;
+        c.getConfig().mapLayout = List.of("FIGHTS", "STRETCH 1", "BOSS");
         MetaProfile profile = new MetaProfile();
         RunSimulator sim = new RunSimulator(c);
         sim.setMatchTimeoutSeconds(90);

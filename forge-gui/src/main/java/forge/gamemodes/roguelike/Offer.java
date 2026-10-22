@@ -11,7 +11,10 @@ public class Offer {
     /** For an event: its title and scene text. */
     public String title;
     public String text;
-    /** For a store's card removal or upgrade service: the store to return to once paid for, or backed out of. */
+    /**
+     * For a second choice opened from a store (card removal, upgrade service) or a campfire (train, purge): the
+     * offer to go back to when backing out, and, for a store, once paid for.
+     */
     public Offer returnToShop;
 
     public Offer() {

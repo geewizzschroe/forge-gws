@@ -26,6 +26,17 @@ public class RandomPolicy implements RunPolicy {
         return available.get(rnd.nextInt(available.size()));
     }
 
+    /** Rest when hurt (or when told to), otherwise train if possible; never purge. */
+    static int campfireChoice(final Run run, final Offer campfire, final boolean preferRest) {
+        boolean hurt = run.getState().life < run.getState().maxLife;
+        for (int i = 0; i < campfire.options.size(); i++) {
+            if (campfire.options.get(i).train && !(hurt && preferRest)) {
+                return i;
+            }
+        }
+        return 0; // rest
+    }
+
     @Override
     public void resolveOffer(final Run run) {
         Offer offer = run.getState().offer;
@@ -48,6 +59,8 @@ public class RandomPolicy implements RunPolicy {
                 }
             }
             run.skip();
+        } else if (offer.kind == OfferKind.CAMPFIRE) {
+            run.choose(campfireChoice(run, offer, rnd.nextBoolean()));
         } else if (offer.kind == OfferKind.EVENT) {
             List<Integer> affordable = new ArrayList<>();
             for (int i = 0; i < offer.options.size(); i++) {

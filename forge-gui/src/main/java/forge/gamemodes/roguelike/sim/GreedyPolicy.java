@@ -29,7 +29,7 @@ public class GreedyPolicy implements RunPolicy {
         int bestScore = Integer.MIN_VALUE;
         for (MapNode n : available) {
             int score = switch (n.type) {
-                case REST -> life * 2 < max ? 100 : 5;
+                case REST -> life * 2 < max ? 100 : 45; // a campfire can also train
                 case SHOP -> gold >= run.getContent().getConfig().shopCardPrice ? 60 : 0;
                 case UPGRADE -> 50;
                 case ENEMY, BOSS -> 40;
@@ -48,6 +48,10 @@ public class GreedyPolicy implements RunPolicy {
     @Override
     public void resolveOffer(final Run run) {
         Offer offer = run.getState().offer;
+        if (offer.kind == OfferKind.CAMPFIRE) {
+            run.choose(RandomPolicy.campfireChoice(run, offer, run.getState().life * 2 < run.getState().maxLife));
+            return;
+        }
         if (offer.kind.isStore() || offer.kind == OfferKind.EVENT) {
             new RandomPolicy(0).resolveOffer(run); // buys relics first, then cards, while affordable; events at random
             return;

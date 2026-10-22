@@ -5,7 +5,7 @@ package forge.gamemodes.roguelike;
  * {@code weight}) among the events the run qualifies for. The {@code kind} says what it offers; the
  * other numbers are its settings. Kinds:
  * <ul>
- * <li>{@code gold}: take {@code amount} gold.</li>
+ * <li>{@code gold}: take {@code amount} gold (or don't).</li>
  * <li>{@code upgrade}: pay {@code price} gold for one of the Upgrade offer's choices, or walk away.</li>
  * <li>{@code card}: take one of three single cards (2 copies each), or walk away.</li>
  * <li>{@code relicForLife}: pay {@code lifeCost} life for a random relic, or walk away. Needs a relic left to give

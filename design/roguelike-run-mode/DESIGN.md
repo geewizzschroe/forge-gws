@@ -38,7 +38,8 @@ What makes it different from other Forge modes:
 
 - Pick a character (Commander) and a starter deck.
 - Pick from the available nodes to move forward on a board-style map.
-- Node types: **Enemy**, **Boss**, **Shop**, **Rest** (restore health), **Workshop** and **Event** (both 2026-10-22, below). The standalone **Cut a card** and **Upgrade a card** nodes were removed from new maps on 2026-10-22 (their jobs moved to the Workshop, the shop and events); the code stays so older saved runs still load.
+- **Map** (decided and built 2026-10-22, proposal 1.1): touchstones every path goes through, with branching stretches between them. Default layout, bottom to top: three fights to choose from, an Upgrade, a 2-row stretch, a Shop, a 3-row stretch, a campfire, the boss (`mapLayout`, `mapLanes` 3; PLACEHOLDER stretch lengths). In a stretch every node leads straight up and to one diagonal neighbour, paths never cross, and a non-fight type already in a row is rerolled once so forks offer different things. Stretch node weights are PLACEHOLDERs (shop and rest lower, since touchstones guarantee them).
+- Node types: **Enemy**, **Boss**, **Shop**, **Rest** (a campfire, below), **Workshop** and **Event** (both 2026-10-22, below). The standalone **Cut a card** and **Upgrade a card** nodes were removed from new maps on 2026-10-22 (their jobs moved to the Workshop, the shop and events); the code stays so older saved runs still load.
   - **Event node** (decided and built 2026-10-22): picks one event, weighted, among those the run qualifies for. Events are data (`events/*.json`) of five kinds: gold; a discounted upgrade (refusable); one of three single cards (refusable); life for a random relic (refusable, never lethal); and selling a retry for an event-only relic (only while a retry is banked). The first set is listed in `proposals/refinement-2026-10-22.md` 1.5. `weightEvent` PLACEHOLDER 0.12.
 - Selecting an Enemy node means playing a match against it.
 - After a match: pick **1 of 3 cards** (adds **2 copies**) **or 1 of 3 buckets** (3 randomly selected cards from a themed pool, e.g. "Goblins!", "Big Sorceries", "Green Staples").
@@ -401,11 +402,11 @@ Placeholders and new questions raised by building it (all in `config.json`):
 - **N6. Cut node:** how many copies does it remove? Placeholder: all copies of the chosen name.
 - **N7. Card vs bucket rewards:** which is offered when? Placeholder: 30% of rewards are a choice of buckets (when buckets exist), otherwise a choice of single cards (curated and Full Pool slots, 2.1). Bucket contents are rolled and shown when offered.
 - **N8. Shop contents and prices** (part of D2): placeholder 3 relics at 60 gold and 3 cards (2 copies, from the curated pool) at 30, plus card removal (2.1); gold is 25 per enemy and 100 per boss.
-- **N9. Rest:** placeholder heals 30% of run max life.
+- **N9. Rest:** every Rest node is a **campfire** (decided and built 2026-10-22, proposal 1.2): rest (heal, placeholder 30% of run max life), train (upgrade a card, choose 1 of 3) or purge (remove every copy of a card). Train and purge open their own choice; backing out returns to the fire.
 - **N10. Upgrade node:** placeholder offers 3 random (creature name, upgrade) pairs, pick one; each single-card reward option that is a creature comes upgraded 25% of the time (spells and bucket cards never do, so about 11 to 19% of options). Since 2026-10-22 an upgrade that would change nothing (a keyword the card already has, printed or from an earlier upgrade; Ward excepted, since it stacks) is never offered. Upgrade pool: +1/+1, +1/+0, +0/+2, Haste, Vigilance, Trample, Lifelink, Ward 1.
 - **N11. Starter deck size:** *resolved* by the starter template (2.3): 32 cards.
 - **N12. Quitting mid-match:** closing the app during a match lets you replay that match from the start with no penalty.
-- **D1** placeholder: one floor (the boss ends the run). **D8** placeholder: 7 rows, 4 columns, 3 paths from the start, node weights in the config.
+- **D1** placeholder: one floor (the boss ends the run). **D8**: the touchstone map above (built 2026-10-22); the stretch lengths, lanes and weights are placeholders.
 
 ### 6.4 Phase 3: UI
 

@@ -6,10 +6,14 @@ import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertTrue;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.testng.annotations.Test;
 
@@ -62,6 +66,68 @@ public class RunMapTest extends AITest {
             }
             assertEquals(map.nodes.size(), seen.size());
         }
+    }
+
+    @Test
+    public void everyPathGoesThroughTheTouchstonesAndStretchesBranch() {
+        initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        assertEquals(List.of("FIGHTS", "UPGRADE", "STRETCH 2", "SHOP", "STRETCH 3", "REST", "BOSS"), c.getConfig().mapLayout);
+        Random walk = new Random(1);
+        int choices = 0;
+        int walks = 0;
+        for (long seed = 0; seed < 200; seed++) {
+            RunMap map = RunMap.generate(c.getConfig(), c, new Random(seed));
+            Map<Integer, List<MapNode>> rows = new TreeMap<>();
+            for (MapNode n : map.nodes) {
+                rows.computeIfAbsent(n.row, k -> new ArrayList<>()).add(n);
+            }
+            assertEquals(10, rows.size());
+            assertEquals(3, map.startIds.size());
+            assertEquals(List.of(NodeType.UPGRADE), types(rows.get(1)));
+            assertEquals(List.of(NodeType.SHOP), types(rows.get(4)));
+            assertEquals(List.of(NodeType.REST), types(rows.get(8)));
+            assertEquals(List.of(NodeType.BOSS), types(rows.get(9)));
+            for (int r : List.of(2, 3, 5, 6, 7)) {
+                assertEquals("stretch row " + r, 3, rows.get(r).size());
+                for (MapNode n : rows.get(r)) {
+                    assertTrue(n.type + " in a stretch", List.of(NodeType.ENEMY, NodeType.SHOP, NodeType.REST, NodeType.WORKSHOP, NodeType.EVENT).contains(n.type));
+                }
+            }
+            // a random walk counts the steps with a real choice
+            MapNode at = map.get(map.startIds.get(walk.nextInt(3)));
+            choices++; // which start
+            while (at.type != NodeType.BOSS) {
+                List<Integer> next = new ArrayList<>(at.next);
+                if (next.size() > 1) {
+                    choices++;
+                }
+                at = map.get(next.get(walk.nextInt(next.size())));
+            }
+            walks++;
+        }
+        double perRun = (double) choices / walks;
+        assertTrue("real choices per run " + perRun, perRun >= 4.5);
+    }
+
+    @Test
+    public void aCustomLayoutWorks() {
+        initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        c.getConfig().mapLayout = List.of("EVENT", "STRETCH 1", "BOSS");
+        RunMap map = RunMap.generate(c.getConfig(), c, new Random(3));
+        assertEquals(List.of(0), map.startIds);
+        assertEquals(NodeType.EVENT, map.get(0).type);
+        assertEquals(3, map.get(0).next.size());
+        assertEquals(NodeType.BOSS, map.get(map.bossId).type);
+    }
+
+    private static List<NodeType> types(List<MapNode> row) {
+        List<NodeType> out = new ArrayList<>();
+        for (MapNode n : row) {
+            out.add(n.type);
+        }
+        return out;
     }
 
     @Test
