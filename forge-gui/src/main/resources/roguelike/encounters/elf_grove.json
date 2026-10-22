@@ -7,15 +7,14 @@
   "hand": 7,
   "deck": {
     "Llanowar Elves": 3,
-    "Elvish Mystic": 3,
-    "Fyndhorn Elves": 2,
+    "Elvish Mystic": 2,
     "Imperious Perfect": 2,
     "Dwynen's Elite": 3,
     "Dwynen, Gilt-Leaf Daen": 2,
     "Elderfang Disciple": 2,
     "Skemfar Shadowsage": 2,
     "Infestation Sage": 2,
-    "Elvish Visionary": 2,
+    "Elvish Visionary": 3,
     "Elvish Regrower": 2,
     "Thornweald Archer": 2,
     "Moment of Craving": 2,
@@ -23,6 +22,7 @@
     "Llanowar Visionary": 3,
     "Greenwood Sentinel": 2,
     "Maraleaf Rider": 2,
-    "Druid of the Anima": 2
+    "Druid of the Anima": 2,
+    "Kujar Seedsculptor": 2
   }
 }

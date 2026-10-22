@@ -1,6 +1,6 @@
 Name:Ancient Grove
 ManaCost:no cost
 Types:Base
-T:Mode$ Phase | Phase$ Upkeep | ValidPlayer$ You | TriggerZones$ Command | IsPresent$ Elf.YouCtrl | PresentCompare$ GE3 | Execute$ grove_Elf | TriggerDescription$ Ancient Grove — At the beginning of your upkeep, if you control three or more Elves, create a 1/1 green Elf Warrior creature token.
+T:Mode$ Phase | Phase$ Upkeep | ValidPlayer$ You | TriggerZones$ Command | IsPresent$ Elf.YouCtrl | PresentCompare$ GE5 | Execute$ grove_Elf | TriggerDescription$ Ancient Grove — At the beginning of your upkeep, if you control five or more Elves, create a 1/1 green Elf Warrior creature token.
 SVar:grove_Elf:DB$ Token | TokenScript$ g_1_1_elf_warrior
-Oracle:Ancient Grove — At the beginning of your upkeep, if you control three or more Elves, create a 1/1 green Elf Warrior creature token.
+Oracle:Ancient Grove — At the beginning of your upkeep, if you control five or more Elves, create a 1/1 green Elf Warrior creature token.

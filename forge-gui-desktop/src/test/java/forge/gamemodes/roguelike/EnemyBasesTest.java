@@ -132,9 +132,9 @@ public class EnemyBasesTest extends AITest {
     }
 
     @Test
-    public void ancientGroveGrowsOnceThereAreThreeElves() {
+    public void ancientGroveGrowsOnceThereAreFiveElves() {
         setUp("ancient_grove.txt");
-        addCards("Llanowar Elves", 3, me);
+        addCards("Llanowar Elves", 5, me);
         playUntilNextTurn(game);
         playUntilNextTurn(game); // to my next upkeep and beyond
         playUntilPhase(game, PhaseType.MAIN1);
@@ -187,11 +187,12 @@ public class EnemyBasesTest extends AITest {
     public void bigBridgeGivesEquippedCreaturesFirstStrike() {
         setUp("big_bridge.txt");
         Card lions = addCard("Savannah Lions", me);
-        Card pick = addCard("Goldvein Pick", me);
         game.getAction().checkStateEffects(true);
         assertFalse(lions.hasFirstStrike());
-        pick.attachToEntity(lions, null);
-        game.getAction().checkStateEffects(true);
+        // an Equipment entering is attached by the Base (the AI rarely pays to equip on its own)
+        Card pick = game.getAction().moveToPlay(addCardToZone("Goldvein Pick", me, ZoneType.Hand), null, null);
+        resolveTriggers();
+        assertTrue("attached on entering", pick.isAttachedToEntity());
         assertTrue(lions.hasFirstStrike());
     }
 }

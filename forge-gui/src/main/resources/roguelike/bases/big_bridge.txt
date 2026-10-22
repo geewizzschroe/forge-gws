@@ -1,5 +1,7 @@
 Name:Big Bridge
 ManaCost:no cost
 Types:Base
-S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.equipped+YouCtrl | AddKeyword$ First Strike | Description$ Sword Collector — Equipped creatures you control have first strike.
-Oracle:Sword Collector — Equipped creatures you control have first strike.
+T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Equipment.YouCtrl | TriggerZones$ Command | Execute$ bridge_Attach | OptionalDecider$ You | TriggerDescription$ Sword Collector — Whenever an Equipment you control enters, you may attach it to target creature you control.
+SVar:bridge_Attach:DB$ Attach | Object$ TriggeredCard | ValidTgts$ Creature.YouCtrl | TgtPrompt$ Select target creature you control
+S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.equipped+YouCtrl | AddKeyword$ First Strike | Description$ Equipped creatures you control have first strike.
+Oracle:Sword Collector — Whenever an Equipment you control enters, you may attach it to target creature you control.\nEquipped creatures you control have first strike.
