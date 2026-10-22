@@ -1,0 +1,7 @@
+Name:Grow from the Ashes
+ManaCost:2 G
+Types:Sorcery
+K:Kicker:2
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True | SubAbility$ DBSecond | SpellDescription$ Conjure a basic land card of your choice onto the battlefield. If this spell was kicked, instead conjure two basic land cards of your choice onto the battlefield.
+SVar:DBSecond:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Conjure$ True | Condition$ Kicked
+Oracle:Kicker {2} (You may pay an additional {2} as you cast this spell.)\nConjure a basic land card of your choice onto the battlefield. If this spell was kicked, instead conjure two basic land cards of your choice onto the battlefield.

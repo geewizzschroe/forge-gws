@@ -1,0 +1,5 @@
+Name:Expedition Map
+ManaCost:1
+Types:Artifact
+A:AB$ MakeCard | Cost$ 2 T Sac<1/CARDNAME> | Choices$ Plains,Island,Swamp,Mountain,Forest,Baron; Airship Kingdom,Balamb Garden; SeeD Academy,Guadosalam; Farplane Gateway,Gohn; Town of Ruin,Gongaga; Reactor Town,Insomnia; Crown City,Rabanastre; Royal City,Sharlayan; Nation of Scholars,Treno; Dark City,Vector; Imperial Capital,Windurst; Federation Center | Zone$ Hand | Conjure$ True | SpellDescription$ Conjure a basic land card or Town card of your choice into your hand.
+Oracle:{2}, {T}, Sacrifice Expedition Map: Conjure a basic land card or Town card of your choice into your hand.

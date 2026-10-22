@@ -92,15 +92,25 @@ public class RoguelikeContentTest extends AITest {
     public void overridesParseAsTheCardsTheyReplace() {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();
-        assertEquals(10, c.getOverrides().size());
+        assertEquals(32, c.getOverrides().size());
         for (CardRules o : c.getOverrides()) {
             PaperCard printed = forge.StaticData.instance().getCommonCards().getCard(o.getName());
             assertEquals(o.getName(), printed.getRules().getType().toString(), o.getType().toString());
-            StringBuilder script = new StringBuilder(String.join(" ", o.getMainPart().getAbilities()));
-            script.append(String.join(" ", o.getMainPart().getTriggers()));
-            o.getMainPart().getVariables().forEach(v -> script.append(v.getValue()));
-            assertTrue(o.getName() + " should conjure", script.toString().contains("MakeCard"));
-            assertFalse(o.getName() + " should not search", script.toString().contains("ChangeZone"));
+            StringBuilder script = new StringBuilder();
+            for (forge.card.ICardFace face : new forge.card.ICardFace[] {o.getMainPart(), o.getOtherPart()}) {
+                if (face == null) {
+                    continue;
+                }
+                script.append(String.join(" ", face.getAbilities())).append(' ');
+                script.append(String.join(" ", face.getTriggers())).append(' ');
+                script.append(String.join(" ", face.getKeywords())).append(' ');
+                face.getVariables().forEach(v -> script.append(v.getValue()).append(' '));
+            }
+            String all = script.toString();
+            assertTrue(o.getName() + " should conjure or cycle", all.contains("MakeCard") || all.contains("Cycling:"));
+            assertFalse(o.getName() + " still searches for lands",
+                    all.matches(".*ChangeType\\$ (?:Land|Plains|Island|Swamp|Mountain|Forest|[^|]*Basic).*"));
+            assertFalse(o.getName() + " still landcycles", all.contains("TypeCycling"));
         }
     }
 
@@ -163,7 +173,8 @@ public class RoguelikeContentTest extends AITest {
         // cards affected by landless play stay out of decks and pools until fixed (DESIGN.md 2.5.1)
         RoguelikeContent c = RoguelikeContent.load();
         assertTrue("quarantine list loaded", c.getQuarantine().size() > 300);
-        assertTrue(c.getQuarantine().contains("World Map"));
+        assertTrue(c.getQuarantine().contains("Coiling Oracle"));
+        assertFalse("overridden cards are fixed", c.getQuarantine().contains("World Map"));
         for (Map.Entry<String, List<String>> e : c.cardNamesBySource().entrySet()) {
             for (String name : e.getValue()) {
                 assertFalse(e.getKey() + " has quarantined " + name, c.getQuarantine().contains(name));

@@ -1,0 +1,8 @@
+Name:Bushwhack
+ManaCost:G
+Types:Sorcery
+A:SP$ Charm | Choices$ FetchBasic,Fight
+SVar:FetchBasic:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Hand | Conjure$ True | SpellDescription$ Conjure a basic land card of your choice into your hand.
+SVar:Fight:DB$ Pump | AILogic$ Fight | ValidTgts$ Creature.YouCtrl | TgtPrompt$ Choose target creature you control | SubAbility$ DBFight | SpellDescription$ Target creature you control fights target creature you don't control.
+SVar:DBFight:DB$ Fight | Defined$ ParentTarget | ValidTgts$ Creature.YouDontCtrl | TgtPrompt$ Choose target creature you don't control
+Oracle:Choose one —\n• Conjure a basic land card of your choice into your hand.\n• Target creature you control fights target creature you don't control. (Each deals damage equal to its power to the other.)

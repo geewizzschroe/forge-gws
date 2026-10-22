@@ -1,0 +1,6 @@
+Name:World Map
+ManaCost:1
+Types:Artifact
+A:AB$ MakeCard | Cost$ 1 T Sac<1/CARDNAME> | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Hand | Conjure$ True | SpellDescription$ Conjure a basic land card of your choice into your hand.
+A:AB$ MakeCard | Cost$ 3 T Sac<1/CARDNAME> | Choices$ Plains,Island,Swamp,Mountain,Forest,Baron; Airship Kingdom,Balamb Garden; SeeD Academy,Guadosalam; Farplane Gateway,Gohn; Town of Ruin,Gongaga; Reactor Town,Insomnia; Crown City,Rabanastre; Royal City,Sharlayan; Nation of Scholars,Treno; Dark City,Vector; Imperial Capital,Windurst; Federation Center | Zone$ Hand | Conjure$ True | SpellDescription$ Conjure a basic land card or Town card of your choice into your hand.
+Oracle:{1}, {T}, Sacrifice this artifact: Conjure a basic land card of your choice into your hand.\n{3}, {T}, Sacrifice this artifact: Conjure a basic land card or Town card of your choice into your hand.

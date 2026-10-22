@@ -1,0 +1,8 @@
+Name:Springbloom Druid
+ManaCost:2 G
+Types:Creature Elf Druid
+PT:1/1
+T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Card.Self | Execute$ TrigRamp | TriggerDescription$ When CARDNAME enters, you may sacrifice a land. If you do, conjure two basic land cards of your choice onto the battlefield tapped.
+SVar:TrigRamp:AB$ MakeCard | Cost$ Sac<1/Land> | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True | SubAbility$ DBSecond
+SVar:DBSecond:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True
+Oracle:When Springbloom Druid enters, you may sacrifice a land. If you do, conjure two basic land cards of your choice onto the battlefield tapped.

@@ -1,0 +1,7 @@
+Name:Circuitous Route
+ManaCost:3 G
+Types:Sorcery
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True | SubAbility$ DBSecond | SpellDescription$ Conjure two basic land cards of your choice onto the battlefield tapped.
+SVar:DBSecond:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True
+AI:RemoveDeck:Random
+Oracle:Conjure two basic land cards of your choice onto the battlefield tapped.

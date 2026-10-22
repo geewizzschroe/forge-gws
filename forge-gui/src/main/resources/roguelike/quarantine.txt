@@ -40,7 +40,6 @@ Avenging Druid
 Awaken the Inferno
 Azusa's Many Journeys
 Azusa, Lost but Seeking
-Balamb T-Rexaur
 Balustrade Spy
 Bat Colony
 Battle Plan
@@ -63,11 +62,8 @@ Boundless Realms
 Bounty of Skemfar
 Braidwood Sextant
 Brave the Wilds
-Burnished Hart
-Bushwhack
 Cactarantula
 Calamitous Cave-In
-Call the Mountain Chocobo
 Camel
 Canoptek Wraith
 Canyon Crawler
@@ -86,14 +82,12 @@ Changeling Wayfinder
 Charitable Levy
 Chartooth Cougar
 Choco, Seeker of Paradise
-Circuitous Route
 Civic Wayfinder
 Claim Jumper
 Clay-Fired Bricks
 Cleansing Wildfire
 Clear the Land
 Clifftop Lookout
-Cloudbound Moogle
 Coiling Oracle
 Cold-Blooded Crew
 Collective Voyage
@@ -172,7 +166,6 @@ Everbark Shaman
 Everything Pizza
 Evolution Charm
 Expand the Sphere
-Expedition Map
 Exploding Borders
 Exploration
 Exploration Broodship
@@ -231,7 +224,6 @@ Ghirapur Orrery
 Giant Koi
 Gift of Estates
 Gilded Cerodon
-Gladiolus Amicitia
 Glaive of the Guildpact
 Gleam of Resistance
 Glimpse the Core
@@ -246,7 +238,6 @@ Greater Tanuki
 Greenseeker
 Greenside Watcher
 Grisly Salvage
-Grow from the Ashes
 Growth Charm
 Growth Spasm
 Guided Passage
@@ -260,7 +251,6 @@ Hermit Druid
 Hew the Entwood
 Hexhaven Battalion
 Hexhaven Invigorator
-Hill Gigas
 Hired Giant
 Hithlain Rope
 Hiveheart Shaman
@@ -275,7 +265,6 @@ Hugs, Grisly Guardian
 Humpback Whales
 Hunting Cheetah
 Hunting Wilds
-Ice Flan
 Icetill Explorer
 Igneous Pouncer
 Ignis Scientia
@@ -334,7 +323,6 @@ Lumbering Worldwagon
 Lunar Hatchling
 Lórien Revealed
 Magmatic Hellkite
-Malboro
 Many Partings
 Map the Frontier
 Map the Wastes
@@ -402,7 +390,6 @@ Open the Gates
 Open the Way
 Oracle of Mul Daya
 Orchard Strider
-Ordeal of Nylea
 Oreskos Explorer
 Outcaster Greenblade
 Overgrown Pest
@@ -428,7 +415,6 @@ Primal Growth
 Primetime Suspect
 Primeval Herald
 Primeval Titan
-Prishe's Wanderings
 Prismatic Undercurrents
 Proctor's Gaze
 Purestrain Genestealer
@@ -444,7 +430,6 @@ Rampart Architect
 Ramunap Hydra
 Ranger's Path
 Ranging Raptors
-Reach the Horizon
 Realm Seekers
 Reap and Sow
 Reclaim the Wastes
@@ -472,11 +457,9 @@ Sanctum Plowbeast
 Sand Scout
 Sand Strangler
 Sandcloud Harbinger
-Sandworm
 Saruli Gatekeepers
 Satyr Wayfinder
 Savage Land Dinosaur
-Sazh Katzroy
 Scale the Heights
 Scampering Surveyor
 Scapeshift
@@ -499,7 +482,6 @@ Shefet Monitor
 Shepherding Spirits
 Shigeki, Jukai Visionary
 Shoreline Ranger
-Sidequest: Raise a Chocobo
 Sidewinder Naga
 Silhana Wayfinder
 Silkwing Scout
@@ -519,7 +501,6 @@ Smelt-Ward Gatekeepers
 Sméagol, Helpful Guide
 Soaring Sandwing
 Sojourner's Companion
-Solemn Simulacrum
 Solitary Camel
 Song of Creation
 Sowing Mycospawn
@@ -533,7 +514,6 @@ Spirit of the Aldergard
 Spoils of Victory
 Sporocyst
 Spring
-Springbloom Druid
 Sprouting Goblin
 Sprouting Vines
 Starfield Shepherd
@@ -544,7 +524,6 @@ Strixhaven Skycoach
 Subway Train
 Sultai Monument
 Summer Bloom
-Summon: Fenrir
 Sunblade Samurai
 Sundering Eruption
 Sunspire Gatekeepers
@@ -644,7 +623,6 @@ Wild-Field Scarecrow
 Winds of Abandon
 Wirewood Guardian
 Woodland Investigation
-World Map
 World-Weary
 Worzel, the Protector
 Wrenn and Seven

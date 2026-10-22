@@ -1,0 +1,6 @@
+Name:Reach the Horizon
+ManaCost:3 G
+Types:Sorcery
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest,Baron; Airship Kingdom,Balamb Garden; SeeD Academy,Guadosalam; Farplane Gateway,Gohn; Town of Ruin,Gongaga; Reactor Town,Insomnia; Crown City,Rabanastre; Royal City,Sharlayan; Nation of Scholars,Treno; Dark City,Vector; Imperial Capital,Windurst; Federation Center | Zone$ Battlefield | Tapped$ True | Conjure$ True | SpellbookAmount$ 2 | SpellDescription$ Conjure two basic land cards and/or Town cards with different names of your choice onto the battlefield tapped.
+DeckHints:Type$Town
+Oracle:Conjure two basic land cards and/or Town cards with different names of your choice onto the battlefield tapped.

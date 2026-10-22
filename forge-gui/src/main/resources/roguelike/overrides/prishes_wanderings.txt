@@ -1,0 +1,10 @@
+Name:Prishe's Wanderings
+ManaCost:2 G
+Types:Instant
+A:SP$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest,Baron; Airship Kingdom,Balamb Garden; SeeD Academy,Guadosalam; Farplane Gateway,Gohn; Town of Ruin,Gongaga; Reactor Town,Insomnia; Crown City,Rabanastre; Royal City,Sharlayan; Nation of Scholars,Treno; Dark City,Vector; Imperial Capital,Windurst; Federation Center | Zone$ Battlefield | Tapped$ True | Conjure$ True | SubAbility$ DBImmediateTrigger | SpellDescription$ Conjure a basic land card or Town card of your choice onto the battlefield tapped. When you do, put a +1/+1 counter on target creature you control.
+SVar:DBImmediateTrigger:DB$ ImmediateTrigger | Execute$ TrigPutCounter | SubAbility$ DBCleanup | TriggerDescription$ When you do, put a +1/+1 counter on target creature you control.
+SVar:TrigPutCounter:DB$ PutCounter | ValidTgts$ Creature.YouCtrl | TgtPrompt$ Select target creature you control | CounterType$ P1P1
+SVar:DBCleanup:DB$ Cleanup | ClearRemembered$ True
+DeckHas:Ability$Counters
+DeckHints:Type$Town
+Oracle:Conjure a basic land card or Town card of your choice onto the battlefield tapped. When you do, put a +1/+1 counter on target creature you control.

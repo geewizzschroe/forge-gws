@@ -1,0 +1,10 @@
+Name:Solemn Simulacrum
+ManaCost:4
+Types:Artifact Creature Golem
+PT:2/2
+T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Card.Self | Execute$ TrigChange | OptionalDecider$ You | TriggerDescription$ When CARDNAME enters, you may conjure a basic land card of your choice onto the battlefield tapped.
+SVar:TrigChange:DB$ MakeCard | Choices$ Plains,Island,Swamp,Mountain,Forest | Zone$ Battlefield | Tapped$ True | Conjure$ True
+T:Mode$ ChangesZone | Origin$ Battlefield | Destination$ Graveyard | ValidCard$ Card.Self | Execute$ TrigDraw | OptionalDecider$ TriggeredCardController | TriggerDescription$ When CARDNAME dies, you may draw a card.
+SVar:TrigDraw:DB$ Draw | Defined$ TriggeredCardController | NumCards$ 1
+SVar:SacMe:1
+Oracle:When Solemn Simulacrum enters, you may conjure a basic land card of your choice onto the battlefield tapped.\nWhen Solemn Simulacrum dies, you may draw a card.

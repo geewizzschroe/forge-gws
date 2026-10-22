@@ -109,7 +109,7 @@ public class MakeCardEffect extends SpellAbilityEffect {
                 }
                 int i = sa.hasParam("SpellbookAmount") ?
                         AbilityUtils.calculateAmount(source, sa.getParam("SpellbookAmount"), sa) : 1;
-                while (i > 0) {
+                while (i > 0 && !faces.isEmpty()) {
                     String chosen;
                     if (sa.hasParam("AtRandom")) {
                         chosen = Aggregates.random(faces).getName();
