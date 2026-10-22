@@ -23,17 +23,12 @@ A card can appear in more than one group.
 | Destroys, exiles or returns lands to hand | 220 | Less punishing: the victim gets a land back every turn; mass land destruction resets both players to 0 and they regrow 1 a turn. |
 | Returns lands from the graveyard | 94 | Works only on lands that were sacrificed or destroyed. |
 | A spell on the front with a land on the back | 50 | Kept by the land stripper; the land side can still be played from hand, counting against the 10-land cap. |
-| Cares about nonbasic land types (Towns, Gates, Deserts, Caves, Spheres) | 85 | Never finds any: the mode's only lands are conjured basics. |
+| Cares about Towns | 7 | Towns exist only as the two-colour Final Fantasy Towns the land picker can offer, so these work in two-colour decks. |
+| Cares about other nonbasic land types (Gates, Deserts, Caves, Spheres) | 78 | Never finds any: the mode's only lands are conjured basics and the picker's Towns. |
 
 ## Sample content affected
 
-- **Searches the library for lands to put onto the battlefield (ramp)**: Sandworm
-- **Searches the library for lands to put into hand (land tutors)**: Call the Mountain Chocobo
-- **Looks through the library for lands (dig, reveal until, etc.)**: Coiling Oracle
-- **Landcycling (cycle to search for a land)**: Cloudbound Moogle, Hill Gigas
-- **Landfall and other "whenever a land enters" triggers**: Ambrosia Whiteheart, Call the Mountain Chocobo, Choco-Comet, Sabotender
-- **Destroys, exiles or returns lands to hand**: Ghostly Flicker, Sandworm
-- **Cares about nonbasic land types (Towns, Gates, Deserts, Caves, Spheres)**: PuPu UFO
+None of the sample content's cards fall into these groups.
 
 ## Searches the library for lands to put onto the battlefield (ramp) (229)
 
@@ -113,8 +108,14 @@ Kept by the land stripper; the land side can still be played from hand, counting
 
 Agadeem's Awakening, Akoum Warrior, Bala Ged Recovery, Beyeen Veil, Blackbloom Rogue, Bloodsoaked Insight, Boggart Trawler, Bridgeworks Battle, Disciple of Freyalise, Drowner of Truth, Emeria's Call, Fell the Profane, Glasspool Mimic, Glasswing Grace, Hagra Mauling, Hydroelectric Specimen, Jwari Disruption, Kabira Takedown, Kazandu Mammoth, Kazuul's Fury, Khalni Ambush, Legion Leadership, Makindi Stampede, Malakir Rebirth, Ondu Inversion, Pelakka Predation, Pinnacle Monk, Razorgrass Ambush, Revitalizing Repast, Rush of Inspiration, Sea Gate Restoration, Sejiri Shelter, Shatterskull Smashing, Silundi Vision, Sink into Stupor, Skyclave Cleric, Song-Mad Treachery, Spikefield Hazard, Strength of the Harvest, Stump Stomp, Sundering Eruption, Suppression Ray, Tangled Florahedron, Turntimber Symbiosis, Umara Wizard, Valakut Awakening, Vastwood Fortification, Waterlogged Teachings, Witch Enchanter, Zof Consumption
 
-## Cares about nonbasic land types (Towns, Gates, Deserts, Caves, Spheres) (85)
+## Cares about Towns (7)
 
-Never finds any: the mode's only lands are conjured basics.
+Towns exist only as the two-colour Final Fantasy Towns the land picker can offer, so these work in two-colour decks.
 
-A-Navigation Orb, Archway Angel, Armory Guard, Bat Colony, Cactarantula, Calamitous Cave-In, Camel, Cataclysmic Prospecting, Circuitous Route, Colossal Rattlewurm, Compass Gnome, Cosmium Confluence, Crackling Perimeter, Dance of the Tumbleweeds, Desert Nomads, Desert Warfare, Desert's Due, Desert's Hold, Detention Sphere, District Guide, Dune Chanter, Dune Diviner, Explore the Underdark, Failed Fording, Follow the Tracks, G'raha Tia, Scion Reborn, Gargantuan Leech, Garrison Sergeant, Gate Colossus, Gatebreaker Ram, Gatecreeper Vine, Gatekeeper Gargoyle, Gates Ablaze, Gateway Shade, Gateway Sneak, Gilded Cerodon, Glaive of the Guildpact, Glimpse the Core, Greenside Watcher, Guild Summit, Hazezon, Shaper of Sand, Hold the Gates, Hour of Promise, Kaslem's Stonetree, Locus Cobra, Map the Frontier, Monument to Perfection, Navigation Orb, Necron Monolith, Nine-Fingers Keene, Ogre Jailbreaker, Opal Lake Gatekeepers, Open the Gates, Outcaster Greenblade, Prishe's Wanderings, PuPu UFO, Qiqirn Merchant, Ramunap Hydra, Reach the Horizon, Sage of the Maze, Sand Scout, Sand Strangler, Sandcloud Harbinger, Saruli Gatekeepers, Scampering Surveyor, Shard of the Void Dragon, Shefet Monitor, Sidewinder Naga, Silver Deputy, Sinuous Benthisaur, Smelt-Ward Gatekeepers, Solitary Camel, Spelunking, Spinewoods Armadillo, Sunspire Gatekeepers, The Cave of Two Lovers, The Wandering Minstrel, Town Greeter, Travel the Overworld, Ubul Sar Gatekeepers, Unquenchable Thirst, Wall of Forgotten Pharaohs, Way of the Thief, Wretched Camel, Yuma, Proud Protector
+Prishe's Wanderings, PuPu UFO, Qiqirn Merchant, Reach the Horizon, The Wandering Minstrel, Town Greeter, Travel the Overworld
+
+## Cares about other nonbasic land types (Gates, Deserts, Caves, Spheres) (78)
+
+Never finds any: the mode's only lands are conjured basics and the picker's Towns.
+
+A-Navigation Orb, Archway Angel, Armory Guard, Bat Colony, Cactarantula, Calamitous Cave-In, Camel, Cataclysmic Prospecting, Circuitous Route, Colossal Rattlewurm, Compass Gnome, Cosmium Confluence, Crackling Perimeter, Dance of the Tumbleweeds, Desert Nomads, Desert Warfare, Desert's Due, Desert's Hold, Detention Sphere, District Guide, Dune Chanter, Dune Diviner, Explore the Underdark, Failed Fording, Follow the Tracks, G'raha Tia, Scion Reborn, Gargantuan Leech, Garrison Sergeant, Gate Colossus, Gatebreaker Ram, Gatecreeper Vine, Gatekeeper Gargoyle, Gates Ablaze, Gateway Shade, Gateway Sneak, Gilded Cerodon, Glaive of the Guildpact, Glimpse the Core, Greenside Watcher, Guild Summit, Hazezon, Shaper of Sand, Hold the Gates, Hour of Promise, Kaslem's Stonetree, Locus Cobra, Map the Frontier, Monument to Perfection, Navigation Orb, Necron Monolith, Nine-Fingers Keene, Ogre Jailbreaker, Opal Lake Gatekeepers, Open the Gates, Outcaster Greenblade, Ramunap Hydra, Sage of the Maze, Sand Scout, Sand Strangler, Sandcloud Harbinger, Saruli Gatekeepers, Scampering Surveyor, Shard of the Void Dragon, Shefet Monitor, Sidewinder Naga, Silver Deputy, Sinuous Benthisaur, Smelt-Ward Gatekeepers, Solitary Camel, Spelunking, Spinewoods Armadillo, Sunspire Gatekeepers, The Cave of Two Lovers, Ubul Sar Gatekeepers, Unquenchable Thirst, Wall of Forgotten Pharaohs, Way of the Thief, Wretched Camel, Yuma, Proud Protector

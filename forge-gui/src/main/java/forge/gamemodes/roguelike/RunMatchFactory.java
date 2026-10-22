@@ -34,6 +34,7 @@ public final class RunMatchFactory {
         rules.setWarnAboutAICards(false);
         rules.setConjureBasicLandEachTurn(true);
         rules.setMaxLandsPerPlayer(cfg.landCap);
+        rules.setExtraConjurableLands(cfg.landPickerExtras);
         for (CardRules o : content.getOverrides()) {
             rules.addCardOverride(o);
         }

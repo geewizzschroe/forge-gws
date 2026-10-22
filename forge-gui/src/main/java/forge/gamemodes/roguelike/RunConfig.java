@@ -1,5 +1,6 @@
 package forge.gamemodes.roguelike;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,6 +14,9 @@ public class RunConfig {
     public int startingMaxLife = 20;
     public int inMatchLifeMultiplier = 2;
     public int landCap = 10;
+    // Decided (DESIGN.md 2.5.1): nonbasic lands the per-turn land choice may offer, when both their colours are
+    // in the deck: Final Fantasy's two-colour Towns (they enter tapped).
+    public List<String> landPickerExtras = new ArrayList<>();
     public int retries = 1;
     public int cardRewardChoices = 3;
     public int cardRewardCopies = 2;

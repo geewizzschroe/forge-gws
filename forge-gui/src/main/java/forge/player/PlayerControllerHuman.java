@@ -3828,7 +3828,7 @@ public class PlayerControllerHuman extends PlayerController implements IGameCont
     @Override
     public String chooseBasicLandToConjure(List<String> basicLandNames) {
         return getGui().one(localizer.getMessageorUseDefault("lblChooseBasicLandToConjure",
-                "Choose a basic land to add this turn"), basicLandNames);
+                "Choose a land to add this turn"), basicLandNames);
     }
 
     @Override

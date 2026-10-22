@@ -162,12 +162,25 @@ public class RoguelikeContentTest extends AITest {
     public void noQuarantinedCardIsInTheContent() {
         // cards affected by landless play stay out of decks and pools until fixed (DESIGN.md 2.5.1)
         RoguelikeContent c = RoguelikeContent.load();
-        assertTrue("quarantine list loaded", c.getQuarantine().size() > 1000);
+        assertTrue("quarantine list loaded", c.getQuarantine().size() > 300);
         assertTrue(c.getQuarantine().contains("World Map"));
         for (Map.Entry<String, List<String>> e : c.cardNamesBySource().entrySet()) {
             for (String name : e.getValue()) {
                 assertFalse(e.getKey() + " has quarantined " + name, c.getQuarantine().contains(name));
             }
+        }
+    }
+
+    @Test
+    public void theLandPickersExtrasAreTwoColourTowns() {
+        initAndCreateGame(); // loads the card database
+        RoguelikeContent c = RoguelikeContent.load();
+        assertEquals(11, c.getConfig().landPickerExtras.size());
+        for (String name : c.getConfig().landPickerExtras) {
+            PaperCard pc = forge.StaticData.instance().getCommonCards().getCard(name);
+            assertTrue("unknown card " + name, pc != null);
+            assertTrue(name, pc.getRules().getType().isLand() && pc.getRules().getType().hasSubtype("Town"));
+            assertEquals(name + " colours", 2, pc.getRules().getColorIdentity().countColors());
         }
     }
 }

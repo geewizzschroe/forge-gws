@@ -1,7 +1,9 @@
 package forge.game;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +27,7 @@ public class GameRules {
     private int simTimeout = 120;
     private boolean conjureBasicLandEachTurn = false;
     private int maxLandsPerPlayer = 0;
+    private List<String> extraConjurableLands = new ArrayList<>();
     private final Map<String, CardRules> cardOverrides = new HashMap<>();
 
     // it's a preference, not rule... but I could hardly find a better place for it
@@ -174,6 +177,18 @@ public class GameRules {
 
     public void setMaxLandsPerPlayer(final int value) {
         this.maxLandsPerPlayer = value;
+    }
+
+    /**
+     * Nonbasic lands the per-turn land choice may also offer (see {@link BasicLandEscalation#basicLandOptions}):
+     * each one is offered when its colours are all among the player's deck colours.
+     */
+    public List<String> getExtraConjurableLands() {
+        return extraConjurableLands;
+    }
+
+    public void setExtraConjurableLands(final List<String> names) {
+        this.extraConjurableLands = new ArrayList<>(names);
     }
 
     /**

@@ -186,6 +186,31 @@ public class BasicLandEscalationTest extends AITest {
     }
 
     @Test
+    public void twoColourTownsAreOfferedWhenBothColoursAreInTheDeck() {
+        Game game = initAndCreateGame();
+        game.getRules().setMaxLandsPerPlayer(10);
+        game.getRules().setExtraConjurableLands(List.of("Sharlayan, Nation of Scholars", "Baron, Airship Kingdom"));
+        Player p = game.getPlayers().get(1);
+        addCardToZone("Mulldrifter", p, ZoneType.Library);    // U
+        assertEquals("one colour: no Town fits, so no choice", List.of("Island"), BasicLandEscalation.basicLandOptions(p));
+        addCardToZone("Savannah Lions", p, ZoneType.Library); // W
+        assertEquals(List.of("Plains", "Island", "Sharlayan, Nation of Scholars"), BasicLandEscalation.basicLandOptions(p));
+
+        final Card[] made = new Card[1];
+        p.runWithController(() -> made[0] = BasicLandEscalation.conjureChosenBasicLand(p),
+                new PlayerControllerAi(game, p, p.getLobbyPlayer()) {
+                    @Override
+                    public String chooseBasicLandToConjure(List<String> names) {
+                        return "Sharlayan, Nation of Scholars";
+                    }
+                });
+        assertEquals("Sharlayan, Nation of Scholars", made[0].getName());
+        assertTrue(made[0].isInPlay());
+        assertTrue("enters tapped", made[0].isTapped());
+        assertTrue(made[0].getType().hasSubtype("Town"));
+    }
+
+    @Test
     public void nothingIsConjuredAtTheCap() {
         Game game = initAndCreateGame();
         game.getRules().setMaxLandsPerPlayer(10);

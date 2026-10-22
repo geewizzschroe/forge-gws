@@ -91,8 +91,9 @@ public final class BasicLandEscalation {
     }
 
     /**
-     * The basic lands to offer a player: one for each colour in the colour identity of the nonland,
-     * nontoken cards they own in this game (their deck and commander). All five if that has no colour.
+     * The lands to offer a player: one basic for each colour in the colour identity of the nonland, nontoken
+     * cards they own in this game (their deck and commander), all five if that has no colour; then any of the
+     * rules' extra conjurable lands whose colours are all among the deck's.
      */
     public static List<String> basicLandOptions(final Player player) {
         byte identity = 0;
@@ -111,7 +112,17 @@ public final class BasicLandEscalation {
                 options.add(MagicColor.Constant.BASIC_LANDS.get(i));
             }
         }
-        return options.isEmpty() ? MagicColor.Constant.BASIC_LANDS : options;
+        if (options.isEmpty()) {
+            return MagicColor.Constant.BASIC_LANDS;
+        }
+        for (String name : player.getGame().getRules().getExtraConjurableLands()) {
+            PaperCard pc = StaticData.instance().getCommonCards().getCard(name);
+            byte colours = pc == null ? 0 : pc.getRules().getColorIdentity().getColor();
+            if (colours != 0 && (colours & ~identity) == 0) {
+                options.add(name);
+            }
+        }
+        return options;
     }
 
     /**
