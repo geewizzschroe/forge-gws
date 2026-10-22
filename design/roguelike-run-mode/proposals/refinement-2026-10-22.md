@@ -85,6 +85,47 @@ Add "no enemy twice on one path". Optionally, show which boss waits at the top f
 
 This is small plumbing. It is not built, because the tiers themselves come from part 2.
 
+### 1.4 The workshop node (added after review; scoping, not built)
+
+Your idea is a node with its own theme: a blacksmith, war camp, artisan caravan or similar. The name is open; "Workshop" below is a placeholder. You buy three kinds of thing there, any number of times while you have gold:
+
+| Service | How it would work | Built from |
+|---|---|---|
+| **A. Artifacts and Equipment** | A few artifact cards for gold (2 copies each, like shop cards), weighted toward Equipment | the Full Pool, artifacts only, in the run's colours (colourless always fits); FIN and FDN have 36 Equipment and 62 other artifacts before the colour filter |
+| **B. Upgrade for gold** | Pick a (card, upgrade) pair from an offer of 3, like the Upgrade node; pay; return to the workshop; can be repeated | the Upgrade node's offer, plus the same "back to the shop" flow the shop's card removal already uses |
+| **C. Stock up your Base** | Your Base gains "Remove a supply counter: put a +1/+1 counter on target creature you control. Activate only as a sorcery" and 3 supply counters. Counters you spend stay spent for the rest of the run | engine support exists; see below |
+
+**C is the proof of concept: a resource the Base holds, which runs down over the run.**
+- **Tried it:** a Base in the command zone can pay a supply counter from itself. A throwaway test activated it, the Base went from 3 to 2 counters, and the target got +1/+1. The test isn't kept.
+- **What's missing is plumbing:**
+  - **The count lives in the run.** The run state holds "supply: 3".
+  - **Putting counters on at game start.** The Base needs that many counters when the game starts. It's a small engine addition: a "starting counters" field for the Base, next to `RegisteredPlayer.setBase`.
+  - **Reading them back.** After the game, the run reads how many are left from the Base in the command zone, and stores that. This works even if the hero lost, because the run reads from registered players, as it already does for life.
+- **It generalises:** the same counters plus run state can carry any limited-use Base ability later, such as a once-per-run heal, a few scries or a stored Treasure. Each one is a counter type, a script line and a price.
+- Since the counter is a real card counter, the Base shows "Supply: 3" in the match, and what you spend is visible.
+
+**Questions for you before building:**
+1. **Uses: per run or per fight?**
+   - "Non-replenishing" reads as per run, so spent counters stay spent. I'll build that unless you say otherwise.
+   - Per fight would mean 3 in every match until the run ends, which is much stronger.
+2. **Which creatures can it target?** Yours only, as I assumed, or any creature (which would allow tricks like pumping the enemy's creature into your blocker's deathtouch)?
+3. **Buying again:** does a second purchase add 3 more counters to the same ability (my assumption)?
+4. **Prices** (PLACEHOLDER until you set them):
+   - an artifact about the shop's 30
+   - an upgrade about 40, rising each time like removal, or flat
+   - stocking up about 50
+5. **Where it appears:** stretch nodes only (my assumption), or as a touchstone? It overlaps a little with the shop touchstone (both sell cards) and with the campfire's Train (free, but you give up the heal).
+6. **Name and flavour.** Final Fantasy has Cid's workshops, the Gold Saucer and Moogle shops. Picking one is yours to do, and it only touches the label and the log text.
+
+**Work involved**, about a day of building:
+- a node type
+- the offer and its three services
+- the generalised "return to the workshop" flow (it's hard-coded to removal today)
+- the supply counters (engine field, run state, read-back)
+- text and screen buttons
+- both simulator policies
+- tests: buying each service, counters persisting across two matches, upgrade repeats, the screen compiles
+
 ---
 
 ## 2. Enemy decks and bosses
