@@ -39,6 +39,7 @@ public class RunTextTest extends AITest {
 
         assertTrue(RunText.nodeDetail(run, first), RunText.nodeDetail(run, first).startsWith("Enemy: "));
         MapNode boss = run.getState().map.get(run.getState().map.bossId);
+        boss.encounterId = "boss_krenko"; // several bosses now; this checks Krenko's text
         String bossText = RunText.nodeDetail(run, boss);
         assertTrue(bossText, bossText.contains("Boss: Krenko's Warband"));
         assertTrue(bossText, bossText.contains("commander Krenko, Mob Boss"));

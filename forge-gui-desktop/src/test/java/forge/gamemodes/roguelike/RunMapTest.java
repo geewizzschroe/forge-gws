@@ -131,7 +131,8 @@ public class RunMapTest extends AITest {
                     fightsAtStart += n.row == 0 ? 1 : 0;
                 }
             }
-            assertEquals("one tier-1 enemy exists, so one start is a fight", 1, fightsAtStart);
+            long tierOne = c.getEncounters().values().stream().filter(e -> !e.boss && e.tier == 1).count();
+            assertEquals("starts that keep their fight: one per unused tier-1 enemy", Math.min(3, tierOne), fightsAtStart);
         }
     }
 
