@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class Run {
         s.life = s.maxLife;
         s.retriesLeft = cfg.retries;
         s.gold = cfg.startingGold;
+        s.fullPoolSets.addAll(cfg.fullPoolSets);
         if (setup != null) {
             s.characterId = setup.characterId;
             s.maxLife += setup.maxLifeBonus;
@@ -70,6 +72,12 @@ public class Run {
             s.relicPool = setup.relicPool == null ? null : new ArrayList<>(setup.relicPool);
             s.extraRewardCards.addAll(setup.extraRewardCards);
             s.unlockedPools.addAll(setup.unlockedPools);
+            for (String set : setup.fullPoolSets) {
+                if (!s.fullPoolSets.contains(set)) {
+                    s.fullPoolSets.add(set);
+                }
+            }
+            s.fullPoolSets.removeAll(setup.disabledSets);
             s.baseAbilities.addAll(setup.baseAbilities);
         }
         s.map = RunMap.generate(cfg, content, s.nextRandom());
@@ -259,6 +267,22 @@ public class Run {
             throw new IllegalStateException("Use buy() in a shop");
         }
         OfferOption o = offer.options.get(index);
+        if (offer.returnToShop != null) {
+            if (state.gold < o.price) {
+                throw new IllegalStateException("Can't pay " + o.price + " gold with " + state.gold);
+            }
+            state.log.add("Paid " + o.price + " gold to remove every " + o.cutCard);
+            state.gold -= o.price;
+            state.deck.remove(o.cutCard); // every copy, whatever cutCopies says
+            state.removalsBought++;
+            for (OfferOption shopOption : offer.returnToShop.options) {
+                if (shopOption.removal) {
+                    shopOption.bought = true;
+                }
+            }
+            state.offer = offer.returnToShop;
+            return;
+        }
         state.log.add("Chose " + RunText.option(this, o));
         apply(o);
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
@@ -279,6 +303,16 @@ public class Run {
         if (o.bought || state.gold < o.price) {
             throw new IllegalStateException("Can't buy " + o + " with " + state.gold + " gold");
         }
+        if (o.removal) {
+            // paid for when a card is chosen; backing out returns to the shop for free
+            Offer cut = makeCutOffer();
+            cut.returnToShop = offer;
+            for (OfferOption c : cut.options) {
+                c.price = o.price;
+            }
+            state.offer = cut;
+            return;
+        }
         state.log.add("Bought " + RunText.option(this, o));
         state.gold -= o.price;
         o.bought = true;
@@ -290,6 +324,10 @@ public class Run {
         Offer offer = requireOffer();
         if (!offer.canSkip) {
             throw new IllegalStateException("This choice can't be skipped");
+        }
+        if (offer.returnToShop != null) {
+            state.offer = offer.returnToShop;
+            return;
         }
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
         state.offer = null;
@@ -342,16 +380,23 @@ public class Run {
         byte colours = runColours();
         List<CardPoolDef> onColour = new ArrayList<>();
         List<CardPoolDef> offColour = new ArrayList<>();
+        Map<String, List<String>> bucketCards = new LinkedHashMap<>();
         for (CardPoolDef p : content.getPools().values()) {
             if (p.bucket && (!p.locked || state.unlockedPools.contains(p.id))) {
-                if ((colourIdentity(p.cards) & ~colours) == 0) {
+                // a set bucket takes its set's cards within the run's colours, so it is always on-colour
+                List<String> cards = p.fromSet != null ? FullPool.cards(List.of(p.fromSet), colours) : p.cards;
+                if (cards.isEmpty()) {
+                    continue;
+                }
+                bucketCards.put(p.id, cards);
+                if ((colourIdentity(cards) & ~colours) == 0) {
                     onColour.add(p);
                 } else {
                     offColour.add(p);
                 }
             }
         }
-        Offer offer = new Offer(OfferKind.CARD_REWARD, true);
+        Offer offer = new Offer(OfferKind.CARD_REWARD, false); // rewards can't be turned down
         if (rnd.nextDouble() < cfg.bucketRewardChance) {
             // buckets in the run's colours, plus now and then one off-colour or mixed-colour bucket to splash
             List<CardPoolDef> offered = new ArrayList<>();
@@ -364,7 +409,7 @@ public class Run {
             for (CardPoolDef b : offered) {
                 OfferOption o = new OfferOption();
                 o.label = splash.contains(b) ? b.name + " (splash)" : b.name;
-                for (String c : pickAllowingRepeats(b.cards, cfg.bucketRewardCards, rnd)) {
+                for (String c : pickAllowingRepeats(bucketCards.get(b.id), cfg.bucketRewardCards, rnd)) {
                     o.cards.merge(c, 1, Integer::sum);
                 }
                 offer.options.add(o);
@@ -373,8 +418,30 @@ public class Run {
                 return offer;
             }
         }
-        for (String c : pick(rewardPool(), cfg.cardRewardChoices, rnd)) {
+        // one slot curated, one from the Full Pool, the rest either at even odds, in random order
+        List<Boolean> curatedSlots = new ArrayList<>();
+        for (int i = 0; i < cfg.cardRewardChoices; i++) {
+            curatedSlots.add(i == 0 || (i > 1 && rnd.nextBoolean()));
+        }
+        Collections.shuffle(curatedSlots, rnd);
+        List<String> curated = rewardPool();
+        List<String> full = FullPool.cards(fullPoolSets(), colours);
+        List<String> taken = new ArrayList<>();
+        for (boolean fromCurated : curatedSlots) {
+            List<String> from = new ArrayList<>(fromCurated ? curated : full);
+            from.removeAll(taken);
+            if (from.isEmpty()) { // that source has run dry: use the other
+                fromCurated = !fromCurated;
+                from = new ArrayList<>(fromCurated ? curated : full);
+                from.removeAll(taken);
+            }
+            if (from.isEmpty()) {
+                break;
+            }
+            String c = from.get(rnd.nextInt(from.size()));
+            taken.add(c);
             OfferOption o = new OfferOption();
+            o.source = fromCurated ? "curated" : "full pool";
             o.cards.put(c, cfg.cardRewardCopies);
             if (isCreature(c) && rnd.nextDouble() < cfg.rewardUpgradeChance && !content.getUpgrades().isEmpty()) {
                 o.upgradeCard = c;
@@ -413,6 +480,11 @@ public class Run {
             o.price = cfg.shopCardPrice;
             offer.options.add(o);
         }
+        OfferOption removal = new OfferOption();
+        removal.removal = true;
+        removal.label = "Remove a card (every copy)";
+        removal.price = cfg.shopRemovalPrice * (state.removalsBought + 1);
+        offer.options.add(removal);
         return offer;
     }
 
@@ -453,6 +525,11 @@ public class Run {
         List<String> pool = new ArrayList<>(starter.rewardPool == null ? state.deck.keySet() : content.getPool(starter.rewardPool).cards);
         pool.addAll(state.extraRewardCards);
         return pool;
+    }
+
+    /** The run's Full Pool sets (older saves have none recorded and use the starting sets). */
+    public List<String> fullPoolSets() {
+        return state.fullPoolSets.isEmpty() ? content.getConfig().fullPoolSets : state.fullPoolSets;
     }
 
     /** The run's colours: the colour identity of the commander and every card in the deck. */

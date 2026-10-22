@@ -8,15 +8,11 @@ import java.util.Set;
 
 import forge.StaticData;
 import forge.card.CardEdition;
-import forge.card.CardRules;
-import forge.card.ColorSet;
 import forge.gamemodes.roguelike.BaseAbility;
 import forge.gamemodes.roguelike.CardPoolDef;
 import forge.gamemodes.roguelike.RelicDef;
 import forge.gamemodes.roguelike.RoguelikeContent;
 import forge.gamemodes.roguelike.RunSetup;
-import forge.gamemodes.roguelike.StarterDef;
-import forge.item.PaperCard;
 
 /**
  * The rules of meta-progression (DESIGN.md 2.6): levels from experience, unlocks at fixed levels and from
@@ -178,7 +174,6 @@ public final class Progression {
                 relics.add(r.id);
             }
         }
-        StarterDef starter = loadout != null && loadout.starterId != null ? c.getStarter(loadout.starterId) : null;
         for (Unlock u : accountUnlocks(c, profile)) {
             UnlockDef d = u.def();
             switch (d.kind) {
@@ -190,47 +185,42 @@ public final class Progression {
                         s.extraRewardCards.addAll(pool.cards);
                     }
                 }
-                case "set" -> s.extraRewardCards.addAll(setCards(d, starter));
+                case "set" -> s.fullPoolSets.add(d.set);
                 default -> { }
             }
         }
         s.relicPool = relics;
+        if (loadout != null) {
+            List<String> choices = fullPoolSetChoices(c, profile);
+            for (String set : loadout.disabledSets) {
+                if (choices.contains(set) && s.disabledSets.size() < setToggles(c, profile)) {
+                    s.disabledSets.add(set);
+                }
+            }
+        }
         return s;
     }
 
-    /**
-     * The cards of an unlocked set that join the reward pool: nonland cards not excluded, which share a colour
-     * with the starter's commander or are colourless. PLACEHOLDER: the colour filter is not decided.
-     */
-    static List<String> setCards(final UnlockDef d, final StarterDef starter) {
-        CardEdition edition = StaticData.instance().getEditions().get(d.set);
-        if (edition == null) {
-            throw new IllegalArgumentException("No set with code " + d.set);
-        }
-        ColorSet identity = null;
-        if (starter != null) {
-            PaperCard cmd = StaticData.instance().getCommonCards().getCard(starter.commander);
-            identity = cmd == null ? null : cmd.getRules().getColorIdentity();
-        }
-        Set<String> out = new LinkedHashSet<>();
-        for (CardEdition.EditionEntry e : edition.getAllCardsInSet()) {
-            if (d.exclude.contains(e.name())) {
-                continue;
-            }
-            PaperCard pc = StaticData.instance().getCommonCards().getCard(e.name());
-            if (pc == null) {
-                continue;
-            }
-            CardRules rules = pc.getRules();
-            if (rules.getMainPart().getType().isLand()) {
-                continue;
-            }
-            ColorSet colors = rules.getColorIdentity();
-            if (identity == null || colors.isColorless() || colors.sharesColorWith(identity)) {
-                out.add(e.name());
+    /** The sets the account's Full Pool can hold: the starting sets plus those unlocked. */
+    public static List<String> fullPoolSetChoices(final RoguelikeContent c, final MetaProfile profile) {
+        List<String> out = new ArrayList<>(c.getConfig().fullPoolSets);
+        for (Unlock u : accountUnlocks(c, profile)) {
+            if ("set".equals(u.def().kind) && !out.contains(u.def().set)) {
+                out.add(u.def().set);
             }
         }
-        return new ArrayList<>(out);
+        return out;
+    }
+
+    /** How many Full Pool sets the account may switch off when starting a run. */
+    public static int setToggles(final RoguelikeContent c, final MetaProfile profile) {
+        int n = 0;
+        for (Unlock u : accountUnlocks(c, profile)) {
+            if ("setToggle".equals(u.def().kind)) {
+                n += Math.max(1, u.def().amount);
+            }
+        }
+        return n;
     }
 
     public static String describe(final RoguelikeContent c, final UnlockDef d) {
@@ -247,9 +237,16 @@ public final class Progression {
             case "baseAbility" -> d.name + ": " + d.description;
             case "relic" -> "Relic in the pool: " + c.getRelic(d.id).name;
             case "pool" -> "Cards in the pool: " + c.getPool(d.id).name;
-            case "set" -> "Set in the reward pool: " + d.set;
+            case "set" -> "Set added to the Full Pool: " + setName(d.set);
+            case "setToggle" -> "Switch off " + Math.max(1, d.amount) + " more Full Pool set" + (d.amount > 1 ? "s" : "") + " when starting a run";
             default -> d.kind;
         };
+    }
+
+    /** A set's name from its code, for screens. */
+    public static String setName(final String code) {
+        CardEdition e = StaticData.instance().getEditions().get(code);
+        return e == null ? code : e.getName();
     }
 
     static String baseName(final RoguelikeContent c, final String file) {

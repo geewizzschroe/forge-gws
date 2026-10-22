@@ -23,6 +23,8 @@ public class RunConfig {
     // PLACEHOLDER: chance that a bucket offer includes one bucket outside the run's colours (a splash).
     // Other buckets offered are always within the run's colours.
     public double offColourBucketChance = 0.25;
+    // Decided (DESIGN.md 2.5): the sets of the Full Pool, the uncurated source of reward slots, at the start.
+    public List<String> fullPoolSets = List.of("FIN", "FDN");
 
     // PLACEHOLDER: D1 floors. 1 means beating the boss wins the run.
     public int floors = 1;
@@ -43,6 +45,9 @@ public class RunConfig {
     public int shopRelicPrice = 60;
     public int shopCardChoices = 3;
     public int shopCardPrice = 30;
+    // Decided (DESIGN.md 2.5): the shop's card removal costs this, times one more than the times bought before
+    // (75, 150, 225 ...). PLACEHOLDER: the amount.
+    public int shopRemovalPrice = 75;
     // PLACEHOLDER: how much a Rest node heals, as a fraction of run max life.
     public double restHealFraction = 0.3;
     // PLACEHOLDER: how many copies a Cut node removes from the chosen card name (0 = all of them).

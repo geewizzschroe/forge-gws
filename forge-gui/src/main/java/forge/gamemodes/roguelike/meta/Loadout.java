@@ -10,4 +10,6 @@ public class Loadout {
     public List<String> disabled = new ArrayList<>();
     /** Base file to use instead of the starter's own, or null. */
     public String base;
+    /** Full Pool sets to switch off, up to the number the account has unlocked. */
+    public List<String> disabledSets = new ArrayList<>();
 }

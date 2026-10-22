@@ -23,4 +23,8 @@ public class RunSetup {
     public List<BaseAbility> baseAbilities = new ArrayList<>();
     /** Locked card pools that have been unlocked (buckets among them can be offered). */
     public List<String> unlockedPools = new ArrayList<>();
+    /** Sets added to the Full Pool by unlocks. */
+    public List<String> fullPoolSets = new ArrayList<>();
+    /** Full Pool sets switched off for this run. */
+    public List<String> disabledSets = new ArrayList<>();
 }

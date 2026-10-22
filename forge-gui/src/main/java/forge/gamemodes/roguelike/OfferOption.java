@@ -18,6 +18,10 @@ public class OfferOption {
     /** Shop price; 0 elsewhere. */
     public int price;
     public boolean bought;
+    /** The shop's card removal service: buying it opens a choice of a card to cut every copy of. */
+    public boolean removal;
+    /** Where a single-card reward came from: "curated" or "full pool" (shown as a debug tag). */
+    public String source;
 
     @Override
     public String toString() {

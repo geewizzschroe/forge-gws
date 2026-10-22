@@ -45,6 +45,10 @@ public class RunState {
     public Integer currentNodeId;
     /** Node entered but not finished yet (a match to play, or an open choice); null otherwise. */
     public Integer activeNodeId;
+    /** Times the shop's card removal was bought this run; each use costs more. */
+    public int removalsBought;
+    /** Set codes in this run's Full Pool; empty means the config's starting sets. */
+    public List<String> fullPoolSets = new ArrayList<>();
     /** Life when the active match was entered, restored by a retry. */
     public int lifeBeforeMatch;
     public Offer offer;

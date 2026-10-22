@@ -15,4 +15,6 @@ public class CardPoolDef {
     /** Not available until unlocked at an account level. */
     public boolean locked;
     public List<String> cards = new ArrayList<>();
+    /** A set bucket: instead of {@code cards}, it offers cards of this set within the run's colours. */
+    public String fromSet;
 }

@@ -123,7 +123,7 @@ public class RunTest extends AITest {
         run.enterNode(0);
         Offer offer = run.getState().offer;
         assertEquals(OfferKind.SHOP, offer.kind);
-        assertEquals(6, offer.options.size()); // 3 relics + 3 cards
+        assertEquals(7, offer.options.size()); // 3 relics + 3 cards + card removal
         int relic = -1;
         for (int i = 0; i < offer.options.size(); i++) {
             if (offer.options.get(i).relicId != null) {
@@ -255,5 +255,116 @@ public class RunTest extends AITest {
             }
         }
         assertEquals("one of the three is a splash", 1, splashes);
+    }
+
+    @Test
+    public void cardRewardsCantBeSkipped() {
+        RoguelikeContent c = content();
+        Run run = runWithPath(c, NodeType.ENEMY);
+        run.enterNode(0);
+        run.applyMatchResult(run.getActiveEncounter(), true, 20);
+        assertFalse(run.getState().offer.canSkip);
+        try {
+            run.skip();
+            throw new AssertionError("skipped a card reward");
+        } catch (IllegalStateException expected) {
+            // fine
+        }
+    }
+
+    @Test
+    public void singleCardRewardsMixCuratedAndFullPoolSlots() {
+        RoguelikeContent c = content();
+        c.getConfig().bucketRewardChance = 0;
+        List<String> curatedPool = c.getPool("blue_core").cards;
+        for (int seed = 1; seed <= 20; seed++) {
+            Run line = runWithPath(c, NodeType.ENEMY);
+            line.getState().seed = seed;
+            line.enterNode(0);
+            line.applyMatchResult(line.getActiveEncounter(), true, 20);
+            int curated = 0;
+            int full = 0;
+            for (OfferOption o : line.getState().offer.options) {
+                String card = o.cards.keySet().iterator().next();
+                if ("curated".equals(o.source)) {
+                    curated++;
+                    assertTrue(card + " is not in the curated pool", curatedPool.contains(card));
+                } else {
+                    assertEquals("full pool", o.source);
+                    full++;
+                    var rules = StaticData.instance().getCommonCards().getCard(card).getRules();
+                    assertFalse(card + " is a land", rules.getMainPart().getType().isLand());
+                    assertEquals(card + " is outside blue", 0, rules.getColorIdentity().getColor() & ~MagicColor.BLUE);
+                }
+            }
+            assertEquals(3, curated + full);
+            assertTrue("at least one curated slot", curated >= 1);
+            assertTrue("at least one Full Pool slot", full >= 1);
+        }
+    }
+
+    @Test
+    public void theThroughTheAgesBucketTakesOnColourCardsOfItsSet() {
+        RoguelikeContent c = content();
+        c.getConfig().bucketRewardChance = 1;
+        c.getConfig().offColourBucketChance = 0;
+        c.getPools().values().removeIf(p -> p.bucket && !p.id.equals("bucket_fca"));
+        Run run = runWithPath(c, NodeType.ENEMY);
+        assertTrue(run.getState().unlockedPools.isEmpty());
+        run.getState().unlockedPools.add("bucket_fca");
+        run.enterNode(0);
+        run.applyMatchResult(run.getActiveEncounter(), true, 20);
+        Offer offer = run.getState().offer;
+        assertEquals(1, offer.options.size());
+        assertEquals("Through the Ages", offer.options.get(0).label);
+        List<String> fca = FullPool.setCards("FCA");
+        for (String card : offer.options.get(0).cards.keySet()) {
+            assertTrue(card + " is not from Through the Ages", fca.contains(card));
+            byte identity = StaticData.instance().getCommonCards().getCard(card).getRules().getColorIdentity().getColor();
+            assertEquals(card + " is outside blue", 0, identity & ~MagicColor.BLUE);
+        }
+    }
+
+    @Test
+    public void theShopRemovesEveryCopyOfACardOncePerVisitForARisingFee() {
+        RoguelikeContent c = content();
+        Run run = runWithPath(c, NodeType.SHOP, NodeType.SHOP);
+        run.getState().gold = 300;
+        run.enterNode(0);
+        int removal = removalOption(run.getState().offer);
+        assertEquals(75, run.getState().offer.options.get(removal).price);
+
+        run.buy(removal); // opens the choice; backing out is free
+        assertEquals(OfferKind.CUT, run.getState().offer.kind);
+        run.skip();
+        assertEquals(OfferKind.SHOP, run.getState().offer.kind);
+        assertEquals(300, run.getState().gold);
+
+        run.buy(removal);
+        String cut = run.getState().offer.options.get(0).cutCard;
+        run.choose(0);
+        assertFalse(run.getState().deck.containsKey(cut));
+        assertEquals(225, run.getState().gold);
+        assertEquals(OfferKind.SHOP, run.getState().offer.kind);
+        assertTrue(run.getState().offer.options.get(removal).bought);
+        try {
+            run.buy(removal);
+            throw new AssertionError("removed twice in one shop");
+        } catch (IllegalStateException expected) {
+            // fine
+        }
+        run.skip(); // leave
+
+        run.enterNode(1);
+        assertEquals(150, run.getState().offer.options.get(removalOption(run.getState().offer)).price);
+    }
+
+    private static int removalOption(Offer shop) {
+        for (int i = 0; i < shop.options.size(); i++) {
+            if (shop.options.get(i).removal) {
+                return i;
+            }
+        }
+        throw new AssertionError("no removal option");
     }
 }

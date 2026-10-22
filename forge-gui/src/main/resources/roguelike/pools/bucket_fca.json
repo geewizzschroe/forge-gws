@@ -1,0 +1,8 @@
+{
+  "id": "bucket_fca",
+  "name": "Through the Ages",
+  "bucket": true,
+  "locked": true,
+  "fromSet": "FCA",
+  "cards": []
+}

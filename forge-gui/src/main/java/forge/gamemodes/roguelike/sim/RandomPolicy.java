@@ -35,7 +35,7 @@ public class RandomPolicy implements RunPolicy {
                 for (boolean relicsFirst : new boolean[] {true, false}) {
                     for (int i = 0; i < offer.options.size() && !bought; i++) {
                         OfferOption o = offer.options.get(i);
-                        if (!o.bought && o.price <= run.getState().gold && (o.relicId != null) == relicsFirst) {
+                        if (!o.bought && !o.removal && o.price <= run.getState().gold && (o.relicId != null) == relicsFirst) {
                             run.buy(i);
                             bought = true;
                         }

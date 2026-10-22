@@ -27,6 +27,7 @@ overrides/wood_elves.txt
 pools/blue_core.json
 pools/bucket_bounce.json
 pools/bucket_burn.json
+pools/bucket_fca.json
 pools/bucket_fliers.json
 pools/bucket_haste.json
 pools/bucket_job_select.json

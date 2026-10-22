@@ -12,6 +12,7 @@ testable. Replace it freely.
 
 - `config.json`: run numbers (`RunConfig`). Fields marked PLACEHOLDER in `RunConfig.java` stand in for open design questions.
   `cardScopeSets` and `cardScopeExceptions` set the card scope; `CardScopeTest` lists deck and pool cards outside it.
+  `fullPoolSets` are the Full Pool's starting sets (the uncurated source of reward slots); `shopRemovalPrice` is the first price of the shop's card removal.
 - `upgrades.json`: the pool card upgrades are drawn from (power/toughness and keywords).
 - `starters/`: characters (commander, landless starter deck, Base, reward pool).
   A character's `core` (in `characters/`) must appear 2x in each of its starters, except a starter with `"independentOfCore": true`, which must contain none of it.
@@ -19,6 +20,7 @@ testable. Replace it freely.
 - `relics/`: relics. `script` lines are added to the player's Base each match; prefix SVar names with the relic id.
 - `pools/`: card lists. `"bucket": true` makes a themed bucket that can be offered as a reward.
   A bucket is offered only if its cards' colour identity is within the run's colours, except for an occasional "(splash)" slot (`offColourBucketChance` in `config.json`).
+  A bucket with `"fromSet": "<set code>"` instead offers cards of that set within the run's colours (its `cards` list is ignored).
 - `bases/`: Base card scripts (type line `Types:Base`). Abilities used from the command zone need
   `ActivationZone$ Command`, triggers `TriggerZones$ Command`, statics `EffectZone$ Command`.
 - `overrides/`: landless versions of ramp cards, used instead of the printed card in every match of the mode.

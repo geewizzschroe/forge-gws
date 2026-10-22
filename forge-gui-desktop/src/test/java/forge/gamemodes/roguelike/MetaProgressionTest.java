@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.testng.annotations.Test;
 
-import forge.StaticData;
 import forge.ai.AITest;
 import forge.game.Game;
 import forge.game.card.Card;
@@ -120,13 +119,32 @@ public class MetaProgressionTest extends AITest {
         assertTrue(s4.relicPool.contains("lucky_coin"));
         assertFalse(s4.relicPool.contains("war_drum"));
         assertTrue(s4.unlockedPools.contains("bucket_ramp"));
-        assertTrue(s4.extraRewardCards.size() > 20); // the blue and colourless half of Final Fantasy
-        for (String name : s4.extraRewardCards) {
-            var rules = StaticData.instance().getCommonCards().getCard(name).getRules();
-            assertFalse(name, rules.getMainPart().getType().isLand());
-            assertTrue(name + " shares no colour with Jill", rules.getColorIdentity().isColorless()
-                    || rules.getColorIdentity().hasBlue());
-        }
+        assertTrue(s4.unlockedPools.contains("bucket_fca"));
+        assertEquals(List.of("FCA"), s4.fullPoolSets);
+        assertTrue(s4.extraRewardCards.isEmpty());
+    }
+
+    @Test
+    public void fullPoolSetsCanBeSwitchedOffOnceUnlocked() {
+        RoguelikeContent c = content();
+        CharacterDef jill = c.getCharacter("jill");
+        Loadout loadout = new Loadout();
+        loadout.starterId = "jill_mono_blue";
+        loadout.disabledSets.add("FIN");
+        loadout.disabledSets.add("FDN");
+
+        MetaProfile level6 = new MetaProfile();
+        level6.accountXp = 7500; // account level 6: both commander sets, no switching off yet
+        assertEquals(List.of("FIN", "FDN", "FCA", "FIC", "FDC"), Progression.fullPoolSetChoices(c, level6));
+        assertEquals(0, Progression.setToggles(c, level6));
+        assertTrue(Progression.setup(c, level6, jill, loadout).disabledSets.isEmpty());
+
+        MetaProfile level7 = new MetaProfile();
+        level7.accountXp = 10500; // account level 7: one set can be switched off
+        RunSetup s7 = Progression.setup(c, level7, jill, loadout);
+        assertEquals(List.of("FIN"), s7.disabledSets);
+        Run run = Run.start(c, "jill_mono_blue", 1, s7);
+        assertEquals(List.of("FDN", "FCA", "FIC", "FDC"), run.getState().fullPoolSets);
     }
 
     @Test

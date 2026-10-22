@@ -128,7 +128,8 @@ public class RoguelikeScreen extends FScreen {
             for (int i = 0; i < options.size(); i++) {
                 final int index = i;
                 OfferOption o = options.get(i);
-                FButton b = button(RunText.option(run, o), e -> act(() -> {
+                String tag = o.source != null && devMode() ? "[" + o.source + "] " : "";
+                FButton b = button(tag + RunText.option(run, o), e -> act(() -> {
                     if (offer.kind == OfferKind.SHOP) {
                         run.buy(index);
                     } else {
@@ -140,7 +141,7 @@ public class RoguelikeScreen extends FScreen {
                 }
             }
             if (offer.canSkip) {
-                button(offer.kind == OfferKind.SHOP ? "Leave the shop" : "Skip", e -> act(run::skip));
+                button(offer.kind == OfferKind.SHOP ? "Leave the shop" : offer.returnToShop != null ? "Back to the shop" : "Skip", e -> act(run::skip));
             }
         } else if (run.getActiveEncounter() != null) {
             button("Fight: " + run.getActiveEncounter().name, e -> ctrl().startMatch());
@@ -277,9 +278,13 @@ public class RoguelikeScreen extends FScreen {
 
     private boolean showDebug;
 
+    private static boolean devMode() {
+        return FModel.getPreferences().getPrefBoolean(ForgePreferences.FPref.DEV_MODE_ENABLED);
+    }
+
     /** Testing shortcuts, behind a toggle at the bottom of the list. Shown only with Forge's developer mode on. */
     private void addDebugTools(final Run run) {
-        if (!FModel.getPreferences().getPrefBoolean(ForgePreferences.FPref.DEV_MODE_ENABLED)) {
+        if (!devMode()) {
             return;
         }
         button(showDebug ? "Hide debug tools" : "Debug tools", e -> {
@@ -409,6 +414,27 @@ public class RoguelikeScreen extends FScreen {
                 update();
             });
         }
+        int toggles = Progression.setToggles(content, profile);
+        if (toggles > 0) {
+            List<String> sets = Progression.fullPoolSetChoices(content, profile);
+            loadout.disabledSets.retainAll(sets);
+            text("Full Pool sets (switch off up to " + toggles + "):");
+            for (String set : sets) {
+                boolean on = !loadout.disabledSets.contains(set);
+                FButton b = button((on ? "[x] " : "[ ] ") + Progression.setName(set), e -> {
+                    if (on) {
+                        loadout.disabledSets.add(set);
+                    } else {
+                        loadout.disabledSets.remove(set);
+                    }
+                    update();
+                });
+                // keep at least one set, and no more off than unlocked
+                if (on && (loadout.disabledSets.size() >= toggles || loadout.disabledSets.size() >= sets.size() - 1)) {
+                    b.setEnabled(false);
+                }
+            }
+        }
         button("Start the run", e -> {
             ctrl().startRun(ch, loadout);
             chosenCharacter = null;
@@ -430,6 +456,7 @@ public class RoguelikeScreen extends FScreen {
         l.starterId = last != null && starters.contains(last.starterId) ? last.starterId : starters.get(0);
         if (last != null) {
             l.disabled.addAll(last.disabled);
+            l.disabledSets.addAll(last.disabledSets);
             l.base = last.base;
         }
         return l;

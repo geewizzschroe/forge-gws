@@ -28,8 +28,11 @@
       "unlocks": [
         {
           "kind": "set",
-          "set": "FIN",
-          "description": "Final Fantasy cards in the reward pool"
+          "set": "FCA"
+        },
+        {
+          "kind": "pool",
+          "id": "bucket_fca"
         }
       ]
     },
@@ -39,6 +42,37 @@
         {
           "kind": "relic",
           "id": "war_drum"
+        }
+      ]
+    },
+    {
+      "level": 6,
+      "unlocks": [
+        {
+          "kind": "set",
+          "set": "FIC"
+        },
+        {
+          "kind": "set",
+          "set": "FDC"
+        }
+      ]
+    },
+    {
+      "level": 7,
+      "unlocks": [
+        {
+          "kind": "setToggle",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "level": 9,
+      "unlocks": [
+        {
+          "kind": "setToggle",
+          "amount": 1
         }
       ]
     }

@@ -44,7 +44,7 @@ public final class RunText {
                 case BOSS_RELIC -> lastLine(s) + "\nThe boss is beaten! Choose a relic.";
                 case SHOP -> "Shop. You have " + s.gold + " gold.";
                 case UPGRADE -> "Choose a card to upgrade.";
-                case CUT -> "Choose a card to cut from your deck.";
+                case CUT -> s.offer.returnToShop != null ? "Choose a card to remove every copy of." : "Choose a card to cut from your deck.";
             };
         }
         EncounterDef enc = run.getActiveEncounter();
@@ -143,7 +143,7 @@ public final class RunText {
             RelicDef r = run.getContent().getRelic(o.relicId);
             sb.append(r.name).append(" - ").append(r.description);
         } else if (o.cutCard != null) {
-            sb.append("Cut ").append(o.cutCard).append(" (x").append(run.getState().deck.getOrDefault(o.cutCard, 0)).append(")");
+            sb.append(o.price > 0 ? "Remove " : "Cut ").append(o.cutCard).append(" (x").append(run.getState().deck.getOrDefault(o.cutCard, 0)).append(")");
         } else if (!o.cards.isEmpty()) {
             if (o.label != null) {
                 sb.append(o.label).append(": ");
@@ -158,6 +158,9 @@ public final class RunText {
             }
         } else if (o.upgrade != null) {
             sb.append(o.upgradeCard).append(": ").append(o.upgrade.describe());
+        }
+        if (o.removal) {
+            sb.append(o.label);
         }
         if (o.price > 0) {
             sb.append(o.bought ? "  (bought)" : "  (" + o.price + " gold)");
