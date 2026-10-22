@@ -236,6 +236,15 @@ public class RoguelikeContent {
     public Map<String, RelicDef> getRelics() { return relics; }
     public Map<String, CardPoolDef> getPools() { return pools; }
     public List<CardRules> getOverrides() { return overrides; }
+    /** The mode's rewritten version of a card, or null if it is played as printed. */
+    public CardRules getOverride(final String name) {
+        for (CardRules o : overrides) {
+            if (o.getName().equals(name)) {
+                return o;
+            }
+        }
+        return null;
+    }
     public Map<String, CharacterDef> getCharacters() { return characters; }
     public MetaConfig getMeta() { return meta; }
     /** Cards affected by landless play (quarantine.txt), kept out of pools until each is fixed. */

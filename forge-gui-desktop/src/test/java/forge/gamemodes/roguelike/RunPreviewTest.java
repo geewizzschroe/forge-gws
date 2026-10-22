@@ -36,4 +36,16 @@ public class RunPreviewTest extends AITest {
         // the shared UI copy of the card is not changed
         assertEquals(2, RunPreview.cardView(Run.start(c, "jill_mono_blue", 2), "Man-o'-War", null).getCurrentState().getPower());
     }
+
+    @Test
+    public void previewsShowTheModesRewrite() {
+        initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        Run run = Run.start(c, "jill_mono_blue", 1);
+        CardView view = RunPreview.cardView(run, "Reach the Horizon", null);
+        String text = view.getText(view.getCurrentState(), null);
+        assertTrue(text, text.contains("Conjure two basic land cards"));
+        assertTrue(text, !text.contains("Search your library"));
+        assertEquals("", view.getCurrentState().getDisplayId()); // drawn as a preview, not the printed image
+    }
 }
