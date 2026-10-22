@@ -384,7 +384,7 @@ public class Run {
         for (CardPoolDef p : content.getPools().values()) {
             if (p.bucket && (!p.locked || state.unlockedPools.contains(p.id))) {
                 // a set bucket takes its set's cards within the run's colours, so it is always on-colour
-                List<String> cards = p.fromSet != null ? FullPool.cards(List.of(p.fromSet), colours) : p.cards;
+                List<String> cards = p.fromSet != null ? FullPool.cards(List.of(p.fromSet), colours, content.getQuarantine()) : p.cards;
                 if (cards.isEmpty()) {
                     continue;
                 }
@@ -425,7 +425,7 @@ public class Run {
         }
         Collections.shuffle(curatedSlots, rnd);
         List<String> curated = rewardPool();
-        List<String> full = FullPool.cards(fullPoolSets(), colours);
+        List<String> full = FullPool.cards(fullPoolSets(), colours, content.getQuarantine());
         List<String> taken = new ArrayList<>();
         for (boolean fromCurated : curatedSlots) {
             List<String> from = new ArrayList<>(fromCurated ? curated : full);

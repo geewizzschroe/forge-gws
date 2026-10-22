@@ -43,11 +43,17 @@ public final class FullPool {
         });
     }
 
-    /** The cards of the given sets whose colour identity is within {@code colours} (colourless cards always are). */
-    public static List<String> cards(final List<String> sets, final byte colours) {
+    /**
+     * The cards of the given sets whose colour identity is within {@code colours} (colourless cards always are),
+     * minus quarantined cards (affected by landless play).
+     */
+    public static List<String> cards(final List<String> sets, final byte colours, final Set<String> quarantine) {
         Set<String> out = new LinkedHashSet<>();
         for (String set : sets) {
             for (String name : setCards(set)) {
+                if (quarantine.contains(name)) {
+                    continue;
+                }
                 CardRules rules = StaticData.instance().getCommonCards().getCard(name).getRules();
                 if ((rules.getColorIdentity().getColor() & ~colours) == 0) {
                     out.add(name);

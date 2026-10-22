@@ -157,4 +157,17 @@ public class RoguelikeContentTest extends AITest {
             assertEquals(e.id + ": commander", e.boss, e.commander != null);
         }
     }
+
+    @Test
+    public void noQuarantinedCardIsInTheContent() {
+        // cards affected by landless play stay out of decks and pools until fixed (DESIGN.md 2.5.1)
+        RoguelikeContent c = RoguelikeContent.load();
+        assertTrue("quarantine list loaded", c.getQuarantine().size() > 1000);
+        assertTrue(c.getQuarantine().contains("World Map"));
+        for (Map.Entry<String, List<String>> e : c.cardNamesBySource().entrySet()) {
+            for (String name : e.getValue()) {
+                assertFalse(e.getKey() + " has quarantined " + name, c.getQuarantine().contains(name));
+            }
+        }
+    }
 }

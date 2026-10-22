@@ -37,6 +37,7 @@ pools/frozen_core.json
 pools/rw_core.json
 pools/ub_core.json
 pools/uw_core.json
+quarantine.txt
 relics/healing_herb.json
 relics/iron_heart.json
 relics/lucky_coin.json

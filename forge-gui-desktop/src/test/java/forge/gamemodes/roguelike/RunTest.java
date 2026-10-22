@@ -292,6 +292,7 @@ public class RunTest extends AITest {
                 } else {
                     assertEquals("full pool", o.source);
                     full++;
+                    assertFalse(card + " is quarantined", c.getQuarantine().contains(card));
                     var rules = StaticData.instance().getCommonCards().getCard(card).getRules();
                     assertFalse(card + " is a land", rules.getMainPart().getType().isLand());
                     assertEquals(card + " is outside blue", 0, rules.getColorIdentity().getColor() & ~MagicColor.BLUE);
@@ -320,6 +321,7 @@ public class RunTest extends AITest {
         List<String> fca = FullPool.setCards("FCA");
         for (String card : offer.options.get(0).cards.keySet()) {
             assertTrue(card + " is not from Through the Ages", fca.contains(card));
+            assertFalse(card + " is quarantined", c.getQuarantine().contains(card));
             byte identity = StaticData.instance().getCommonCards().getCard(card).getRules().getColorIdentity().getColor();
             assertEquals(card + " is outside blue", 0, identity & ~MagicColor.BLUE);
         }

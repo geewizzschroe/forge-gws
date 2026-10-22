@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import com.google.gson.Gson;
@@ -68,6 +70,7 @@ public class RoguelikeContent {
     private final List<CardRules> overrides = new ArrayList<>();
     private final Map<String, CharacterDef> characters = new LinkedHashMap<>();
     private MetaConfig meta = new MetaConfig();
+    private final Set<String> quarantine = new HashSet<>();
 
     /** The user's content folder if there is one, else the bundled content. */
     public static RoguelikeContent load() {
@@ -125,6 +128,14 @@ public class RoguelikeContent {
         String meta = src.read("meta.json");
         if (meta != null) {
             c.meta = parse(meta, MetaConfig.class, "meta.json");
+        }
+        String quarantine = src.read("quarantine.txt");
+        if (quarantine != null) {
+            for (String line : lines(quarantine)) {
+                if (!line.isBlank() && !line.startsWith("#")) {
+                    c.quarantine.add(line.trim());
+                }
+            }
         }
         return c;
     }
@@ -227,6 +238,8 @@ public class RoguelikeContent {
     public List<CardRules> getOverrides() { return overrides; }
     public Map<String, CharacterDef> getCharacters() { return characters; }
     public MetaConfig getMeta() { return meta; }
+    /** Cards affected by landless play (quarantine.txt), kept out of pools until each is fixed. */
+    public Set<String> getQuarantine() { return quarantine; }
 
     public CharacterDef getCharacter(final String id) { return require(characters, id, "character"); }
 
