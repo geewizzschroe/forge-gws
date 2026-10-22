@@ -94,8 +94,10 @@ public class RunPlaythroughTest extends AITest {
                 check(problems, base != null && base.getName().equals("Wayfarer's Camp"), "base " + base);
                 if (base != null) {
                     String text = base.getAbilityText(base.getCurrentState());
-                    check(problems, text.contains("Relics:\r\nWhetstone: Creatures you control get +1/+0.")
-                            && text.contains("Lucky Coin"), "relic text " + text);
+                    // each relic's text appears once, as its own line, not again in a list
+                    check(problems, text.contains("Whetstone: Creatures you control get +1/+0.")
+                            && text.contains("Lucky Coin") && !text.contains("Relics:")
+                            && text.indexOf("Whetstone") == text.lastIndexOf("Whetstone"), "relic text " + text);
                 }
                 for (Card card : hero.getCardsIn(ZoneType.Library, ZoneType.Hand)) {
                     if (card.getName().equals("Faerie Seer")) {

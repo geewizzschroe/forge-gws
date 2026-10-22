@@ -7,7 +7,8 @@ import java.util.Set;
 
 /**
  * Builds the script of a player's Base for one match: the Base's own lines plus the script lines of
- * every relic the player holds and every unlocked Base ability, with rules text listing the relics.
+ * every relic the player holds and every unlocked Base ability. Each script's own description is its rules text;
+ * only a relic whose script has none (one that works outside the match, like +max life) is listed.
  */
 public final class BaseAssembler {
 
@@ -47,11 +48,15 @@ public final class BaseAssembler {
         }
         List<String> relicText = new ArrayList<>();
         for (RelicDef r : relics) {
+            boolean shown = false; // the relic's script already puts its own text on the Base
             for (String line : r.script) {
                 addSVarName(line, svars, "relic " + r.id);
                 out.add(line);
+                shown |= line.contains("Description$");
             }
-            relicText.add(r.name + ": " + r.description);
+            if (!shown) {
+                relicText.add(r.name + ": " + r.description);
+            }
         }
 
         // An unlocked ability shows only as its own line of rules text (its script's description); only relics are listed
