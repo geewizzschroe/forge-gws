@@ -12,7 +12,6 @@
     "Red Mage's Rapier": 3,
     "Monk's Fist": 3,
     "Quick-Draw Katana": 2,
-    "Scavenged Blade": 2,
     "Lion Heart": 2,
     "The Masamune": 2,
     "Genji Glove": 2,
@@ -25,11 +24,12 @@
     "Axgard Cavalry": 3,
     "Boggart Brute": 3,
     "Raging Redcap": 3,
-    "Gorehorn Raider": 2,
     "Volley Veteran": 2,
     "Goblin Trailblazer": 3,
     "Shock": 3,
     "Lightning Bolt": 3,
-    "Scorching Dragonfire": 2
+    "Scorching Dragonfire": 2,
+    "Basilisk Collar": 2,
+    "Fireshrieker": 2
   }
 }

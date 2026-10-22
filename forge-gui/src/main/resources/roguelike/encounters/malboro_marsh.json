@@ -1,7 +1,7 @@
 {
   "id": "malboro_marsh",
   "name": "Malboro Marsh",
-  "tier": 2,
+  "tier": 1,
   "base": "malboro_bog.txt",
   "life": 20,
   "hand": 6,

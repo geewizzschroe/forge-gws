@@ -31,7 +31,7 @@ import forge.gamemodes.roguelike.sim.SimReport;
  * xvfb-run -a mvn -pl forge-gui-desktop -am test -Dtest=RunBalanceSimTest -Dsurefire.failIfNoSpecifiedTests=false \
  *     -Droguelike.sim.runs=20 [-Droguelike.sim.fights=10] [-Droguelike.sim.starter=jill_mono_blue] \
  *     [-Droguelike.sim.layout=FIGHTS,UPGRADE,STRETCH 2,BOSS] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true] [-Droguelike.sim.progress=true]
- *     [-Droguelike.sim.policy=greedy] [-Droguelike.sim.xp=N]
+ *     [-Droguelike.sim.policy=greedy] [-Droguelike.sim.xp=N] [-Droguelike.sim.encounters=id,id]
  * </pre>
  *
  * The report and a CSV of every match are written to forge-gui-desktop/target/roguelike-sim/; with
@@ -123,7 +123,12 @@ public class RunBalanceSimTest extends AITest {
             System.out.println("sim run " + seed + "/" + runs + ": " + r.status + " after " + r.matches.size() + " matches");
         }
         List<MatchRecord> encounterTests = new ArrayList<>();
+        List<String> only = System.getProperty("roguelike.sim.encounters") == null ? null
+                : List.of(System.getProperty("roguelike.sim.encounters").split(","));
         for (EncounterDef e : c.getEncounters().values()) {
+            if (only != null && !only.contains(e.id)) {
+                continue;
+            }
             for (int i = 0; i < fights; i++) {
                 encounterTests.add(sim.simulateEncounter(starter, e.id, c.getConfig().startingMaxLife, 1000 + i));
             }

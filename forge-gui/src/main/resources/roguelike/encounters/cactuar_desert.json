@@ -1,7 +1,7 @@
 {
   "id": "cactuar_desert",
   "name": "Cactuar Desert",
-  "tier": 2,
+  "tier": 1,
   "base": "cactuar_island.txt",
   "life": 20,
   "hand": 6,

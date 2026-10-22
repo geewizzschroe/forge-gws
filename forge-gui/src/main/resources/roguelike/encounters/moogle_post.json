@@ -1,7 +1,7 @@
 {
   "id": "moogle_post",
   "name": "Moogle Post",
-  "tier": 1,
+  "tier": 2,
   "base": "mognet_central.txt",
   "life": 20,
   "hand": 6,
