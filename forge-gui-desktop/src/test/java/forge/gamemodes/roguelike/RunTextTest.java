@@ -34,7 +34,7 @@ public class RunTextTest extends AITest {
         String deck = RunText.deckList(run);
         assertTrue(deck, deck.contains("2x Faerie Seer  [+1/+1]"));
         assertTrue(deck, deck.contains("Whetstone - Creatures you control get +1/+0."));
-        MapNode first = run.getAvailableNodes().get(0);
+        MapNode first = run.getAvailableNodes().stream().filter(n -> n.type == NodeType.ENEMY).findFirst().orElseThrow();
         assertTrue(RunText.node(run, first), RunText.node(run, first).startsWith("Step 1 - Enemy: "));
 
         assertTrue(RunText.nodeDetail(run, first), RunText.nodeDetail(run, first).startsWith("Enemy: "));

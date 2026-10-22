@@ -38,7 +38,8 @@ public class RunMapTest extends AITest {
             for (MapNode n : map.nodes) {
                 assertEquals(n, map.get(n.id));
                 if (n.row == 0) {
-                    assertEquals("first row is enemies", NodeType.ENEMY, n.type);
+                    // fights, or Events where no unused tier-1 enemy was left
+                    assertTrue("first row is fights or Events: " + n.type, n.type == NodeType.ENEMY || n.type == NodeType.EVENT);
                 }
                 if (n.type.isMatch()) {
                     assertNotNull(n.encounterId);
@@ -114,9 +115,29 @@ public class RunMapTest extends AITest {
         assertTrue("real choices per run " + perRun, perRun >= 4.5);
     }
 
-    /** With enough enemies in every tier, no enemy is met twice on any path. */
+    /** No enemy twice on a floor: with the real content the extra fights become Events. */
     @Test
-    public void noEnemyTwiceOnAPathWhenThereAreEnough() {
+    public void noEnemyTwiceOnAFloor() {
+        initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        for (long seed = 0; seed < 200; seed++) {
+            RunMap map = RunMap.generate(c.getConfig(), c, new Random(seed));
+            List<String> met = new ArrayList<>();
+            int fightsAtStart = 0;
+            for (MapNode n : map.nodes) {
+                if (n.type == NodeType.ENEMY) {
+                    assertFalse(n.encounterId + " twice on a floor (seed " + seed + ")", met.contains(n.encounterId));
+                    met.add(n.encounterId);
+                    fightsAtStart += n.row == 0 ? 1 : 0;
+                }
+            }
+            assertEquals("one tier-1 enemy exists, so one start is a fight", 1, fightsAtStart);
+        }
+    }
+
+    /** With enough enemies in every tier, every fight keeps its fight, and still no enemy repeats. */
+    @Test
+    public void enoughEnemiesFillEveryFight() {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();
         Gson gson = new Gson();
@@ -131,21 +152,16 @@ public class RunMapTest extends AITest {
         }
         for (long seed = 0; seed < 100; seed++) {
             RunMap map = RunMap.generate(c.getConfig(), c, new Random(seed));
-            for (int start : map.startIds) {
-                assertNoRepeat(map, start, new ArrayList<>());
+            List<String> met = new ArrayList<>();
+            for (MapNode n : map.nodes) {
+                if (n.type == NodeType.ENEMY) {
+                    assertFalse(n.encounterId + " twice", met.contains(n.encounterId));
+                    met.add(n.encounterId);
+                }
             }
-        }
-    }
-
-    private static void assertNoRepeat(RunMap map, int id, List<String> met) {
-        MapNode n = map.get(id);
-        List<String> here = new ArrayList<>(met);
-        if (n.encounterId != null && n.type == NodeType.ENEMY) {
-            assertFalse(n.encounterId + " twice on a path", here.contains(n.encounterId));
-            here.add(n.encounterId);
-        }
-        for (int next : n.next) {
-            assertNoRepeat(map, next, here);
+            for (int start : map.startIds) {
+                assertEquals("the start row stays all fights", NodeType.ENEMY, map.get(start).type);
+            }
         }
     }
 

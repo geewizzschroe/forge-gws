@@ -40,7 +40,8 @@ public class RoguelikeDebugTest extends AITest {
         Loadout loadout = new Loadout();
         loadout.starterId = "jill_mono_blue";
         Run run = Run.start(c, "jill_mono_blue", 4, Progression.setup(c, profile, c.getCharacter("jill"), loadout));
-        run.enterNode(run.getAvailableNodes().get(0).id);
+        // the start that kept its fight (the others became Events: one tier-1 enemy, once a floor)
+        run.enterNode(run.getAvailableNodes().stream().filter(n -> n.type == NodeType.ENEMY).findFirst().orElseThrow().id);
         List<String> msgs = RoguelikeDebug.winFight(run, profile);
         assertTrue(msgs.toString(), msgs.get(1).startsWith("+30 experience."));
         assertEquals(OfferKind.CARD_REWARD, run.getState().offer.kind);

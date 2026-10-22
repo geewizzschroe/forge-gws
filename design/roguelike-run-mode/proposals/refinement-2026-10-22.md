@@ -80,7 +80,7 @@ The healing number needs a look whatever else happens. Rest heals 6, but a won f
 
 ### 1.3 A difficulty ladder
 
-*Built 2026-10-22 as proposed (tiers on enemies, tier ranges on the layout, no repeats on a path when avoidable).*
+*Built 2026-10-22: tiers on enemies and tier ranges on the layout. Tightened after review: an enemy appears at most once per floor, and a fight with no unused enemy of its tiers left becomes an Event.*
 
 Today each enemy has only `minRow`, and enemies are picked at random, so the hardest normal enemy can come first (audit 1.5).
 

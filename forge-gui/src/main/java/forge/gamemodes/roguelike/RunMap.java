@@ -1,6 +1,7 @@
 package forge.gamemodes.roguelike;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * A board-style map built from the {@code mapLayout} setting, bottom to top (proposal 1.1). Each entry is:
@@ -22,8 +24,8 @@ import java.util.Set;
  * A row of lanes leads to every node of a single-node row, and a single node leads to every lane above it.
  * <p>
  * An entry may end with a tier range for its fights, such as {@code T1} or {@code T2-3} (proposal 1.3): fights
- * there draw enemies of those tiers (the nearest tiers if none fit). Without one, any tier fits. On any one path
- * an enemy appears only once while another fitting enemy is left.
+ * there draw enemies of those tiers (the nearest tiers if the content has none of those). Without one, any tier
+ * fits. An enemy appears at most once on a floor; a fight with no unused fitting enemy left becomes an Event.
  */
 public class RunMap {
     public List<MapNode> nodes = new ArrayList<>();
@@ -82,18 +84,25 @@ public class RunMap {
         }
         map.bossId = below.get(0).id;
 
-        // ids grow with the rows, so every node's parents are done before it
-        Map<Integer, Set<String>> before = new HashMap<>();
+        // Each enemy appears at most once on a floor. A fight with no unused enemy of its tiers left becomes an
+        // Event. Rows go bottom to top, each in random order, so which lane keeps its fight is random.
+        Map<Integer, List<MapNode>> byRow = new TreeMap<>();
         for (MapNode n : map.nodes) {
-            Set<String> seen = before.getOrDefault(n.id, Set.of());
-            if (n.type.isMatch()) {
-                n.encounterId = pickEncounter(content, n, tiers.get(n.row), seen, rnd);
-            }
-            for (int next : n.next) {
-                Set<String> s = before.computeIfAbsent(next, k -> new HashSet<>());
-                s.addAll(seen);
-                if (n.encounterId != null) {
-                    s.add(n.encounterId);
+            byRow.computeIfAbsent(n.row, k -> new ArrayList<>()).add(n);
+        }
+        Set<String> used = new HashSet<>();
+        for (List<MapNode> rowNodes : byRow.values()) {
+            List<MapNode> order = new ArrayList<>(rowNodes);
+            Collections.shuffle(order, rnd);
+            for (MapNode n : order) {
+                if (!n.type.isMatch()) {
+                    continue;
+                }
+                n.encounterId = pickEncounter(content, n, tiers.get(n.row), used, rnd);
+                if (n.encounterId == null) {
+                    n.type = NodeType.EVENT;
+                } else {
+                    used.add(n.encounterId);
                 }
             }
         }
@@ -177,11 +186,11 @@ public class RunMap {
     }
 
     /**
-     * A boss for the boss node; otherwise an enemy whose tier is in the range, widening the range a step at a time
-     * if none is, and one not yet met on the way here if any fits.
+     * A boss for the boss node. Otherwise an enemy whose tier is in the range (widened a step at a time only if the
+     * content has no enemy of those tiers at all) and not yet on this floor; null if every fitting enemy is.
      */
     private static String pickEncounter(final RoguelikeContent content, final MapNode node, final int[] tier,
-                                        final Set<String> seen, final Random rnd) {
+                                        final Set<String> used, final Random rnd) {
         boolean boss = node.type == NodeType.BOSS;
         List<String> options = new ArrayList<>();
         for (int widen = 0; options.isEmpty() && widen <= 3; widen++) {
@@ -194,9 +203,10 @@ public class RunMap {
         if (options.isEmpty()) {
             throw new IllegalStateException("No " + (boss ? "boss" : "enemy") + " encounter for row " + node.row);
         }
-        List<String> fresh = new ArrayList<>(options);
-        fresh.removeAll(seen);
-        List<String> from = fresh.isEmpty() ? options : fresh;
-        return from.get(rnd.nextInt(from.size()));
+        if (boss) {
+            return options.get(rnd.nextInt(options.size()));
+        }
+        options.removeAll(used);
+        return options.isEmpty() ? null : options.get(rnd.nextInt(options.size()));
     }
 }

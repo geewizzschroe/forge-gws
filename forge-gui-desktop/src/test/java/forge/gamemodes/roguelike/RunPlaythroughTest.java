@@ -195,7 +195,7 @@ public class RunPlaythroughTest extends AITest {
             int matches = 0;
             for (int step = 0; step < 200 && s.status == RunStatus.IN_PROGRESS; step++) {
                 if (s.offer != null) {
-                    if (s.offer.kind == OfferKind.SHOP) {
+                    if (s.offer.kind.isStore()) {
                         int buy = -1;
                         for (int i = 0; i < s.offer.options.size(); i++) {
                             OfferOption o = s.offer.options.get(i);
@@ -208,7 +208,7 @@ public class RunPlaythroughTest extends AITest {
                         } else {
                             run.skip();
                         }
-                    } else if (s.offer.options.isEmpty()) {
+                    } else if (s.offer.options.isEmpty() || (s.offer.canSkip && !run.canAfford(s.offer.options.get(0)))) {
                         run.skip();
                     } else {
                         run.choose(0);
@@ -257,7 +257,9 @@ public class RunPlaythroughTest extends AITest {
         int treasureGames = 0;
         for (long seed = 1; seed <= games; seed++) {
             Run run = Run.start(c, starter.id, seed);
-            run.getState().map.get(run.getAvailableNodes().get(0).id).encounterId = ramp.id;
+            MapNode first = run.getAvailableNodes().get(0);
+            first.type = NodeType.ENEMY; // a start may have become an Event
+            first.encounterId = ramp.id;
             run.enterNode(run.getAvailableNodes().get(0).id);
             RunMatch m = run.createMatch(new LobbyPlayerAi("Hero", null), new LobbyPlayerAi("Enemy", null));
             Game g = play(m, c.getConfig().landCap);
