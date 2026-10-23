@@ -1,0 +1,6 @@
+Name:Black Mage Village
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ Main1 | ValidPlayer$ You | TriggerZones$ Command | IsPresent$ Creature.Wizard+YouCtrl | PresentCompare$ EQ0 | Execute$ village_Wizard | TriggerDescription$ Black Mage Choir — At the beginning of your precombat main phase, if you control no Wizard, create a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
+SVar:village_Wizard:DB$ Token | TokenScript$ b_0_1_wizard_snipe
+Oracle:Black Mage Choir — At the beginning of your precombat main phase, if you control no Wizard, create a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."

@@ -1,5 +1,6 @@
 bases/ancient_grove.txt
 bases/big_bridge.txt
+bases/black_mage_village.txt
 bases/bodhum_beachfront.txt
 bases/cactuar_island.txt
 bases/chamber_of_the_fayth.txt
@@ -17,11 +18,13 @@ bases/northern_crater.txt
 bases/open_graves.txt
 bases/raider_camp.txt
 bases/the_farplane.txt
+bases/the_strahl.txt
 bases/wayfarers_camp.txt
 bases/wyrm_roost.txt
 characters/jill.json
 characters/lightning.json
 config.json
+encounters/black_mage_village.json
 encounters/boss_dion.json
 encounters/boss_gilgamesh.json
 encounters/boss_kefka.json
@@ -36,6 +39,7 @@ encounters/goblin_raiders.json
 encounters/malboro_marsh.json
 encounters/moogle_post.json
 encounters/restless_dead.json
+encounters/sky_pirates.json
 encounters/summoners_circle.json
 encounters/troop_of_dwarves.json
 encounters/vampire_court.json

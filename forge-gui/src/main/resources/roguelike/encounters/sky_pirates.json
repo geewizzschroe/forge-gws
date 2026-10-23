@@ -1,0 +1,27 @@
+{
+  "id": "sky_pirates",
+  "name": "Sky Pirates",
+  "tier": 2,
+  "base": "the_strahl.txt",
+  "life": 20,
+  "hand": 7,
+  "deck": {
+    "Kitesail Corsair": 3,
+    "Fathom Fleet Firebrand": 3,
+    "Goblin Boarders": 3,
+    "Goblin Trailblazer": 3,
+    "Fanatical Firebrand": 3,
+    "Bigfin Bouncer": 2,
+    "Gorehorn Raider": 2,
+    "Seize the Spoils": 2,
+    "Adventurer's Airship": 2,
+    "Shock": 2,
+    "Storm Fleet Spy": 3,
+    "Spectral Sailor": 2,
+    "Strongbox Raider": 2,
+    "Thief's Knife": 2,
+    "Vaan, Street Thief": 2,
+    "Captain Lannery Storm": 2,
+    "Corsair Captain": 2
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "id": "black_mage_village",
+  "name": "Black Mage Village",
+  "tier": 3,
+  "base": "black_mage_village.txt",
+  "life": 20,
+  "hand": 7,
+  "deck": {
+    "Mysidian Elder": 3,
+    "Cornered by Black Mages": 3,
+    "Black Mage's Rod": 3,
+    "Firebrand Archer": 3,
+    "Thunder Magic": 3,
+    "Murder": 3,
+    "Blazing Bomb": 2,
+    "Crackling Cyclops": 2,
+    "Stab": 2,
+    "Black Waltz No. 3": 3,
+    "Circle of Power": 3,
+    "Heartfire Immolator": 2,
+    "Guttersnipe": 2,
+    "Kuja, Genome Sorcerer": 2,
+    "The Destined Black Mage": 2,
+    "Vivi's Persistence": 2
+  }
+}

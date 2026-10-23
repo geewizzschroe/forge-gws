@@ -216,6 +216,48 @@ public class EnemyBasesTest extends AITest {
     }
 
     @Test
+    public void theStrahlPlundersOncePerCombat() {
+        setUp("the_strahl.txt");
+        ready("Savannah Lions", me);
+        ready("Savannah Lions", me); // two attackers, against an empty board
+        playUntilPhase(game, PhaseType.COMBAT_END);
+        resolveTriggers();
+        assertEquals(16, opp.getLife());
+        int treasures = 0;
+        for (Card c : me.getCardsIn(ZoneType.Battlefield)) {
+            treasures += c.isToken() && c.getType().hasSubtype("Treasure") ? 1 : 0;
+        }
+        assertEquals("one Treasure for the combat, not one per creature", 1, treasures);
+    }
+
+    @Test
+    public void blackMageVillageKeepsOneWizardAround() {
+        setUp("black_mage_village.txt");
+        game.getPhaseHandler().devModeSet(PhaseType.UPKEEP, me);
+        game.getAction().checkStateEffects(true);
+        playUntilPhase(game, PhaseType.COMBAT_BEGIN);
+        resolveTriggers();
+        assertEquals(1, tokens(me, "Wizard"));
+        playUntilNextTurn(game);
+        playUntilNextTurn(game);
+        playUntilPhase(game, PhaseType.COMBAT_BEGIN);
+        resolveTriggers();
+        assertEquals("a Wizard is already there", 1, tokens(me, "Wizard"));
+        // the token pings when they cast a noncreature spell
+        int life = opp.getLife();
+        Card mountain = addCard("Mountain", me);
+        Card shock = addCardToZone("Shock", me, ZoneType.Hand);
+        SpellAbility cast = shock.getFirstSpellAbility();
+        cast.setActivatingPlayer(me);
+        cast.getTargets().add(opp);
+        mountain.setTapped(false);
+        game.getAction().moveToStack(shock, cast);
+        game.getStack().add(cast);
+        resolveTriggers();
+        assertEquals("Shock 2 and the Wizard 1", life - 3, opp.getLife());
+    }
+
+    @Test
     public void bigBridgeGivesEquippedCreaturesFirstStrike() {
         setUp("big_bridge.txt");
         Card lions = addCard("Savannah Lions", me);

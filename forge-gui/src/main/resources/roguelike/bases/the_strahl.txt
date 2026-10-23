@@ -1,0 +1,6 @@
+Name:The Strahl
+ManaCost:no cost
+Types:Base
+T:Mode$ DamageDoneOnce | CombatDamage$ True | ValidSource$ Creature.YouCtrl | ValidTarget$ Player | TriggerZones$ Command | Execute$ strahl_Treasure | TriggerDescription$ Plunder — Whenever one or more creatures you control deal combat damage to a player, create a Treasure token.
+SVar:strahl_Treasure:DB$ Token | TokenScript$ c_a_treasure_sac
+Oracle:Plunder — Whenever one or more creatures you control deal combat damage to a player, create a Treasure token.
