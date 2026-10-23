@@ -11,9 +11,10 @@ import forge.game.zone.ZoneType;
 /**
  * AI choice of which basic land to conjure under the landless-play rule.
  *
- * Scores each basic by the coloured mana symbols the AI still needs (hand and commanders count
- * double, library single) divided by one plus the lands of that type it already controls, so it
- * keeps adding the colour its remaining cards ask for most while still splashing.
+ * Scores each basic by the coloured mana symbols the AI still needs (hand double, library single,
+ * and a commander not yet on the battlefield six times, since the deck is built around it) divided by
+ * one plus the lands of that type it already controls, so it keeps adding the colour its remaining
+ * cards ask for most while still splashing.
  */
 public final class AiBasicLandChoice {
 
@@ -24,7 +25,9 @@ public final class AiBasicLandChoice {
         final List<String> basics = MagicColor.Constant.BASIC_LANDS; // WUBRG order
         double[] need = new double[5];
         addNeed(need, ai.getCardsIn(ZoneType.Hand), 2.0);
-        addNeed(need, ai.getCommanders(), 2.0);
+        for (Card commander : ai.getCommanders()) {
+            addNeed(need, List.of(commander), commander.isInPlay() ? 2.0 : 6.0);
+        }
         addNeed(need, ai.getCardsIn(ZoneType.Library), 1.0);
 
         int[] have = new int[5];
@@ -35,6 +38,23 @@ public final class AiBasicLandChoice {
             for (int i = 0; i < 5; i++) {
                 if (c.getType().hasSubtype(basics.get(i))) {
                     have[i]++;
+                }
+            }
+        }
+
+        // a commander still to be cast gets each of its colours as soon as possible, after the first land
+        int lands = 0;
+        for (int h : have) {
+            lands += h;
+        }
+        for (Card commander : ai.getCommanders()) {
+            if (commander.isInPlay() || lands == 0) {
+                continue;
+            }
+            int[] counts = commander.getManaCost().getColorShardCounts();
+            for (int i = 0; i < 5; i++) {
+                if (counts[i] > 0 && have[i] == 0 && options.contains(basics.get(i))) {
+                    return basics.get(i);
                 }
             }
         }

@@ -12,6 +12,7 @@ import com.google.common.collect.Multimap;
 import forge.card.CardStateName;
 import forge.game.Game;
 import forge.game.GameActionUtil;
+import forge.game.GameType;
 import forge.game.ability.ApiType;
 import forge.game.card.Card;
 import forge.game.card.CardCollection;
@@ -365,6 +366,11 @@ public class ComputerUtilAbility {
                 }
                 if (source.hasSVar("AIPriorityModifier")) {
                     p += Integer.parseInt(source.getSVar("AIPriorityModifier"));
+                }
+                // run mode: an enemy's deck is built around its commander, so cast it ahead of other spells
+                if (source.isCommander() && source.isInZone(ZoneType.Command) && sa.isSpell()
+                        && source.getGame().getRules().getGameType() == GameType.Roguelike) {
+                    p += 2;
                 }
                 // try to use it before it's gone
                 if (source.isInPlay() && source.hasSVar("EndOfTurnLeavePlay")) {
