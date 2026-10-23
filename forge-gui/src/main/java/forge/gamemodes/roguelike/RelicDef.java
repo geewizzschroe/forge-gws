@@ -20,4 +20,6 @@ public class RelicDef {
     public boolean locked;
     /** Only an event gives it: never in shops, boss rewards or random relic events. */
     public boolean eventOnly;
+    /** A rare relic: in boss relic choices like any other, but only rarely in shops and random relic events. */
+    public boolean rare;
 }

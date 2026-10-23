@@ -94,8 +94,10 @@ quarantine.txt
 rare_upgrades.json
 relics/healing_herb.json
 relics/hellish_fortitude.json
+relics/hostile_makeover.json
 relics/iron_heart.json
 relics/lucky_coin.json
+relics/magpies_eye.json
 relics/war_drum.json
 relics/whetstone.json
 starters/jill_blue_black.json

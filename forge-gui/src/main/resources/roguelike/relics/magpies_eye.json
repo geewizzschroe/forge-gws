@@ -1,0 +1,11 @@
+{
+  "id": "magpies_eye",
+  "name": "Magpie's Eye",
+  "description": "Whenever you draw a card during your draw step, or on an opponent's turn, instead scry 3 and then draw.",
+  "script": [
+    "R:Event$ Draw | ActiveZones$ Command | ValidPlayer$ You | ActivePhases$ Draw | PlayerTurn$ True | ReplaceWith$ magpies_eye_Scry | Description$ Magpie's Eye: If you would draw a card during your draw step, instead scry 3, then draw a card.",
+    "R:Event$ Draw | ActiveZones$ Command | ValidPlayer$ You | PlayerTurn$ Opponent | ReplaceWith$ magpies_eye_Scry | Description$ Magpie's Eye: If you would draw a card on an opponent's turn, instead scry 3, then draw a card.",
+    "SVar:magpies_eye_Scry:DB$ Scry | ScryNum$ 3 | SubAbility$ magpies_eye_Draw",
+    "SVar:magpies_eye_Draw:DB$ Draw | Defined$ You | NumCards$ 1"
+  ]
+}

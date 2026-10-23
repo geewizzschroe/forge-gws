@@ -640,7 +640,9 @@ public class Run {
 
     private Offer makeBossRelicOffer() {
         Offer offer = new Offer(OfferKind.BOSS_RELIC, true);
-        for (String id : pick(unownedRelics(), content.getConfig().bossRelicChoices, state.nextRandom())) {
+        List<String> pool = unownedRelics(false);
+        pool.addAll(unownedRelics(true));
+        for (String id : pick(pool, content.getConfig().bossRelicChoices, state.nextRandom())) {
             OfferOption o = new OfferOption();
             o.relicId = id;
             o.label = content.getRelic(id).name;
@@ -653,7 +655,7 @@ public class Run {
         RunConfig cfg = content.getConfig();
         Random rnd = state.nextRandom();
         Offer offer = new Offer(OfferKind.SHOP, true);
-        for (String id : pick(unownedRelics(), cfg.shopRelicChoices, rnd)) {
+        for (String id : pickRelics(cfg.shopRelicChoices, rnd)) {
             OfferOption o = new OfferOption();
             o.relicId = id;
             o.label = content.getRelic(id).name;
@@ -740,7 +742,7 @@ public class Run {
     /** Whether the run qualifies for an event (see {@link EventDef} for each kind's needs). */
     private boolean eligible(final EventDef e) {
         return switch (e.kind) {
-            case "relicForLife" -> !unownedRelics().isEmpty() && state.life > e.lifeCost;
+            case "relicForLife" -> !unownedRelics(false).isEmpty() && state.life > e.lifeCost;
             case "sellRetry" -> state.retriesLeft >= 1 && e.relic != null && !state.relics.contains(e.relic);
             case "upgrade" -> !makeUpgradeOffer().options.isEmpty();
             default -> true;
@@ -794,7 +796,7 @@ public class Run {
             }
             case "relicForLife" -> {
                 OfferOption o = new OfferOption();
-                o.relicId = pick(unownedRelics(), 1, rnd).get(0);
+                o.relicId = pickRelics(1, rnd).get(0);
                 o.lifeCost = e.lifeCost;
                 o.secret = true;
                 o.label = e.accept != null ? e.accept : "Pay " + e.lifeCost + " life for a random relic";
@@ -878,11 +880,28 @@ public class Run {
         return colours;
     }
 
-    private List<String> unownedRelics() {
+    /** Relics outside a boss's choice: each is a rare one at {@code rareRelicChance}, if any rare one is left. */
+    private List<String> pickRelics(final int n, final Random rnd) {
+        List<String> normal = unownedRelics(false);
+        List<String> rare = unownedRelics(true);
+        Collections.shuffle(normal, rnd);
+        Collections.shuffle(rare, rnd);
+        List<String> out = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            List<String> from = !rare.isEmpty() && rnd.nextDouble() < content.getConfig().rareRelicChance ? rare : normal;
+            if (from.isEmpty()) {
+                break;
+            }
+            out.add(from.remove(0));
+        }
+        return out;
+    }
+
+    private List<String> unownedRelics(final boolean rare) {
         List<String> out = new ArrayList<>();
         for (RelicDef r : content.getRelics().values()) {
             String id = r.id;
-            if (!r.eventOnly && !state.relics.contains(id) && (state.relicPool == null || state.relicPool.contains(id))) {
+            if (!r.eventOnly && r.rare == rare && !state.relics.contains(id) && (state.relicPool == null || state.relicPool.contains(id))) {
                 out.add(id);
             }
         }

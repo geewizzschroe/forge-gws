@@ -91,6 +91,8 @@ What makes it different from other Forge modes:
 ### 2.4 Relics and the Commander
 
 - Relics are acquired from **shops and bosses**.
+- **Rare relics** (decided 2026-10-23): a boss's relic choice draws from normal and rare relics alike; anywhere else (shops, the blood altar event) each relic slot is a rare relic only at `rareRelicChance` (PLACEHOLDER about 1 in 30). That chance is meant to become a level-up perk later (not built). The first rare relic is **Hostile Makeover**: when a creature enters under an opponent's control, choose one: tap it and put a stun counter on it; put a -1/-1 counter on it; or switch its power and toughness (for as long as it stays on the battlefield). Once per turn.
+- **Magpie's Eye** (2026-10-23, normal relic): if you would draw a card during your draw step or on an opponent's turn, instead scry 3, then draw.
 - The Commander (or its game logic) can be upgraded through relics or level-up progression. The "big cool" example: being able to play Jill as her **Shiva** side directly.
 - The Commander itself does not change identity. Upgrades modify it.
 - **Relic presentation:** a single command-zone card that displays the player's **relic inventory** and lists each relic's effects. This is the one deliberate exception to the no-UI-space rule (2.7). How its text is generated, and where the relic effects themselves live, are open (N1).
@@ -515,6 +517,7 @@ All of this was used successfully in the design sessions.
 21. Card removal at the shop (2.1).
 22. Landless play: quarantine only what can never work; land searches and landcycling in Final Fantasy and Foundations rewritten; two-colour Towns in the land picker (2.5.1).
 23. Floors (D1): 2 floors; between them a relic, a full heal and a rare Commander upgrade; floor 2 enemies get more life, upgraded cards and a shared Base ability (2.1).
+24. Rare relics: in boss relic choices like any relic, elsewhere only at a small chance (2.4).
 
 ---
 

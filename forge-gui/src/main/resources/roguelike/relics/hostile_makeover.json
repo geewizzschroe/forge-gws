@@ -1,0 +1,14 @@
+{
+  "id": "hostile_makeover",
+  "name": "Hostile Makeover",
+  "description": "When a creature enters under an opponent's control, choose one: tap it and put a stun counter on it; put a -1/-1 counter on it; or swap its power and toughness. This triggers only once per turn.",
+  "rare": true,
+  "script": [
+    "T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Creature.OppCtrl | TriggerZones$ Command | ActivationLimit$ 1 | Execute$ hostile_makeover_Charm | TriggerDescription$ Hostile Makeover: When a creature enters under an opponent's control, choose one. This ability triggers only once each turn.",
+    "SVar:hostile_makeover_Charm:DB$ Charm | Choices$ hostile_makeover_Tap,hostile_makeover_Shrink,hostile_makeover_Swap",
+    "SVar:hostile_makeover_Tap:DB$ Tap | Defined$ TriggeredCard | SubAbility$ hostile_makeover_Stun | SpellDescription$ Tap it. Put a stun counter on it.",
+    "SVar:hostile_makeover_Stun:DB$ PutCounter | Defined$ TriggeredCard | CounterType$ STUN | CounterNum$ 1",
+    "SVar:hostile_makeover_Shrink:DB$ PutCounter | Defined$ TriggeredCard | CounterType$ M1M1 | CounterNum$ 1 | SpellDescription$ Put a -1/-1 counter on it.",
+    "SVar:hostile_makeover_Swap:DB$ Pump | Defined$ TriggeredCard | KW$ HIDDEN CARDNAME's power and toughness are switched | Duration$ Permanent | SpellDescription$ Switch its power and toughness."
+  ]
+}

@@ -91,6 +91,9 @@ public class RunConfig {
     // PLACEHOLDER: experience for a lost match.
     public int xpLostMatch = 0;
     public double xpMultiplier = 1.0;
+    // Decided 2026-10-23: rare relics are offered by bosses; elsewhere each relic slot is rare with this chance.
+    // PLACEHOLDER: about 1 in 30. Meant to become a level-up perk later.
+    public double rareRelicChance = 1.0 / 30;
     // PLACEHOLDER: relic choices after a boss.
     public int bossRelicChoices = 3;
 
