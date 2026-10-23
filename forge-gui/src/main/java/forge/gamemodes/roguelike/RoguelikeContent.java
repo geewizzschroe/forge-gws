@@ -270,18 +270,28 @@ public class RoguelikeContent {
 
     /** Add the mode's own cards and tokens to the card database, once (as Adventure does with its custom cards). */
     private void registerCustomCards() {
+        // the app's database, and the current one if something (a test) has made another
         if (StaticData.instance() == null) {
-            return;
+            return; // no card database yet (content read on its own); nothing to add to
         }
-        for (CardRules rules : customCards) {
-            if (StaticData.instance().getCommonCards().getCard(rules.getName()) == null) {
-                StaticData.instance().getCommonCards().addCard(new PaperCard(rules, CardEdition.UNKNOWN_CODE, CardRarity.Special));
+        Set<StaticData> dbs = new java.util.LinkedHashSet<>();
+        dbs.add(forge.model.FModel.getMagicDb());
+        dbs.add(StaticData.instance());
+        for (StaticData db : dbs) {
+            if (db == null) {
+                continue;
+            }
+            for (CardRules rules : customCards) {
+                if (db.getCommonCards().getCard(rules.getName()) == null) {
+                    db.getCommonCards().addCard(new PaperCard(rules, CardEdition.UNKNOWN_CODE, CardRarity.Special));
+                }
+            }
+            if (db.getAllTokens() != null) {
+                customTokens.forEach((script, r) -> db.getAllTokens().addTokenRules(script, r));
             }
         }
-        if (StaticData.instance().getAllTokens() != null) {
-            customTokens.forEach((script, rules) -> StaticData.instance().getAllTokens().addTokenRules(script, rules));
-        }
     }
+
     /** The mode's rewritten version of a card, or null if it is played as printed. */
     public CardRules getOverride(final String name) {
         for (CardRules o : overrides) {
