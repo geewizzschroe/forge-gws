@@ -180,18 +180,26 @@ public class RunSimulator {
         return rec;
     }
 
+    private int encounterFloor = 1;
+
+    /** Single encounters are fought as on this floor (its enemy life, upgrades and Base ability). */
+    public void setEncounterFloor(final int floor) {
+        this.encounterFloor = Math.max(1, floor);
+    }
+
     /** The starter deck fights one enemy, starting at the given life, without any run progress (but with the profile's unlocks, if set). */
     public MatchRecord simulateEncounter(final String starterId, final String encounterId, final int heroLife, final long seed) {
         Run run = Run.start(content, starterId, seed, setupFor(starterId));
         RunState s = run.getState();
         s.life = Math.min(heroLife, s.maxLife);
+        s.floor = encounterFloor;
         EncounterDef enc = content.getEncounter(encounterId);
         MatchRecord m = new MatchRecord();
         m.runSeed = seed;
         m.encounterId = enc.id;
         m.encounterName = enc.name;
         m.boss = enc.boss;
-        m.floor = 1;
+        m.floor = encounterFloor;
         m.row = -1;
         m.heroLifeBefore = s.life;
         RunMatch match = RunMatchFactory.create(content, s, enc, hero(), new LobbyPlayerAi(enc.name, null));

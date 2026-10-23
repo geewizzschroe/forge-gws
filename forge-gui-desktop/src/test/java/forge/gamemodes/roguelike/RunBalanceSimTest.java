@@ -32,7 +32,7 @@ import forge.gamemodes.roguelike.sim.SimReport;
  *     -Droguelike.sim.runs=20 [-Droguelike.sim.fights=10] [-Droguelike.sim.starter=jill_mono_blue] \
  *     [-Droguelike.sim.layout=FIGHTS,UPGRADE,STRETCH 2,BOSS] [-Droguelike.sim.timeout=120] [-Droguelike.sim.logs=true] [-Droguelike.sim.progress=true]
  *     [-Droguelike.sim.policy=greedy] [-Droguelike.sim.xp=N] [-Droguelike.sim.encounters=id,id]
- *     [-Droguelike.sim.heroProfile=Reckless] [-Droguelike.sim.heroAi=hybrid|full]
+ *     [-Droguelike.sim.heroProfile=Reckless] [-Droguelike.sim.heroAi=hybrid|full] [-Droguelike.sim.floor=2]
  * </pre>
  *
  * The report and a CSV of every match are written to forge-gui-desktop/target/roguelike-sim/; with
@@ -98,6 +98,7 @@ public class RunBalanceSimTest extends AITest {
         int fights = Integer.getInteger("roguelike.sim.fights", 0);
         RunSimulator sim = new RunSimulator(c);
         sim.setMatchTimeoutSeconds(Integer.getInteger("roguelike.sim.timeout", 120));
+        sim.setEncounterFloor(Integer.getInteger("roguelike.sim.floor", 1));
         String heroAi = System.getProperty("roguelike.sim.heroAi", "");
         sim.setHeroAi(System.getProperty("roguelike.sim.heroProfile"), "full".equals(heroAi) ? forge.ai.AIOption.USE_FULL_SIMULATION
                 : "hybrid".equals(heroAi) ? forge.ai.AIOption.USE_HYBRID_SIMULATION : null);
@@ -144,7 +145,8 @@ public class RunBalanceSimTest extends AITest {
         String report = SimReport.markdown("Run-mode simulation: " + starter + ", " + runs + " runs"
                 + (System.getProperty("roguelike.sim.heroProfile") != null ? ", hero profile " + System.getProperty("roguelike.sim.heroProfile") : "")
                 + (heroAi.isEmpty() ? "" : ", hero simulation " + heroAi)
-                + (fixedXp >= 0 ? ", hero at " + fixedXp + " XP" : ""), records, encounterTests);
+                + (fixedXp >= 0 ? ", hero at " + fixedXp + " XP" : "")
+                + (Integer.getInteger("roguelike.sim.floor", 1) > 1 ? ", single encounters on floor " + Integer.getInteger("roguelike.sim.floor") : ""), records, encounterTests);
         if (profile != null) {
             StringBuilder sb = new StringBuilder(report).append("\n## Progression (runs played with a fresh profile, all unlocks on)\n\n");
             for (CharacterDef ch : c.getCharacters().values()) {
