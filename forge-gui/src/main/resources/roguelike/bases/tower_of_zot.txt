@@ -1,0 +1,7 @@
+Name:Tower of Zot
+ManaCost:no cost
+Types:Base
+S:Mode$ ReduceCost | EffectZone$ Command | ValidCard$ Card | ValidSpell$ Activated.Cycling | Activator$ You | Amount$ 1 | Description$ Crystal Hoard — Cycling abilities you activate cost {1} less to activate.
+T:Mode$ Cycled | ValidCard$ Card | ValidPlayer$ You | TriggerZones$ Command | Execute$ zot_Clue | TriggerDescription$ Whenever you cycle a card, create a Clue token.
+SVar:zot_Clue:DB$ Token | TokenScript$ c_a_clue_draw
+Oracle:Crystal Hoard — Cycling abilities you activate cost {1} less to activate.\nWhenever you cycle a card, create a Clue token.

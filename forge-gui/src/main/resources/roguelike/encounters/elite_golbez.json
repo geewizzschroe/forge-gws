@@ -1,0 +1,29 @@
+{
+  "id": "elite_golbez",
+  "name": "Golbez's Tower",
+  "elite": true,
+  "commander": "Golbez, Crystal Collector",
+  "base": "tower_of_zot.txt",
+  "life": 25,
+  "hand": 7,
+  "deck": {
+    "Ice Flan": 3,
+    "Malboro": 3,
+    "Hill Gigas": 2,
+    "Balamb T-Rexaur": 2,
+    "Cloudbound Moogle": 2,
+    "Scion of Darkness": 2,
+    "Windcaller Aven": 2,
+    "Choking Tethers": 2,
+    "Moment of Evil Triumph": 2,
+    "Bake into a Pie": 3,
+    "Gleaming Barrier": 3,
+    "Crow of Dark Tidings": 2,
+    "Instant Ramen": 2,
+    "Dreams of Laguna": 2,
+    "Magic Pot": 2,
+    "Vayne's Treachery": 2,
+    "Ultimecia, Time Sorceress": 2,
+    "Locke Cole": 2
+  }
+}

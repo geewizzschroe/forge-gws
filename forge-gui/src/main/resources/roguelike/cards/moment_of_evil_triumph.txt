@@ -1,0 +1,6 @@
+Name:Moment of Evil Triumph
+ManaCost:8 U B
+Types:Sorcery
+A:SP$ ChangeZoneAll | ChangeType$ Creature.YouOwn | Origin$ Graveyard | Destination$ Battlefield | SpellDescription$ Return all creature cards from your graveyard to the battlefield under your control.
+SVar:AICyclingPlan:True
+Oracle:Return all creature cards from your graveyard to the battlefield under your control.

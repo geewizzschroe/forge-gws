@@ -20,6 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import forge.StaticData;
+import forge.card.CardEdition;
+import forge.card.CardRarity;
 import forge.card.CardRules;
 import forge.gamemodes.roguelike.meta.CharacterDef;
 import forge.gamemodes.roguelike.meta.MetaConfig;
@@ -40,6 +42,7 @@ import forge.localinstance.properties.ForgeConstants;
  * pools/*.json       CardPoolDef
  * bases/*.txt        Base card scripts
  * overrides/*.txt    replacement card scripts (landless ramp) used in every match of the mode
+ * cards/*.txt        the mode's own cards, added to the card database (not in any set)
  * characters/*.json  CharacterDef (meta-progression: levels, unlocks, milestones)
  * meta.json          MetaConfig (experience curves, account levels)
  * </pre>
@@ -72,6 +75,7 @@ public class RoguelikeContent {
     private final Map<String, CardPoolDef> pools = new LinkedHashMap<>();
     private final Map<String, List<String>> bases = new LinkedHashMap<>();
     private final List<CardRules> overrides = new ArrayList<>();
+    private final List<CardRules> customCards = new ArrayList<>();
     private final Map<String, CharacterDef> characters = new LinkedHashMap<>();
     private MetaConfig meta = new MetaConfig();
     private final Set<String> quarantine = new HashSet<>();
@@ -133,6 +137,12 @@ public class RoguelikeContent {
         for (String f : src.list("overrides", ".txt")) {
             c.overrides.add(CardRules.fromScript(lines(src.read(f))));
         }
+        for (String f : src.list("cards", ".txt")) {
+            CardRules rules = CardRules.fromScript(lines(src.read(f)));
+            rules.setCustom();
+            c.customCards.add(rules);
+        }
+        c.registerCustomCards();
         for (String f : src.list("characters", ".json")) {
             CharacterDef d = parse(src.read(f), CharacterDef.class, f);
             c.characters.put(d.id, d);
@@ -250,6 +260,19 @@ public class RoguelikeContent {
     public Map<String, EventDef> getEvents() { return events; }
     public Map<String, CardPoolDef> getPools() { return pools; }
     public List<CardRules> getOverrides() { return overrides; }
+    public List<CardRules> getCustomCards() { return customCards; }
+
+    /** Add the mode's own cards to the card database, once (as Adventure does with its custom cards). */
+    private void registerCustomCards() {
+        if (StaticData.instance() == null) {
+            return;
+        }
+        for (CardRules rules : customCards) {
+            if (StaticData.instance().getCommonCards().getCard(rules.getName()) == null) {
+                StaticData.instance().getCommonCards().addCard(new PaperCard(rules, CardEdition.UNKNOWN_CODE, CardRarity.Special));
+            }
+        }
+    }
     /** The mode's rewritten version of a card, or null if it is played as printed. */
     public CardRules getOverride(final String name) {
         for (CardRules o : overrides) {

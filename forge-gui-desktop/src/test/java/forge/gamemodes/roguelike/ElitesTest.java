@@ -120,6 +120,6 @@ public class ElitesTest extends AITest {
                 assertEquals(e.id, 25, e.life);
             }
         }
-        assertEquals(3, elites);
+        assertEquals(4, elites);
     }
 }

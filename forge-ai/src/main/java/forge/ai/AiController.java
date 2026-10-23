@@ -1654,7 +1654,11 @@ public class AiController {
         if (!skipped.isEmpty())
             saList.removeAll(skipped);
         //update LivingEndPlayer
-        useLivingEnd = IterableUtil.any(player.getZone(ZoneType.Library), CardPredicates.nameEquals("Living End"));
+        // a card with SVar AICyclingPlan (run mode's Moment of Evil Triumph) asks for the same cycle-then-reanimate play,
+        // and keeps asking from the hand once drawn
+        useLivingEnd = IterableUtil.any(player.getZone(ZoneType.Library), CardPredicates.nameEquals("Living End"))
+                || IterableUtil.any(player.getZone(ZoneType.Library), c -> c.hasSVar("AICyclingPlan"))
+                || IterableUtil.any(player.getZone(ZoneType.Hand), c -> c.hasSVar("AICyclingPlan"));
 
         SpellAbility chosenSa = chooseSpellAbilityToPlayFromList(saList, true);
 

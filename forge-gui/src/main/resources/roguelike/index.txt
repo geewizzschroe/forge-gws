@@ -22,8 +22,10 @@ bases/open_graves.txt
 bases/raider_camp.txt
 bases/the_farplane.txt
 bases/the_strahl.txt
+bases/tower_of_zot.txt
 bases/wayfarers_camp.txt
 bases/wyrm_roost.txt
+cards/moment_of_evil_triumph.txt
 characters/jill.json
 characters/lightning.json
 config.json
@@ -39,6 +41,7 @@ encounters/chocobo_stables.json
 encounters/dragons_aerie.json
 encounters/elf_grove.json
 encounters/elite_ayli.json
+encounters/elite_golbez.json
 encounters/elite_halana_and_alena.json
 encounters/elite_tatyova.json
 encounters/goblin_raiders.json

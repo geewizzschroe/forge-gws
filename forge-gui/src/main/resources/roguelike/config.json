@@ -73,5 +73,5 @@
   "bossRelicChoices": 3,
   "rareRelicChance": 0.0333,
   "cardScopeSets": ["FIN", "FCA", "FIC", "RFIN", "FDN", "FDC", "J25", "PFDN"],
-  "cardScopeExceptions": []
+  "cardScopeExceptions": ["Moment of Evil Triumph"]
 }
