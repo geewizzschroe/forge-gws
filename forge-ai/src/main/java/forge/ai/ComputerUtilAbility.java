@@ -368,9 +368,10 @@ public class ComputerUtilAbility {
                     p += Integer.parseInt(source.getSVar("AIPriorityModifier"));
                 }
                 // run mode: an enemy's deck is built around its commander, so cast it ahead of other spells
+                // (enough to outweigh the creature evaluation that comes after, which favours big bodies)
                 if (source.isCommander() && source.isInZone(ZoneType.Command) && sa.isSpell()
                         && source.getGame().getRules().getGameType() == GameType.Roguelike) {
-                    p += 2;
+                    p += 10;
                 }
                 // try to use it before it's gone
                 if (source.isInPlay() && source.hasSVar("EndOfTurnLeavePlay")) {
