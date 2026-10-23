@@ -53,6 +53,24 @@ public class LightningTest extends AITest {
     }
 
     @Test
+    public void theAiUsesTheArmory() {
+        Game game = initAndCreateGame();
+        RoguelikeContent c = RoguelikeContent.load();
+        Player p = game.getPlayers().get(1);
+        fillLibrary(p, 10);
+        fillLibrary(game.getPlayers().get(0), 10);
+        game.getPhaseHandler().devModeSet(PhaseType.MAIN1, p);
+        putBase(game, p, lightningRun(c, 0));
+        Card lions = addCard("Savannah Lions", p);
+        lions.setSickness(false);
+        Card pick = addCard("Colossus Hammer", p); // equip {8}: with two lands only the Armory can attach it
+        addCards("Mountain", 2, p);
+        game.getAction().checkStateEffects(true);
+        playUntilPhase(game, PhaseType.COMBAT_DECLARE_ATTACKERS);
+        assertEquals("the AI paid {2} to attach it", lions, pick.getEntityAttachedTo());
+    }
+
+    @Test
     public void upgradesThatChangeNothingAreNotOffered() {
         initAndCreateGame();
         RoguelikeContent c = RoguelikeContent.load();

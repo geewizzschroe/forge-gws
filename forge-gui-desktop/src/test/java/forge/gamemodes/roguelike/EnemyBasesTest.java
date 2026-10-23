@@ -60,6 +60,38 @@ public class EnemyBasesTest extends AITest {
     }
 
     @Test
+    public void theAiSpendsBaseSupplies() {
+        game = initAndCreateGame();
+        me = game.getPlayers().get(1);
+        opp = game.getPlayers().get(0);
+        fillLibrary(me, 10);
+        fillLibrary(opp, 10);
+        game.getPhaseHandler().devModeSet(PhaseType.MAIN1, me);
+        RoguelikeContent c = RoguelikeContent.load();
+        java.util.List<String> script = BaseAssembler.assemble(null, java.util.List.of(),
+                java.util.List.of(new BaseAbility("Supplies", "", c.getConfig().workshopSupplyScript)));
+        Card base = Card.fromPaperCard(BaseCard.fromScript(script), me);
+        base.addCounterInternal(CounterEnumType.SUPPLY, 3, me, false, null, null);
+        me.getZone(ZoneType.Command).add(base);
+        Card lions = ready("Savannah Lions", me);
+        game.getAction().checkStateEffects(true);
+        playUntilPhase(game, PhaseType.COMBAT_DECLARE_ATTACKERS);
+        assertTrue("the AI spent a supply: " + base.getCounters(CounterEnumType.SUPPLY), base.getCounters(CounterEnumType.SUPPLY) < 3);
+        assertTrue(lions.getCounters(CounterEnumType.P1P1) > 0);
+    }
+
+    @Test
+    public void theAiUsesFrozenBastionToStopAnAttacker() {
+        setUp("frozen_bastion.txt");
+        addCards("Island", 3, me);
+        ready("Grizzly Bears", opp); // would attack an empty board
+        game.getPhaseHandler().devModeSet(PhaseType.UPKEEP, opp);
+        game.getAction().checkStateEffects(true);
+        playUntilPhase(game, PhaseType.COMBAT_END);
+        assertEquals("the AI tapped the attacker before it could attack", 20, me.getLife());
+    }
+
+    @Test
     public void chocoboRanchMakesABirdOnlyWhenThereIsNone() {
         setUp("chocobo_ranch.txt");
         playUntilPhase(game, PhaseType.END_OF_TURN);

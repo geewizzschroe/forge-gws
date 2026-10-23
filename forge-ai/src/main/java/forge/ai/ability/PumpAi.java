@@ -129,7 +129,9 @@ public class PumpAi extends PumpAiBase {
         final boolean isFight = "Fight".equals(aiLogic) || "PowerDmg".equals(aiLogic);
         final boolean isBerserk = "Berserk".equals(aiLogic);
 
-        if ("Pummeler".equals(aiLogic)) {
+        if ("AttachEquipment".equals(aiLogic)) {
+            return AttachAi.chooseEquipmentToMove(ai, sa);
+        } else if ("Pummeler".equals(aiLogic)) {
             return SpecialCardAi.ElectrostaticPummeler.consider(ai, sa);
         } else if (aiLogic.startsWith("AristocratCounters")) {
             // the preconditions to this are already tested in checkAiLogic

@@ -951,6 +951,11 @@ public class AttachAi extends SpellAbilityAi {
 
     @Override
     public AiAbilityDecision chkDrawback(final Player ai, final SpellAbility sa) {
+        if (!sa.isTrigger() && sa.usesTargeting() && "AttachEquipment".equals(sa.getRootAbility().getParam("AILogic"))) {
+            // the creature was chosen with the Equipment, in chooseEquipmentToMove
+            return sa.isTargetNumberValid() ? new AiAbilityDecision(100, AiPlayDecision.WillPlay)
+                    : new AiAbilityDecision(0, AiPlayDecision.TargetingFailed);
+        }
         if (sa.isTrigger() && sa.usesTargeting()) {
             CardCollection targetables = CardLists.getTargetableCards(ai.getCardsIn(ZoneType.Battlefield), sa);
             CardCollection source = AbilityUtils.getDefinedCards(sa.getHostCard(), sa.getParam("Object"), sa);
@@ -1417,6 +1422,51 @@ public class AttachAi extends SpellAbilityAi {
      *            the logic
      * @return the card
      */
+    /**
+     * For "attach target Equipment you control to target creature you control" abilities (AILogic$ AttachEquipment on
+     * the ability that targets the Equipment, with an Attach sub-ability whose Object is that target): picks an
+     * Equipment and the creature to move it to, preferring an unattached Equipment, and only moving an attached one to
+     * a clearly better creature. Sets both targets.
+     */
+    public static AiAbilityDecision chooseEquipmentToMove(final Player ai, final SpellAbility sa) {
+        SpellAbility attach = sa.getSubAbility();
+        while (attach != null && attach.getApi() != ApiType.Attach) {
+            attach = attach.getSubAbility();
+        }
+        if (attach == null || !sa.usesTargeting() || !attach.usesTargeting()) {
+            return new AiAbilityDecision(0, AiPlayDecision.CantPlayAi);
+        }
+        CardCollection equipment = CardLists.filter(CardLists.getTargetableCards(ai.getCardsIn(ZoneType.Battlefield), sa),
+                c -> c.isEquipment() && c.getController().equals(ai));
+        // unattached first, then the more expensive (usually stronger) Equipment
+        equipment.sort((a, b) -> a.isAttachedToEntity() != b.isAttachedToEntity() ? (a.isAttachedToEntity() ? 1 : -1)
+                : Integer.compare(b.getCMC(), a.getCMC()));
+        CardCollection creatures = CardLists.filter(CardLists.getTargetableCards(ai.getCardsIn(ZoneType.Battlefield), attach),
+                CardPredicates.CREATURES);
+        for (Card e : equipment) {
+            List<Card> options = new ArrayList<>(creatures);
+            Card current = e.isAttachedToEntity() && e.getEntityAttachedTo() instanceof Card ? (Card) e.getEntityAttachedTo() : null;
+            options.remove(current);
+            if (options.isEmpty()) {
+                continue;
+            }
+            Card best = attachGeneralAI(ai, attach, options, false, e, "Pump"); // Equipment helps the creature it's on
+            if (best == null) {
+                continue;
+            }
+            if (current != null && current.isCreature() && current.getController().equals(ai)
+                    && ComputerUtilCard.evaluateCreature(best) <= ComputerUtilCard.evaluateCreature(current) + 50) {
+                continue; // not worth moving
+            }
+            sa.resetTargets();
+            sa.getTargets().add(e);
+            attach.resetTargets();
+            attach.getTargets().add(best);
+            return new AiAbilityDecision(100, AiPlayDecision.WillPlay);
+        }
+        return new AiAbilityDecision(0, AiPlayDecision.TargetingFailed);
+    }
+
     public static Card attachGeneralAI(final Player ai, final SpellAbility sa, final List<Card> list, final boolean mandatory,
             final Card attachSource, final String logic) {
         // AI logic types that do not require a prefList and that evaluate the

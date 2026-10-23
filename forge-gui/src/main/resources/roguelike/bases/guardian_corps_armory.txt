@@ -1,7 +1,7 @@
 Name:Guardian Corps Armory
 ManaCost:no cost
 Types:Base
-A:AB$ Pump | Cost$ 2 | ActivationZone$ Command | ActivationLimit$ 1 | SorcerySpeed$ True | ValidTgts$ Equipment.YouCtrl | TgtPrompt$ Select target Equipment you control | SubAbility$ armory_Attach | SpellDescription$ Attach target Equipment you control to target creature you control. Activate only as a sorcery and only once each turn.
+A:AB$ Pump | Cost$ 2 | ActivationZone$ Command | ActivationLimit$ 1 | SorcerySpeed$ True | ValidTgts$ Equipment.YouCtrl | TgtPrompt$ Select target Equipment you control | SubAbility$ armory_Attach | AILogic$ AttachEquipment | SpellDescription$ Attach target Equipment you control to target creature you control. Activate only as a sorcery and only once each turn.
 SVar:armory_Attach:DB$ Attach | Object$ ParentTarget | ValidTgts$ Creature.YouCtrl | TgtPrompt$ Select target creature you control
 S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.token+equipped+YouCtrl | AddKeyword$ Haste | Description$ Equipped tokens you control have haste.
 Oracle:{2}: Attach target Equipment you control to target creature you control. Activate only as a sorcery and only once each turn.\nEquipped tokens you control have haste.
