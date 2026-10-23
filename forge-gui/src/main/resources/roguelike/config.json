@@ -23,7 +23,28 @@
   "bucketRewardChance": 0.3,
   "offColourBucketChance": 0.25,
   "fullPoolSets": ["FIN", "FDN"],
-  "floors": 1,
+  "floors": 2,
+  "floorRules": [
+    {},
+    {
+      "layout": [
+        "FIGHTS T2",
+        "UPGRADE",
+        "STRETCH 2 T2",
+        "SHOP",
+        "STRETCH 3 T2-3",
+        "REST",
+        "BOSS"
+      ],
+      "enemyLifeBonus": 5,
+      "enemyUpgrades": 2,
+      "enemyBaseScript": [
+        "T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Creature.YouCtrl | TriggerZones$ Command | GameActivationLimit$ 1 | Execute$ floor_Veteran | TriggerDescription$ Veterans — The first time a creature enters under your control this match, put a +1/+1 counter on it.",
+        "SVar:floor_Veteran:DB$ PutCounter | Defined$ TriggeredCard | CounterType$ P1P1 | CounterNum$ 1"
+      ],
+      "enemyBaseText": "Veterans: the first creature that enters under their control each match gets a +1/+1 counter."
+    }
+  ],
   "mapLayout": ["FIGHTS T1", "UPGRADE", "STRETCH 2 T1-2", "SHOP", "STRETCH 3 T2-3", "REST", "BOSS"],
   "mapLanes": 3,
   "weightEnemy": 0.55,

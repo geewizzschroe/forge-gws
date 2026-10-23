@@ -83,7 +83,7 @@ public class GreedyPolicy implements RunPolicy {
             return 10;
         }
         if (o.upgrade != null && o.cards.isEmpty()) {
-            return o.upgrade.power + o.upgrade.toughness + o.upgrade.keywords.size();
+            return o.upgrade.power + o.upgrade.toughness + o.upgrade.keywords.size() - 2 * o.upgrade.costChange + 2 * o.upgrade.abilities.size();
         }
         double score = 0;
         for (Map.Entry<String, Integer> e : o.cards.entrySet()) {

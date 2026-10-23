@@ -14,7 +14,9 @@ the rest is draft or sample content, there to make the run playable and testable
   `cardScopeSets` and `cardScopeExceptions` set the card scope; `CardScopeTest` lists deck and pool cards outside it.
   `fullPoolSets` are the Full Pool's starting sets (the uncurated source of reward slots); `shopRemovalPrice` is the first price of the shop's card removal.
   `workshop*` set the Workshop node (artifact choices and prices, upgrade price, Base supplies and the ability they give).
+  `floors` is the number of floors; `floorRules` has one entry per floor (the first is floor 1): an optional `layout` (else `mapLayout`), `enemyLifeBonus`, `enemyUpgrades` (how many of an enemy's creature cards get a random upgrade), and `enemyBaseScript`/`enemyBaseText`, an ability every enemy's Base gains on that floor (prefix SVar names with `floor_`).
 - `upgrades.json`: the pool card upgrades are drawn from (power/toughness and keywords).
+- `rare_upgrades.json`: the stronger pool offered for the Commander between floors. Besides power/toughness and keywords, an entry can have a `name` (shown instead of the generated text), `costChange` (generic mana, negative is cheaper) and `abilities` (card script lines: `T:`, `S:`, `K:` and `SVar:`; prefix SVar names with `rare_`).
 - `starters/`: characters (commander, landless starter deck, Base, reward pool).
   A character's `core` (in `characters/`) must appear 2x in each of its starters, except a starter with `"independentOfCore": true`, which must contain none of it.
 - `encounters/`: enemies and bosses (deck, optional commander, Base, life, hand size, `tier` 1 to 3 for the map's difficulty ladder).

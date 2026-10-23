@@ -85,7 +85,8 @@ public class Run {
             s.fullPoolSets.removeAll(setup.disabledSets);
             s.baseAbilities.addAll(setup.baseAbilities);
         }
-        s.map = RunMap.generate(cfg, content, s.nextRandom());
+        s.map = RunMap.generate(cfg, floorRule(cfg, 1).layout != null ? floorRule(cfg, 1).layout : cfg.mapLayout,
+                content, s.nextRandom(), Set.of());
         s.log.add("Run started with " + starter.name + " (seed " + seed + ")");
         return new Run(content, s);
     }
@@ -187,7 +188,41 @@ public class Run {
 
     /** An enemy's Base, or null if it has none. */
     public PaperCard getEncounterBase(final EncounterDef enc) {
-        return enc.base == null ? null : BaseCard.fromScript(content.getBase(enc.base));
+        List<String> buff = floorRule().enemyBaseScript;
+        if (buff == null || buff.isEmpty()) {
+            return enc.base == null ? null : BaseCard.fromScript(content.getBase(enc.base));
+        }
+        // the floor's buff joins the enemy's own Base (or a plain one), shown as its own line of rules text
+        return BaseCard.fromScript(BaseAssembler.assemble(enc.base == null ? null : content.getBase(enc.base), List.of(),
+                List.of(new BaseAbility("Floor " + state.floor, "", buff))));
+    }
+
+    /** An enemy's starting life on this floor. */
+    public int encounterLife(final EncounterDef enc) {
+        return enc.life + floorRule().enemyLifeBonus;
+    }
+
+    /**
+     * The upgrades this floor gives an enemy's creatures: {@code enemyUpgrades} creature names from its deck, each
+     * with a random upgrade from the pool. The same for every look at the same enemy on the same floor of a run.
+     */
+    public Map<String, RunUpgrade> encounterUpgrades(final EncounterDef enc) {
+        int n = floorRule().enemyUpgrades;
+        Map<String, RunUpgrade> out = new LinkedHashMap<>();
+        if (n <= 0 || content.getUpgrades().isEmpty()) {
+            return out;
+        }
+        Random rnd = new Random(state.seed * 31 + state.floor * 7919L + enc.id.hashCode());
+        List<String> creatures = new ArrayList<>();
+        for (String c : enc.deck.keySet()) {
+            if (isCreature(c)) {
+                creatures.add(c);
+            }
+        }
+        for (String c : pick(creatures, n, rnd)) {
+            out.put(c, content.getUpgrades().get(rnd.nextInt(content.getUpgrades().size())));
+        }
+        return out;
     }
 
     public RunMatch createMatch(final LobbyPlayer hero, final LobbyPlayer enemy) {
@@ -238,6 +273,9 @@ public class Run {
             state.xpEarned += Math.round((node.type == NodeType.BOSS ? cfg.xpPerBoss : cfg.xpPerFight) * cfg.xpMultiplier);
             state.matchesWon++;
             state.beaten.add(encounter.name);
+            if (encounter.boss) {
+                state.bossesBeaten.add(encounter.id);
+            }
             state.life = Math.max(1, Math.min(endLife, state.maxLife));
             boolean boss = node.type == NodeType.BOSS;
             int gold = boss ? content.getConfig().goldPerBoss : content.getConfig().goldPerEnemy;
@@ -273,13 +311,49 @@ public class Run {
                 state.status = RunStatus.WON;
                 state.log.add("Run won");
             } else {
-                state.floor++;
-                state.map = RunMap.generate(content.getConfig(), content, state.nextRandom());
-                state.currentNodeId = null;
-                state.visited.clear();
-                state.log.add("Floor " + state.floor);
+                state.offer = makeCommanderUpgradeOffer();
+                if (state.offer.options.isEmpty()) {
+                    state.offer = null;
+                    advanceFloor();
+                }
             }
         }
+    }
+
+    /** The rules of a floor: its entry in {@code floorRules}, the last entry past the end, or none. */
+    static FloorRule floorRule(final RunConfig cfg, final int floor) {
+        if (cfg.floorRules == null || cfg.floorRules.isEmpty()) {
+            return new FloorRule();
+        }
+        return cfg.floorRules.get(Math.min(floor, cfg.floorRules.size()) - 1);
+    }
+
+    public FloorRule floorRule() {
+        return floorRule(content.getConfig(), state.floor);
+    }
+
+    /** On to the next floor: full life, a new map from that floor's layout, and no boss met again. */
+    private void advanceFloor() {
+        state.floor++;
+        state.life = state.maxLife;
+        FloorRule rule = floorRule();
+        state.map = RunMap.generate(content.getConfig(), rule.layout != null ? rule.layout : content.getConfig().mapLayout,
+                content, state.nextRandom(), new HashSet<>(state.bossesBeaten));
+        state.currentNodeId = null;
+        state.visited.clear();
+        state.log.add("Floor " + state.floor + ": healed to " + state.life + " life");
+    }
+
+    /** Between floors: three rare upgrades that would change the commander, one to take. */
+    private Offer makeCommanderUpgradeOffer() {
+        Offer offer = new Offer(OfferKind.COMMANDER_UPGRADE, false);
+        for (RunUpgrade u : pick(usefulUpgrades(state.commander, content.getRareUpgrades()), 3, state.nextRandom())) {
+            OfferOption o = new OfferOption();
+            o.upgradeCard = state.commander;
+            o.upgrade = u;
+            offer.options.add(o);
+        }
+        return offer;
     }
 
     // ---------------------------------------------------------------- choices
@@ -330,6 +404,11 @@ public class Run {
         }
         state.log.add("Chose " + RunText.option(this, o));
         apply(o);
+        if (offer.kind == OfferKind.COMMANDER_UPGRADE) {
+            state.offer = null;
+            advanceFloor();
+            return;
+        }
         boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
         state.offer = null;
         if (matchReward) {
@@ -815,19 +894,28 @@ public class Run {
      * already has each of its keywords, printed or from this run's upgrades (Ward stacks, so it always counts).
      */
     List<RunUpgrade> usefulUpgrades(final String name) {
+        return usefulUpgrades(name, content.getUpgrades());
+    }
+
+    /** As {@link #usefulUpgrades(String)} for any pool; a cost cut also needs generic mana left in the cost to cut. */
+    List<RunUpgrade> usefulUpgrades(final String name, final List<RunUpgrade> pool) {
         Set<String> has = new HashSet<>();
+        int generic = 0;
         PaperCard pc = StaticData.instance().getCommonCards().getCard(name);
         if (pc != null) {
             for (String k : pc.getRules().getMainPart().getKeywords()) {
                 has.add(k);
             }
+            generic = Math.max(0, pc.getRules().getManaCost().getGenericCost());
         }
         for (RunUpgrade u : state.upgrades.getOrDefault(name, List.of())) {
             has.addAll(u.keywords);
+            generic = Math.max(0, generic + u.costChange);
         }
         List<RunUpgrade> out = new ArrayList<>();
-        for (RunUpgrade u : content.getUpgrades()) {
-            boolean changes = u.power != 0 || u.toughness != 0;
+        for (RunUpgrade u : pool) {
+            boolean changes = u.power != 0 || u.toughness != 0 || !u.abilities.isEmpty() || u.costChange > 0
+                    || (u.costChange < 0 && generic > 0);
             for (String k : u.keywords) {
                 changes |= k.startsWith("Ward") || !has.contains(k);
             }

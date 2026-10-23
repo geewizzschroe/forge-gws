@@ -32,6 +32,7 @@ import forge.localinstance.properties.ForgeConstants;
  * <pre>
  * config.json        RunConfig
  * upgrades.json      list of RunUpgrade (the pool upgrades are drawn from)
+ * rare_upgrades.json list of RunUpgrade offered for the commander between floors
  * starters/*.json    StarterDef
  * encounters/*.json  EncounterDef
  * relics/*.json      RelicDef
@@ -63,6 +64,7 @@ public class RoguelikeContent {
 
     private RunConfig config = new RunConfig();
     private final List<RunUpgrade> upgrades = new ArrayList<>();
+    private final List<RunUpgrade> rareUpgrades = new ArrayList<>();
     private final Map<String, StarterDef> starters = new LinkedHashMap<>();
     private final Map<String, EncounterDef> encounters = new LinkedHashMap<>();
     private final Map<String, RelicDef> relics = new LinkedHashMap<>();
@@ -100,6 +102,10 @@ public class RoguelikeContent {
         String upgrades = src.read("upgrades.json");
         if (upgrades != null) {
             c.upgrades.addAll(parse(upgrades, new TypeToken<List<RunUpgrade>>() { }.getType(), "upgrades.json"));
+        }
+        String rare = src.read("rare_upgrades.json");
+        if (rare != null) {
+            c.rareUpgrades.addAll(parse(rare, new TypeToken<List<RunUpgrade>>() { }.getType(), "rare_upgrades.json"));
         }
         for (String f : src.list("starters", ".json")) {
             StarterDef d = parse(src.read(f), StarterDef.class, f);
@@ -237,6 +243,7 @@ public class RoguelikeContent {
     }
 
     public RunConfig getConfig() { return config; }    public List<RunUpgrade> getUpgrades() { return upgrades; }
+    public List<RunUpgrade> getRareUpgrades() { return rareUpgrades; }
     public Map<String, StarterDef> getStarters() { return starters; }
     public Map<String, EncounterDef> getEncounters() { return encounters; }
     public Map<String, RelicDef> getRelics() { return relics; }

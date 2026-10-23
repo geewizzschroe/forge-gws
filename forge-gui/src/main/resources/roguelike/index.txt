@@ -91,6 +91,7 @@ pools/rw_core.json
 pools/ub_core.json
 pools/uw_core.json
 quarantine.txt
+rare_upgrades.json
 relics/healing_herb.json
 relics/hellish_fortitude.json
 relics/iron_heart.json

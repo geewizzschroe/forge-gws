@@ -244,7 +244,7 @@ public class RoguelikeScreen extends FScreen {
                     case SHOP, WORKSHOP -> o.bought || o.price > run.getState().gold ? null : "Buy for " + o.price + " gold";
                     case CUT -> "Cut " + o.cutCard;
                     case EVENT -> !run.canAfford(o) ? null : "Take " + RunText.option(run, o);
-                    case UPGRADE -> o.price > run.getState().gold ? null
+                    case UPGRADE, COMMANDER_UPGRADE -> o.price > run.getState().gold ? null
                             : "Upgrade: " + o.upgrade.describe() + (o.price > 0 ? " for " + o.price + " gold" : "");
                     default -> o.label != null ? "Take " + o.label : "Take " + RunText.option(run, o);
                 };

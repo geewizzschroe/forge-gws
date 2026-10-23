@@ -58,6 +58,8 @@ public class RunState {
     public List<Integer> visited = new ArrayList<>();
     public int matchesWon;
     public int matchesLost;
+    /** Ids of the bosses beaten (no boss is met twice in a run). */
+    public List<String> bossesBeaten = new ArrayList<>();
     /** Names of the enemies beaten, in order. */
     public List<String> beaten = new ArrayList<>();
 

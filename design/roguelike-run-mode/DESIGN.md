@@ -51,7 +51,9 @@ What makes it different from other Forge modes:
   - **Workshop node** (decided 2026-10-22, built): a store that appears only in the map's stretches, never guaranteed (`weightWorkshop`, PLACEHOLDER 0.08). It sells, any number of times while gold lasts: artifacts from the Full Pool in the run's colours (2 copies; each slot is Equipment at `workshopEquipmentChance` odds), **upgrades for gold** (the Upgrade node's offer of three, paid when one is taken, repeatable; backing out is free), and **Base supplies**: the Base gains "Remove a supply counter: put a +1/+1 counter on target creature you control, sorcery speed" with 3 SUPPLY counters per purchase. Supplies last the whole run: the Base starts each match with what is left (`RegisteredPlayer.setBaseCounters`), and after a won match the run keeps what was not spent (a lost match is retried or ends the run, so its spending is not kept). This is the first run-limited resource held on the Base; others can follow the same pattern. Prices PLACEHOLDER: artifact 30, upgrade 40 (flat), supplies 50.
   - **Card removal at the shop** (decided 2026-10-22): once per shop visit, pay to remove every copy of one card. The fee rises each time it is bought in a run: 75, 150, 225, 300 ... (`shopRemovalPrice`, PLACEHOLDER 75). Backing out of the card choice costs nothing.
 - Continue from the node just played. Repeat until the only available node is the Boss.
-- Beating the Boss gives a big reward and either moves to a new, harder "floor" or ends the run. **Deferred.**
+- **Floors** (decided and built 2026-10-23, D1): a run is **2 floors** (`floors` in `config.json`). Beating floor 1's boss gives its relic, then a **full heal** and a choice of **3 rare upgrades for the Commander** (no skip), then floor 2 begins on a new map. Beating the last floor's boss wins the run. A boss met on floor 1 isn't picked again while another boss is left.
+  - **Rare upgrades** (`rare_upgrades.json`): a separate, stronger pool offered only between floors, always for the Commander, with no weak entries. Starting list: costs {1} less, costs {2} less, +4/+4 and costs {1} more, Ward 3, Prowess, Double strike, +2/+2, +1/+1 and lifelink, "Mind Rot" (when it enters, each opponent discards a card) and "Spellweaver" (your instants and sorceries cost {1} less). An upgrade that would change nothing (a keyword already there, a cost cut on a Commander with no generic mana left) isn't offered.
+  - **Floor 2 is harder** (`floorRules` in `config.json`, numbers PLACEHOLDER): its fights start at tier 2 (`FIGHTS T2`, `STRETCH 2 T2`, `STRETCH 3 T2-3`); every enemy has **+5 life** and **2 of its creature cards carry a random upgrade** (from the normal upgrade pool, fixed per enemy and run); and every enemy's Base gains **"Veterans"**: the first creature that enters under their control each match gets a +1/+1 counter.
 - There is no manual deck editing anywhere in the mode.
 
 ### 2.2 Failure
@@ -72,7 +74,7 @@ What makes it different from other Forge modes:
   - Jill's core: Faerie Seer, Moon-Circuit Hacker, Chilling Trap, Burrog Befuddler (commons); Micromancer, Brineborn Cutthroat, Counterspell (uncommons); High Fae Trickster (rare). Frozen Throne is her independent starter.
 - **Enemy decks** (decided 2026-10-21): looser than starters. **40 cards** for normal enemies, **60** for bosses. Each card is a **2-of, 3-of or 4-of**, with 4-ofs used sparingly to keep games from feeling samey. Rarity is **tiered like the starters** (mostly commons, then uncommons, a few rares) but with **no fixed numbers**. **Bosses have commanders; normal enemies don't.** **Life: 20 for normal enemies, 30 for bosses** (scaling life by map row was tried and dropped). An enemy's identity and fiction are expressed through **both its Base and its deck**, neither one more than the other. `RoguelikeContentTest` checks size, copies and the commander rule only.
   - **Boss decks carry their character** (decided 2026-10-22): a boss's deck includes cards strongly tied to that character, even middling ones, and as a habit every in-scope card with the boss's name in its card name when it is at least passable (Sephiroth gets Sephiroth's Intervention; Krenko gets Krenko's Command and Krenko, Tin Street Kingpin).
-  - **Scaling over a run** (direction, not built yet): both ways are expected as the mode grows. One is scaling existing enemies (card upgrades, more life, swapping weaker cards for stronger ones, stronger tiers of a Base's power). The other is fights that only appear on floor 2 and later.
+  - **Scaling over a run**: both ways are expected as the mode grows. One is scaling existing enemies (card upgrades, more life, swapping weaker cards for stronger ones, stronger tiers of a Base's power). The other is fights that only appear on floor 2 and later. Built 2026-10-23: floor 2 gives enemies more life, upgraded cards and a floor-wide Base ability (2.1, Floors).
 - Worked example: **Jill, Shiva's Dominant** (Final Fantasy set, mono-blue). Her enter trigger bounces any one other nonland permanent. Jill gets a mono-blue starter deck built on her core (Fading Hope, Into the Roil, Run Away Together, Whirler Rogue, Rite of Replication, Skyship Buccaneer, Starlit Mantle and Soul Read besides the core), then two blue+X starter decks that **unlock through progress**, and the independent Frozen Throne starter from a milestone.
 
 ### 2.3.1 Card counts and upgrades
@@ -177,7 +179,7 @@ Details:
 
 None of these blocks Phase 1 (engine rules).
 
-- **D1. Floors.** After a boss: new, harder floor, or end the run? (Phase 2)
+- **D1. Floors.** *Resolved 2026-10-23*: 2 floors; see 2.1.
 - **D2. Currency.** Shops need one. Where does it come from (enemy nodes?) and what do things cost? (Phase 2)
 - **D4. What can an upgrade be?** The engine supports power/toughness, keywords, abilities, mana cost, colours and types (4.4). Which are in scope, and how are they randomised on rewards? (Phase 1 item 4 and Phase 2)
 - **D8. Node types and map.** Elites, events? Map shape, nodes per floor, difficulty scaling. (Phase 2)
@@ -408,7 +410,7 @@ Placeholders and new questions raised by building it (all in `config.json`):
 - **N10. Upgrade node:** placeholder offers 3 random (creature name, upgrade) pairs, pick one; each single-card reward option that is a creature comes upgraded 25% of the time (spells and bucket cards never do, so about 11 to 19% of options). Since 2026-10-22 an upgrade that would change nothing (a keyword the card already has, printed or from an earlier upgrade; Ward excepted, since it stacks) is never offered. Upgrade pool: +1/+1, +1/+0, +0/+2, Haste, Vigilance, Trample, Lifelink, Ward 1.
 - **N11. Starter deck size:** *resolved* by the starter template (2.3): 32 cards.
 - **N12. Quitting mid-match:** closing the app during a match lets you replay that match from the start with no penalty.
-- **D1** placeholder: one floor (the boss ends the run). **D8**: the touchstone map above (built 2026-10-22); the stretch lengths, lanes and weights are placeholders.
+- **D1**: 2 floors (2.1, built 2026-10-23). **D8**: the touchstone map above (built 2026-10-22); the stretch lengths, lanes and weights are placeholders.
 
 ### 6.4 Phase 3: UI
 
@@ -512,6 +514,7 @@ All of this was used successfully in the design sessions.
 20. Rewards can't be skipped; single-card slots mix the curated pool and the Full Pool; buckets follow the run's colours with an occasional splash (2.1).
 21. Card removal at the shop (2.1).
 22. Landless play: quarantine only what can never work; land searches and landcycling in Final Fantasy and Foundations rewritten; two-colour Towns in the land picker (2.5.1).
+23. Floors (D1): 2 floors; between them a relic, a full heal and a rare Commander upgrade; floor 2 enemies get more life, upgraded cards and a shared Base ability (2.1).
 
 ---
 

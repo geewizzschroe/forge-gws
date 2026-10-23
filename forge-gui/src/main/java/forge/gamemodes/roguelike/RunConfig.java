@@ -30,8 +30,11 @@ public class RunConfig {
     // Decided (DESIGN.md 2.5): the sets of the Full Pool, the uncurated source of reward slots, at the start.
     public List<String> fullPoolSets = List.of("FIN", "FDN");
 
-    // PLACEHOLDER: D1 floors. 1 means beating the boss wins the run.
-    public int floors = 1;
+    // Decided 2026-10-23: two floors. Beating a floor's boss gives its relic choice, a full heal and a choice of
+    // three rare upgrades for the commander, then the next floor; beating the last boss wins the run.
+    public int floors = 2;
+    // What changes per floor (FloorRule). PLACEHOLDER: every number in them.
+    public List<FloorRule> floorRules = List.of();
     // Decided (proposal 1.1): touchstones every path goes through (an Upgrade after the first fight, a Shop, a
     // campfire before the boss) with branching stretches between them. See RunMap for the entries.
     // PLACEHOLDER: the stretch lengths and the number of lanes.

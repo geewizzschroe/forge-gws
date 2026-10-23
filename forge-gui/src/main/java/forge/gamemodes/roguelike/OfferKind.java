@@ -17,7 +17,9 @@ public enum OfferKind {
     /** Event node: take one option (some cost gold, life or a retry) or, where allowed, walk away. */
     EVENT,
     /** Rest node (a campfire): rest, or train or purge, which open their own choice. */
-    CAMPFIRE;
+    CAMPFIRE,
+    /** Between floors: pick one of three rare upgrades for the commander. */
+    COMMANDER_UPGRADE;
 
     /** A place to buy things with gold (bought with {@code Run.buy}, left with {@code Run.skip}). */
     public boolean isStore() {

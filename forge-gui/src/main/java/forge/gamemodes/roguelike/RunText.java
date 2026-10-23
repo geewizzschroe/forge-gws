@@ -49,6 +49,7 @@ public final class RunText {
                 case WORKSHOP -> "Workshop. You have " + s.gold + " gold.";
                 case EVENT -> s.offer.title + "\n" + s.offer.text;
                 case CAMPFIRE -> "A campfire. Life " + s.life + "/" + s.maxLife + ". Rest, train or purge.";
+                case COMMANDER_UPGRADE -> "Floor " + s.floor + " cleared! Choose a rare upgrade for " + s.commander + ".";
                 case UPGRADE -> s.offer.returnToShop == null || s.offer.returnToShop.kind == OfferKind.CAMPFIRE
                         ? "Choose a card to upgrade." : "Choose an upgrade to pay for.";
                 case CUT -> s.offer.returnToShop != null ? "Choose a card to remove every copy of." : "Choose a card to cut from your deck.";
@@ -73,12 +74,23 @@ public final class RunText {
                 EncounterDef e = run.getContent().getEncounter(n.encounterId);
                 StringBuilder sb = new StringBuilder();
                 sb.append(n.type == NodeType.BOSS ? "Boss: " : "Enemy: ").append(e.name).append('\n');
-                sb.append(e.life).append(" life, ").append(e.hand).append("-card hand");
+                sb.append(run.encounterLife(e)).append(" life, ").append(e.hand).append("-card hand");
                 if (e.commander != null) {
                     sb.append(", commander ").append(e.commander);
                 }
                 if (e.base != null) {
                     sb.append("\nBase: ").append(baseText(run.getContent().getBase(e.base)));
+                }
+                if (run.floorRule().enemyBaseText != null) {
+                    sb.append("\nFloor ").append(run.getState().floor).append(": ").append(run.floorRule().enemyBaseText);
+                }
+                Map<String, RunUpgrade> upgraded = run.encounterUpgrades(e);
+                if (!upgraded.isEmpty()) {
+                    List<String> parts = new ArrayList<>();
+                    for (Map.Entry<String, RunUpgrade> u : upgraded.entrySet()) {
+                        parts.add(u.getKey() + " " + u.getValue().describe());
+                    }
+                    sb.append("\nUpgraded: ").append(String.join(", ", parts));
                 }
                 yield sb.toString();
             }

@@ -1,0 +1,15 @@
+[
+  {"name": "Lighter: costs {1} less", "costChange": -1},
+  {"name": "Much lighter: costs {2} less", "costChange": -2},
+  {"name": "Titanic: +4/+4, costs {1} more", "power": 4, "toughness": 4, "costChange": 1},
+  {"name": "Ward 3", "keywords": ["Ward:3"]},
+  {"name": "Prowess", "keywords": ["Prowess"]},
+  {"name": "Double strike", "keywords": ["Double Strike"]},
+  {"name": "+2/+2", "power": 2, "toughness": 2},
+  {"name": "+1/+1 and lifelink", "power": 1, "toughness": 1, "keywords": ["Lifelink"]},
+  {"name": "Mind Rot: when it enters, each opponent discards a card", "abilities": [
+    "T:Mode$ ChangesZone | Origin$ Any | Destination$ Battlefield | ValidCard$ Card.Self | Execute$ rare_MindRot | TriggerDescription$ Mind Rot — When this creature enters, each opponent discards a card.",
+    "SVar:rare_MindRot:DB$ Discard | Defined$ Opponent | NumCards$ 1 | Mode$ TgtChoose"]},
+  {"name": "Spellweaver: your instants and sorceries cost {1} less while it's on the battlefield", "abilities": [
+    "S:Mode$ ReduceCost | ValidCard$ Instant,Sorcery | Type$ Spell | Activator$ You | Amount$ 1 | Description$ Spellweaver — Instant and sorcery spells you cast cost {1} less to cast."]}
+]

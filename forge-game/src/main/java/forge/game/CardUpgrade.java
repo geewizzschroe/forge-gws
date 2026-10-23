@@ -1,15 +1,24 @@
 package forge.game;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 
 import forge.game.card.Card;
+import forge.game.card.ICardTraitChanges;
+import forge.game.card.perpetual.PerpetualAbilities;
 import forge.game.card.perpetual.PerpetualInterface;
 import forge.game.card.perpetual.PerpetualKeywords;
+import forge.game.card.perpetual.PerpetualManaCost;
 import forge.game.card.perpetual.PerpetualPTBoost;
+import forge.game.card.perpetual.PerpetualSVars;
+import forge.game.mana.ManaCostBeingPaid;
+import forge.game.staticability.StaticAbility;
+import forge.game.trigger.Trigger;
+import forge.game.trigger.TriggerHandler;
 import forge.game.player.Player;
 import forge.game.zone.ZoneType;
 
@@ -19,11 +28,20 @@ import forge.game.zone.ZoneType;
  * Upgrades are additive: several for the same name all apply. They become perpetual effects, so
  * they stay with the card through zone changes. Keywords follow the normal rules, so a second
  * Haste does nothing while a second Ward or Flanking triggers again.
+ * <p>
+ * Besides power/toughness and keywords, an upgrade can change the generic part of the mana cost
+ * ({@code costChange}, negative is cheaper, never below no generic mana) and add abilities written as
+ * card-script lines ({@code T:}, {@code S:}, {@code K:} and the {@code SVar:} lines they use).
  */
-public record CardUpgrade(int power, int toughness, List<String> keywords) {
+public record CardUpgrade(int power, int toughness, List<String> keywords, int costChange, List<String> abilities) {
 
     public CardUpgrade {
         keywords = keywords == null ? List.of() : List.copyOf(keywords);
+        abilities = abilities == null ? List.of() : List.copyOf(abilities);
+    }
+
+    public CardUpgrade(int power, int toughness, List<String> keywords) {
+        this(power, toughness, keywords, 0, List.of());
     }
 
     public static CardUpgrade pt(int power, int toughness) {
@@ -65,8 +83,48 @@ public record CardUpgrade(int power, int toughness, List<String> keywords) {
         if (power != 0 || toughness != 0) {
             add(c, new PerpetualPTBoost(timestamp, power, toughness));
         }
-        if (!keywords.isEmpty()) {
-            add(c, new PerpetualKeywords(timestamp, Lists.newArrayList(keywords), Lists.newArrayList(), false));
+        List<String> allKeywords = Lists.newArrayList(keywords);
+        Map<String, String> svars = new LinkedHashMap<>();
+        List<Trigger> triggers = Lists.newArrayList();
+        List<String> statics = Lists.newArrayList();
+        for (String line : abilities) {
+            if (line.startsWith("SVar:")) {
+                String rest = line.substring(5);
+                int colon = rest.indexOf(':');
+                svars.put(rest.substring(0, colon), rest.substring(colon + 1));
+            } else if (line.startsWith("K:")) {
+                allKeywords.add(line.substring(2));
+            }
+        }
+        if (!svars.isEmpty()) { // before the abilities that use them
+            add(c, new PerpetualSVars(timestamp, svars));
+        }
+        for (String line : abilities) {
+            if (line.startsWith("T:")) {
+                triggers.add(TriggerHandler.parseTrigger(line.substring(2), c, false));
+            } else if (line.startsWith("S:")) {
+                statics.add(line.substring(2));
+            }
+        }
+        if (!allKeywords.isEmpty()) {
+            add(c, new PerpetualKeywords(timestamp, allKeywords, Lists.newArrayList(), false));
+        }
+        if (!triggers.isEmpty() || !statics.isEmpty()) {
+            List<StaticAbility> stAbs = Lists.newArrayList();
+            for (String st : statics) {
+                stAbs.add(StaticAbility.create(st, c, c.getCurrentState(), false));
+            }
+            ICardTraitChanges changes = c.addChangedCardTraits(List.of(), triggers, List.of(), stAbs, null, timestamp, 0);
+            c.addPerpetual(new PerpetualAbilities(timestamp, changes));
+        }
+        if (costChange != 0 && !c.getManaCost().isNoCost()) {
+            ManaCostBeingPaid cost = new ManaCostBeingPaid(c.getManaCost());
+            if (costChange < 0) {
+                cost.decreaseGenericMana(Math.min(-costChange, c.getManaCost().getGenericCost()));
+            } else {
+                cost.increaseGenericMana(costChange);
+            }
+            add(c, new PerpetualManaCost(timestamp, cost.toManaCost()));
         }
         c.updatePTforView();
     }

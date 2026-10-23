@@ -57,7 +57,10 @@ public final class RunMatchFactory {
         if (encounter.commander != null) {
             enemy.assignCommander();
         }
-        enemy.setStartingLife(encounter.life);
+        enemy.setStartingLife(run.encounterLife(encounter));
+        for (Map.Entry<String, RunUpgrade> e : run.encounterUpgrades(encounter).entrySet()) {
+            enemy.addCardUpgrade(e.getKey(), e.getValue().toCardUpgrade());
+        }
         enemy.setStartingHand(encounter.hand);
         enemy.setBase(run.getEncounterBase(encounter));
         enemy.setPlayer(enemyPlayer);

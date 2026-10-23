@@ -37,12 +37,18 @@ public class RunMap {
     }
 
     public static RunMap generate(final RunConfig cfg, final RoguelikeContent content, final Random rnd) {
+        return generate(cfg, cfg.mapLayout, content, rnd, Set.of());
+    }
+
+    /** A map from the given layout; encounters in {@code avoid} (bosses met earlier in the run) are left out while others fit. */
+    public static RunMap generate(final RunConfig cfg, final List<String> layout, final RoguelikeContent content,
+                                  final Random rnd, final Set<String> avoid) {
         final int lanes = Math.max(1, cfg.mapLanes);
         RunMap map = new RunMap();
         List<MapNode> below = null;
         int row = 0;
         Map<Integer, int[]> tiers = new HashMap<>();
-        for (String entry : cfg.mapLayout) {
+        for (String entry : layout) {
             List<String> words = new ArrayList<>(List.of(entry.trim().toUpperCase(Locale.ROOT).split("\\s+")));
             int[] tier = {1, 3};
             String last = words.get(words.size() - 1);
@@ -80,7 +86,7 @@ public class RunMap {
             }
         }
         if (below == null || below.size() != 1 || below.get(0).type != NodeType.BOSS) {
-            throw new IllegalStateException("mapLayout must end with BOSS: " + cfg.mapLayout);
+            throw new IllegalStateException("A map layout must end with BOSS: " + layout);
         }
         map.bossId = below.get(0).id;
 
@@ -90,7 +96,7 @@ public class RunMap {
         for (MapNode n : map.nodes) {
             byRow.computeIfAbsent(n.row, k -> new ArrayList<>()).add(n);
         }
-        Set<String> used = new HashSet<>();
+        Set<String> used = new HashSet<>(avoid);
         for (List<MapNode> rowNodes : byRow.values()) {
             List<MapNode> order = new ArrayList<>(rowNodes);
             Collections.shuffle(order, rnd);
@@ -204,7 +210,10 @@ public class RunMap {
             throw new IllegalStateException("No " + (boss ? "boss" : "enemy") + " encounter for row " + node.row);
         }
         if (boss) {
-            return options.get(rnd.nextInt(options.size()));
+            List<String> fresh = new ArrayList<>(options);
+            fresh.removeAll(used);
+            List<String> from = fresh.isEmpty() ? options : fresh;
+            return from.get(rnd.nextInt(from.size()));
         }
         options.removeAll(used);
         return options.isEmpty() ? null : options.get(rnd.nextInt(options.size()));
