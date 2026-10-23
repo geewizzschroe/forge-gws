@@ -257,6 +257,53 @@ public class EnemyBasesTest extends AITest {
         assertEquals("Shock 2 and the Wizard 1", life - 3, opp.getLife());
     }
 
+    /** A creature of mine on the battlefield that is my commander. */
+    private Card commander(final String name) {
+        Card c = addCardToZone(name, me, ZoneType.Command);
+        me.addCommander(c);
+        Card onField = game.getAction().moveToPlay(c, null, null);
+        resolveTriggers();
+        return onField;
+    }
+
+    @Test
+    public void huntersLodgeGrowsTheCommanderEachCombat() {
+        setUp("hunters_lodge.txt");
+        Card halana = commander("Halana and Alena, Partners");
+        playUntilPhase(game, PhaseType.COMBAT_DECLARE_ATTACKERS);
+        assertEquals(1, halana.getCounters(CounterEnumType.P1P1));
+    }
+
+    @Test
+    public void benthicGrottoGrowsTheCommanderOnTheSecondDraw() {
+        setUp("benthic_grotto.txt");
+        Card tatyova = commander("Tatyova, Benthic Druid");
+        me.drawCard();
+        resolveTriggers();
+        assertEquals(0, tatyova.getCounters(CounterEnumType.P1P1));
+        me.drawCard();
+        resolveTriggers();
+        assertEquals(1, tatyova.getCounters(CounterEnumType.P1P1));
+        me.drawCard();
+        resolveTriggers();
+        assertEquals("only the second card", 1, tatyova.getCounters(CounterEnumType.P1P1));
+    }
+
+    @Test
+    public void korSanctuaryMakesAPilgrimAfterLifegain() {
+        setUp("kor_sanctuary.txt");
+        playUntilPhase(game, PhaseType.END_OF_TURN);
+        resolveTriggers();
+        assertEquals("no life gained, no token", 0, tokens(me, "Kor"));
+        playUntilNextTurn(game);
+        playUntilNextTurn(game);
+        playUntilPhase(game, PhaseType.MAIN1);
+        me.gainLife(1, null, null);
+        playUntilPhase(game, PhaseType.END_OF_TURN);
+        resolveTriggers();
+        assertEquals(1, tokens(me, "Kor"));
+    }
+
     @Test
     public void bigBridgeGivesEquippedCreaturesFirstStrike() {
         setUp("big_bridge.txt");

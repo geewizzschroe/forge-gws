@@ -94,6 +94,12 @@ public class RunConfig {
     // Decided 2026-10-23: rare relics are offered by bosses; elsewhere each relic slot is rare with this chance.
     // PLACEHOLDER: about 1 in 30. Meant to become a level-up perk later.
     public double rareRelicChance = 1.0 / 30;
+    // Decided 2026-10-23: each fight after a floor's first row becomes an Elite at this chance, at most
+    // eliteMaxPerFloor a floor, each Elite once a floor.
+    public double eliteChance = 0.25;
+    public int eliteMaxPerFloor = 3;
+    // PLACEHOLDER: relic choices after an Elite.
+    public int eliteRelicChoices = 3;
     // PLACEHOLDER: relic choices after a boss.
     public int bossRelicChoices = 3;
 

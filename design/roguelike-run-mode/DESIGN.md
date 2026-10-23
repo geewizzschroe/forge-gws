@@ -53,6 +53,7 @@ What makes it different from other Forge modes:
 - Continue from the node just played. Repeat until the only available node is the Boss.
 - **Floors** (decided and built 2026-10-23, D1): a run is **2 floors** (`floors` in `config.json`). Beating floor 1's boss gives its relic, then a **full heal** and a choice of **3 rare upgrades for the Commander** (no skip), then floor 2 begins on a new map. Beating the last floor's boss wins the run. A boss met on floor 1 isn't picked again while another boss is left.
   - **Rare upgrades** (`rare_upgrades.json`): a separate, stronger pool offered only between floors, always for the Commander, with no weak entries. Starting list: costs {1} less, costs {2} less, +4/+4 and costs {1} more, Ward 3, Prowess, Double strike, +2/+2, +1/+1 and lifelink, "Mind Rot" (when it enters, each opponent discards a card) and "Spellweaver" (your instants and sorceries cost {1} less). An upgrade that would change nothing (a keyword already there, a cost cut on a Commander with no generic mana left) isn't offered.
+  - **Elites** (decided and built 2026-10-23, `proposals/elites-2026-10-23.md`): enemies led by a Commander, nearer normal enemies than bosses in power. 40 cards, 25 life. Each fight above a floor's first row becomes an Elite at 1 in 4 (`eliteChance`), at most 3 a floor, each Elite once a floor; tiers don't apply. Beating one gives the normal gold, a card reward of single cards where every creature comes upgraded, then a choice of relics. Built: Halana and Alena (RG), Tatyova (GU), Ayli (WB).
   - **Floor 2 is harder** (`floorRules` in `config.json`, numbers PLACEHOLDER): its fights start at tier 2 (`FIGHTS T2`, `STRETCH 2 T2`, `STRETCH 3 T2-3`); every enemy has **+5 life** and **2 of its creature cards carry a random upgrade** (from the normal upgrade pool, fixed per enemy and run); and every enemy's Base gains **"Veterans"**: the first creature that enters under their control each match gets a +1/+1 counter.
 - There is no manual deck editing anywhere in the mode.
 
@@ -91,7 +92,7 @@ What makes it different from other Forge modes:
 ### 2.4 Relics and the Commander
 
 - Relics are acquired from **shops and bosses**.
-- **Rare relics** (decided 2026-10-23): a boss's relic choice draws from normal and rare relics alike; anywhere else (shops, the blood altar event) each relic slot is a rare relic only at `rareRelicChance` (PLACEHOLDER about 1 in 30). That chance is meant to become a level-up perk later (not built). The first rare relic is **Hostile Makeover**: when a creature enters under an opponent's control, choose one: tap it and put a stun counter on it; put a -1/-1 counter on it; or switch its power and toughness (for as long as it stays on the battlefield). Once per turn.
+- **Rare relics** (decided 2026-10-23; changed the same day): a boss's relic choice draws from rare relics only (normal ones fill it once the rare ones run out), and Elites give normal relics (2.1, Elites); anywhere else (shops, the blood altar event) each relic slot is a rare relic only at `rareRelicChance` (PLACEHOLDER about 1 in 30). That chance is meant to become a level-up perk later (not built). The first rare relic is **Hostile Makeover**: when a creature enters under an opponent's control, choose one: tap it and put a stun counter on it; put a -1/-1 counter on it; or switch its power and toughness (for as long as it stays on the battlefield). Once per turn.
 - **Magpie's Eye** (2026-10-23, normal relic): if you would draw a card during your draw step or on an opponent's turn, instead scry 3, then draw.
 - The Commander (or its game logic) can be upgraded through relics or level-up progression. The "big cool" example: being able to play Jill as her **Shiva** side directly.
 - The Commander itself does not change identity. Upgrades modify it.
@@ -517,7 +518,8 @@ All of this was used successfully in the design sessions.
 21. Card removal at the shop (2.1).
 22. Landless play: quarantine only what can never work; land searches and landcycling in Final Fantasy and Foundations rewritten; two-colour Towns in the land picker (2.5.1).
 23. Floors (D1): 2 floors; between them a relic, a full heal and a rare Commander upgrade; floor 2 enemies get more life, upgraded cards and a shared Base ability (2.1).
-24. Rare relics: in boss relic choices like any relic, elsewhere only at a small chance (2.4).
+24. Rare relics: in boss relic choices like any relic, elsewhere only at a small chance (2.4). *Changed the same day by 25.*
+25. Elites: Commander-led fights that replace some normal fights and give a relic; bosses give rare relics instead (2.1, 2.4).
 
 ---
 

@@ -96,13 +96,13 @@ public class NewRelicsTest extends AITest {
             }
         }
         c.getConfig().rareRelicChance = 1;
-        boolean seen = false;
+        int rare = 0;
         for (OfferOption o : shop(c, 1).options) {
-            seen |= "hostile_makeover".equals(o.relicId);
+            rare += o.relicId != null && c.getRelic(o.relicId).rare ? 1 : 0;
         }
-        assertTrue("a rare relic in a shop at 100%", seen);
+        assertEquals("every relic slot is rare at 100%", c.getConfig().shopRelicChoices, rare);
 
-        // a boss offers rare relics alongside the others
+        // a boss offers rare relics first, then normal ones once the rare ones run out
         c.getConfig().bossRelicChoices = 50;
         Run run = Run.start(c, "jill_mono_blue", 3);
         RunState s = run.getState();

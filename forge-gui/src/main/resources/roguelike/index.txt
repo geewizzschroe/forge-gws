@@ -1,4 +1,5 @@
 bases/ancient_grove.txt
+bases/benthic_grotto.txt
 bases/big_bridge.txt
 bases/black_mage_village.txt
 bases/bodhum_beachfront.txt
@@ -10,7 +11,9 @@ bases/dragoon_barracks.txt
 bases/frozen_bastion.txt
 bases/goblin_warren.txt
 bases/guardian_corps_armory.txt
+bases/hunters_lodge.txt
 bases/kefkas_tower.txt
+bases/kor_sanctuary.txt
 bases/malboro_bog.txt
 bases/mognet_central.txt
 bases/mountain_pass.txt
@@ -35,6 +38,9 @@ encounters/cactuar_desert.json
 encounters/chocobo_stables.json
 encounters/dragons_aerie.json
 encounters/elf_grove.json
+encounters/elite_ayli.json
+encounters/elite_halana_and_alena.json
+encounters/elite_tatyova.json
 encounters/goblin_raiders.json
 encounters/malboro_marsh.json
 encounters/moogle_post.json
@@ -102,6 +108,9 @@ relics/hostile_makeover.json
 relics/iron_heart.json
 relics/lucky_coin.json
 relics/magpies_eye.json
+relics/ribbon.json
+relics/scholars_tome.json
+relics/sprint_shoes.json
 relics/war_drum.json
 relics/whetstone.json
 starters/jill_blue_black.json

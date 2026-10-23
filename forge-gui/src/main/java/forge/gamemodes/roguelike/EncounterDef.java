@@ -8,6 +8,8 @@ public class EncounterDef {
     public String id;
     public String name;
     public boolean boss;
+    /** An Elite (decided 2026-10-23): has a commander, takes the place of some fights, and gives a relic. Ignores tiers. */
+    public boolean elite;
     /** Difficulty tier, 1 (early) to 3 (late), for the map's ladder (proposal 1.3). Bosses ignore it. */
     public int tier = 1;
     public String commander;

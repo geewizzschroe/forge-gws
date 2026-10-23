@@ -79,6 +79,7 @@ public class RunMapView extends FDisplayObject {
         return switch (n.type) {
             case ENEMY -> new Color(0.75f, 0.25f, 0.2f, 1f);
             case BOSS -> new Color(0.5f, 0.05f, 0.1f, 1f);
+            case ELITE -> new Color(0.85f, 0.45f, 0.1f, 1f);
             case SHOP -> new Color(0.8f, 0.6f, 0.1f, 1f);
             case REST -> new Color(0.2f, 0.6f, 0.3f, 1f);
             case CUT -> new Color(0.45f, 0.45f, 0.45f, 1f);
@@ -92,6 +93,7 @@ public class RunMapView extends FDisplayObject {
         return switch (n.type) {
             case ENEMY -> "E";
             case BOSS -> "B";
+            case ELITE -> "!";
             case SHOP -> "S";
             case REST -> "R";
             case CUT -> "C";

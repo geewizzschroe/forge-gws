@@ -1,0 +1,9 @@
+{
+  "id": "sprint_shoes",
+  "name": "Sprint Shoes",
+  "description": "Creatures you control have haste.",
+  "rare": true,
+  "script": [
+    "S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.YouCtrl | AddKeyword$ Haste | Description$ Sprint Shoes: Creatures you control have haste."
+  ]
+}

@@ -32,7 +32,7 @@ public class GreedyPolicy implements RunPolicy {
                 case REST -> life * 2 < max ? 100 : 45; // a campfire can also train
                 case SHOP -> gold >= run.getContent().getConfig().shopCardPrice ? 60 : 0;
                 case UPGRADE -> 50;
-                case ENEMY, BOSS -> 40;
+                case ENEMY, BOSS, ELITE -> 40;
                 case CUT -> 1;
                 case WORKSHOP -> gold >= run.getContent().getConfig().workshopArtifactPrice ? 55 : 0;
                 case EVENT -> 30;

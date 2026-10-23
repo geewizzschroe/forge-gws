@@ -278,14 +278,16 @@ public class Run {
             }
             state.life = Math.max(1, Math.min(endLife, state.maxLife));
             boolean boss = node.type == NodeType.BOSS;
+            boolean elite = node.type == NodeType.ELITE;
             int gold = boss ? content.getConfig().goldPerBoss : content.getConfig().goldPerEnemy;
             state.gold += gold;
             state.log.add("Beat " + encounter.name + " with " + endLife + " life; run life " + state.life
                     + ", +" + gold + " gold");
-            state.offer = boss ? makeBossRelicOffer() : makeCardRewardOffer();
+            state.eliteRelicPending = elite;
+            state.offer = boss ? makeBossRelicOffer() : makeCardRewardOffer(elite);
             if (state.offer.options.isEmpty()) {
                 state.offer = null;
-                afterMatchReward();
+                nextMatchReward();
             }
         } else if (state.retriesLeft > 0) {
             state.xpEarned += Math.round(cfg.xpLostMatch * cfg.xpMultiplier);
@@ -300,6 +302,19 @@ public class Run {
             state.log.add("Lost to " + encounter.name + "; the run is over");
         }
         return won;
+    }
+
+    /** After a match reward is taken: an Elite's relic choice, if one is due, or on with the run. */
+    private void nextMatchReward() {
+        if (state.eliteRelicPending) {
+            state.eliteRelicPending = false;
+            state.offer = makeEliteRelicOffer();
+            if (!state.offer.options.isEmpty()) {
+                return;
+            }
+            state.offer = null;
+        }
+        afterMatchReward();
     }
 
     private void afterMatchReward() {
@@ -409,10 +424,11 @@ public class Run {
             advanceFloor();
             return;
         }
-        boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
+        boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC
+                || offer.kind == OfferKind.RELIC_REWARD;
         state.offer = null;
         if (matchReward) {
-            afterMatchReward();
+            nextMatchReward();
         } else {
             completeNode();
         }
@@ -472,7 +488,8 @@ public class Run {
             state.offer = offer.returnToShop;
             return;
         }
-        boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC;
+        boolean matchReward = offer.kind == OfferKind.CARD_REWARD || offer.kind == OfferKind.BOSS_RELIC
+                || offer.kind == OfferKind.RELIC_REWARD;
         state.offer = null;
         state.log.add(switch (offer.kind) {
             case SHOP -> "Left the shop";
@@ -481,7 +498,7 @@ public class Run {
             default -> "Skipped the choice";
         });
         if (matchReward) {
-            afterMatchReward();
+            nextMatchReward();
         } else {
             completeNode();
         }
@@ -554,7 +571,8 @@ public class Run {
 
     // ---------------------------------------------------------------- offers
 
-    private Offer makeCardRewardOffer() {
+    /** A match's card reward. An Elite's is single cards only, and each creature among them comes upgraded. */
+    private Offer makeCardRewardOffer(final boolean elite) {
         RunConfig cfg = content.getConfig();
         Random rnd = state.nextRandom();
         byte colours = runColours();
@@ -577,7 +595,7 @@ public class Run {
             }
         }
         Offer offer = new Offer(OfferKind.CARD_REWARD, false); // rewards can't be turned down
-        if (rnd.nextDouble() < cfg.bucketRewardChance) {
+        if (!elite && rnd.nextDouble() < cfg.bucketRewardChance) {
             // buckets in the run's colours, plus now and then one off-colour or mixed-colour bucket to splash
             List<CardPoolDef> offered = new ArrayList<>();
             List<CardPoolDef> splash = new ArrayList<>();
@@ -598,12 +616,12 @@ public class Run {
                 return offer;
             }
         }
-        addSingleCardOptions(offer, rnd, colours);
+        addSingleCardOptions(offer, rnd, colours, elite ? 1.0 : cfg.rewardUpgradeChance);
         return offer;
     }
 
     /** Single-card options: one slot curated, one from the Full Pool, the rest either at even odds, in random order. */
-    private void addSingleCardOptions(final Offer offer, final Random rnd, final byte colours) {
+    private void addSingleCardOptions(final Offer offer, final Random rnd, final byte colours, final double upgradeChance) {
         RunConfig cfg = content.getConfig();
         List<Boolean> curatedSlots = new ArrayList<>();
         for (int i = 0; i < cfg.cardRewardChoices; i++) {
@@ -630,7 +648,7 @@ public class Run {
             o.source = fromCurated ? "curated" : "full pool";
             o.cards.put(c, cfg.cardRewardCopies);
             List<RunUpgrade> useful = isCreature(c) ? usefulUpgrades(c) : List.of();
-            if (!useful.isEmpty() && rnd.nextDouble() < cfg.rewardUpgradeChance) {
+            if (!useful.isEmpty() && rnd.nextDouble() < upgradeChance) {
                 o.upgradeCard = c;
                 o.upgrade = useful.get(rnd.nextInt(useful.size()));
             }
@@ -638,11 +656,26 @@ public class Run {
         }
     }
 
+    /** After an Elite: a relic choice, each slot a rare relic only at {@code rareRelicChance}. */
+    private Offer makeEliteRelicOffer() {
+        Offer offer = new Offer(OfferKind.RELIC_REWARD, true);
+        for (String id : pickRelics(content.getConfig().eliteRelicChoices, state.nextRandom())) {
+            OfferOption o = new OfferOption();
+            o.relicId = id;
+            o.label = content.getRelic(id).name;
+            offer.options.add(o);
+        }
+        return offer;
+    }
+
+    /** A boss offers rare relics (2026-10-23); normal ones fill the choice only once the rare ones run out. */
     private Offer makeBossRelicOffer() {
         Offer offer = new Offer(OfferKind.BOSS_RELIC, true);
-        List<String> pool = unownedRelics(false);
-        pool.addAll(unownedRelics(true));
-        for (String id : pick(pool, content.getConfig().bossRelicChoices, state.nextRandom())) {
+        int n = content.getConfig().bossRelicChoices;
+        Random rnd = state.nextRandom();
+        List<String> ids = pick(unownedRelics(true), n, rnd);
+        ids.addAll(pick(unownedRelics(false), n - ids.size(), rnd));
+        for (String id : ids) {
             OfferOption o = new OfferOption();
             o.relicId = id;
             o.label = content.getRelic(id).name;
@@ -791,7 +824,7 @@ public class Run {
             }
             case "card" -> {
                 Offer cards = new Offer(OfferKind.CARD_REWARD, true);
-                addSingleCardOptions(cards, rnd, runColours());
+                addSingleCardOptions(cards, rnd, runColours(), content.getConfig().rewardUpgradeChance);
                 offer.options.addAll(cards.options);
             }
             case "relicForLife" -> {
@@ -945,7 +978,7 @@ public class Run {
         return out;
     }
 
-    private static boolean isCreature(final String name) {
+    static boolean isCreature(final String name) {
         PaperCard pc = StaticData.instance().getCommonCards().getCard(name);
         return pc != null && pc.getRules().getType().isCreature();
     }

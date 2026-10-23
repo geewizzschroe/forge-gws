@@ -44,7 +44,8 @@ public final class RunText {
         if (s.offer != null) {
             return switch (s.offer.kind) {
                 case CARD_REWARD -> lastLine(s) + "\nChoose a reward.";
-                case BOSS_RELIC -> lastLine(s) + "\nThe boss is beaten! Choose a relic.";
+                case BOSS_RELIC -> lastLine(s) + "\nThe boss is beaten! Choose a rare relic.";
+                case RELIC_REWARD -> "The Elite is beaten! Choose a relic.";
                 case SHOP -> "Shop. You have " + s.gold + " gold.";
                 case WORKSHOP -> "Workshop. You have " + s.gold + " gold.";
                 case EVENT -> s.offer.title + "\n" + s.offer.text;
@@ -57,7 +58,7 @@ public final class RunText {
         }
         EncounterDef enc = run.getActiveEncounter();
         if (enc != null) {
-            return (enc.boss ? "Boss: " : "Next fight: ") + enc.name + " (" + enc.life + " life)";
+            return (enc.boss ? "Boss: " : enc.elite ? "Elite: " : "Next fight: ") + enc.name + " (" + run.encounterLife(enc) + " life)";
         }
         return "Choose where to go next.";
     }
@@ -70,10 +71,10 @@ public final class RunText {
     public static String nodeDetail(final Run run, final MapNode n) {
         RunConfig cfg = run.getContent().getConfig();
         return switch (n.type) {
-            case ENEMY, BOSS -> {
+            case ENEMY, BOSS, ELITE -> {
                 EncounterDef e = run.getContent().getEncounter(n.encounterId);
                 StringBuilder sb = new StringBuilder();
-                sb.append(n.type == NodeType.BOSS ? "Boss: " : "Enemy: ").append(e.name).append('\n');
+                sb.append(n.type == NodeType.BOSS ? "Boss: " : n.type == NodeType.ELITE ? "Elite: " : "Enemy: ").append(e.name).append('\n');
                 sb.append(run.encounterLife(e)).append(" life, ").append(e.hand).append("-card hand");
                 if (e.commander != null) {
                     sb.append(", commander ").append(e.commander);
@@ -148,6 +149,7 @@ public final class RunText {
         String type = switch (n.type) {
             case ENEMY -> "Enemy";
             case BOSS -> "Boss";
+            case ELITE -> "Elite";
             case SHOP -> "Shop";
             case REST -> "Campfire";
             case CUT -> "Cut a card";

@@ -155,7 +155,7 @@ public class RoguelikeContentTest extends AITest {
 
     @Test
     public void enemyDecksFollowTheirShape() {
-        // DESIGN.md, enemy decks: 40 cards (bosses 60), 2 to 4 copies of each card, commanders only for bosses
+        // DESIGN.md, enemy decks: 40 cards (bosses 60), 2 to 4 copies of each card, commanders only for bosses and Elites
         RoguelikeContent c = RoguelikeContent.load();
         for (EncounterDef e : c.getEncounters().values()) {
             int total = 0;
@@ -164,7 +164,8 @@ public class RoguelikeContentTest extends AITest {
                 total += card.getValue();
             }
             assertEquals(e.id + ": deck size", e.boss ? 60 : 40, total);
-            assertEquals(e.id + ": commander", e.boss, e.commander != null);
+            assertEquals(e.id + ": commander", e.boss || e.elite, e.commander != null);
+            assertFalse(e.id + ": a boss can't also be an Elite", e.boss && e.elite);
         }
     }
 

@@ -1,0 +1,10 @@
+{
+  "id": "scholars_tome",
+  "name": "Scholar's Tome",
+  "description": "At the beginning of your upkeep, draw a card.",
+  "rare": true,
+  "script": [
+    "T:Mode$ Phase | Phase$ Upkeep | ValidPlayer$ You | TriggerZones$ Command | Execute$ scholars_tome_Draw | TriggerDescription$ Scholar's Tome: At the beginning of your upkeep, draw a card.",
+    "SVar:scholars_tome_Draw:DB$ Draw | Defined$ You | NumCards$ 1"
+  ]
+}

@@ -1,0 +1,6 @@
+Name:Hunter's Lodge
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ BeginCombat | ValidPlayer$ You | TriggerZones$ Command | IsPresent$ Creature.IsCommander+YouCtrl | Execute$ lodge_Counter | TriggerDescription$ Trophy Wall — At the beginning of combat on your turn, put a +1/+1 counter on your commander.
+SVar:lodge_Counter:DB$ PutCounter | Defined$ Valid Creature.IsCommander+YouCtrl | CounterType$ P1P1 | CounterNum$ 1
+Oracle:Trophy Wall — At the beginning of combat on your turn, put a +1/+1 counter on your commander.

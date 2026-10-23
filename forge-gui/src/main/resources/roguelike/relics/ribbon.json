@@ -1,0 +1,9 @@
+{
+  "id": "ribbon",
+  "name": "Ribbon",
+  "description": "Your commander has hexproof.",
+  "rare": true,
+  "script": [
+    "S:Mode$ Continuous | EffectZone$ Command | Affected$ Creature.IsCommander+YouCtrl | AddKeyword$ Hexproof | Description$ Ribbon: Your commander has hexproof."
+  ]
+}

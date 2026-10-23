@@ -19,7 +19,9 @@ public enum OfferKind {
     /** Rest node (a campfire): rest, or train or purge, which open their own choice. */
     CAMPFIRE,
     /** Between floors: pick one of three rare upgrades for the commander. */
-    COMMANDER_UPGRADE;
+    COMMANDER_UPGRADE,
+    /** The relic choice after an Elite (2026-10-23). */
+    RELIC_REWARD;
 
     /** A place to buy things with gold (bought with {@code Run.buy}, left with {@code Run.skip}). */
     public boolean isStore() {

@@ -1,0 +1,29 @@
+{
+  "id": "elite_ayli",
+  "name": "Ayli's Pilgrimage",
+  "elite": true,
+  "commander": "Ayli, Eternal Pilgrim",
+  "base": "kor_sanctuary.txt",
+  "life": 25,
+  "hand": 7,
+  "deck": {
+    "Doomed Dissenter": 3,
+    "Dwarven Castle Guard": 3,
+    "Celestial Unicorn": 3,
+    "Dire Fleet Hoarder": 2,
+    "Daybreak Chaplain": 2,
+    "Ahriman": 2,
+    "Extinguish the Light": 2,
+    "Deadly Riposte": 2,
+    "Agonizing Syphon": 2,
+    "Basri's Acolyte": 2,
+    "Eaten Alive": 2,
+    "Ajani's Pridemate": 3,
+    "Bastion of Remembrance": 2,
+    "Al Bhed Salvagers": 2,
+    "Angel of Vitality": 2,
+    "Archfiend's Vessel": 2,
+    "Brightmare": 2,
+    "Exemplar of Light": 2
+  }
+}

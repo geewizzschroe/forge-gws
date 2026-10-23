@@ -45,7 +45,8 @@ public class RunMapTest extends AITest {
                     assertNotNull(n.encounterId);
                     EncounterDef e = c.getEncounter(n.encounterId);
                     assertEquals(n.type == NodeType.BOSS, e.boss);
-                    if (!e.boss) { // the default layout's ladder: T1 at the start, T1-2 then T2-3 in the stretches
+                    assertEquals(n.type == NodeType.ELITE, e.elite);
+                    if (!e.boss && !e.elite) { // the default layout's ladder: T1 at the start, T1-2 then T2-3 in the stretches
                         int lo = n.row >= 5 ? 2 : 1;
                         int hi = n.row == 0 ? 1 : n.row >= 5 ? 3 : 2;
                         assertTrue(e.id + " (tier " + e.tier + ") on row " + n.row, e.tier >= lo && e.tier <= hi);
@@ -96,7 +97,7 @@ public class RunMapTest extends AITest {
             for (int r : List.of(2, 3, 5, 6, 7)) {
                 assertEquals("stretch row " + r, 3, rows.get(r).size());
                 for (MapNode n : rows.get(r)) {
-                    assertTrue(n.type + " in a stretch", List.of(NodeType.ENEMY, NodeType.SHOP, NodeType.REST, NodeType.WORKSHOP, NodeType.EVENT).contains(n.type));
+                    assertTrue(n.type + " in a stretch", List.of(NodeType.ENEMY, NodeType.ELITE, NodeType.SHOP, NodeType.REST, NodeType.WORKSHOP, NodeType.EVENT).contains(n.type));
                 }
             }
             // a random walk counts the steps with a real choice

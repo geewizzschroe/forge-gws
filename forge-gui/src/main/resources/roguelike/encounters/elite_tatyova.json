@@ -1,0 +1,27 @@
+{
+  "id": "elite_tatyova",
+  "name": "Tatyova's Tidepools",
+  "elite": true,
+  "commander": "Tatyova, Benthic Druid",
+  "base": "benthic_grotto.txt",
+  "life": 25,
+  "hand": 7,
+  "deck": {
+    "Erudite Wizard": 3,
+    "Lat-Nam Adept": 3,
+    "Mystic Skyfish": 3,
+    "Elfsworn Giant": 3,
+    "Ambush Wolf": 2,
+    "Faerie Vandal": 3,
+    "Mischievous Mystic": 3,
+    "Merfolk Branchwalker": 3,
+    "Eaten by Piranhas": 2,
+    "Skyclave Pick-Axe": 2,
+    "Homunculus Horde": 2,
+    "Scythecat Cub": 2,
+    "Jadelight Ranger": 2,
+    "Cackling Prowler": 3,
+    "Bigfin Bouncer": 2,
+    "Kapsho Kitefins": 2
+  }
+}

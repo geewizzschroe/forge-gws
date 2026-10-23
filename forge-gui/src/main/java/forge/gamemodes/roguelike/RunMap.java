@@ -26,6 +26,9 @@ import java.util.TreeMap;
  * An entry may end with a tier range for its fights, such as {@code T1} or {@code T2-3} (proposal 1.3): fights
  * there draw enemies of those tiers (the nearest tiers if the content has none of those). Without one, any tier
  * fits. An enemy appears at most once on a floor; a fight with no unused fitting enemy left becomes an Event.
+ * <p>
+ * Then each fight above the first row becomes an Elite at {@code eliteChance}, at most {@code eliteMaxPerFloor} a
+ * floor, each Elite at most once (2026-10-23).
  */
 public class RunMap {
     public List<MapNode> nodes = new ArrayList<>();
@@ -112,7 +115,37 @@ public class RunMap {
                 }
             }
         }
+        placeElites(map, byRow, cfg, content, used, rnd);
         return map;
+    }
+
+    private static void placeElites(final RunMap map, final Map<Integer, List<MapNode>> byRow, final RunConfig cfg,
+                                    final RoguelikeContent content, final Set<String> used, final Random rnd) {
+        List<String> elites = new ArrayList<>();
+        for (EncounterDef e : content.getEncounters().values()) {
+            if (e.elite && !used.contains(e.id)) {
+                elites.add(e.id);
+            }
+        }
+        if (elites.isEmpty()) {
+            return;
+        }
+        int firstRow = map.get(map.startIds.get(0)).row;
+        int placed = 0;
+        for (List<MapNode> rowNodes : byRow.values()) {
+            List<MapNode> order = new ArrayList<>(rowNodes);
+            Collections.shuffle(order, rnd);
+            for (MapNode n : order) {
+                if (n.type != NodeType.ENEMY || n.row == firstRow || placed >= cfg.eliteMaxPerFloor || elites.isEmpty()
+                        || rnd.nextDouble() >= cfg.eliteChance) {
+                    continue;
+                }
+                n.type = NodeType.ELITE;
+                n.encounterId = elites.remove(rnd.nextInt(elites.size()));
+                used.add(n.encounterId);
+                placed++;
+            }
+        }
     }
 
     private static MapNode add(final RunMap map, final int row, final int column, final NodeType type) {
@@ -201,7 +234,7 @@ public class RunMap {
         List<String> options = new ArrayList<>();
         for (int widen = 0; options.isEmpty() && widen <= 3; widen++) {
             for (EncounterDef e : content.getEncounters().values()) {
-                if (e.boss == boss && (boss || (e.tier >= tier[0] - widen && e.tier <= tier[1] + widen))) {
+                if (!e.elite && e.boss == boss && (boss || (e.tier >= tier[0] - widen && e.tier <= tier[1] + widen))) {
                     options.add(e.id);
                 }
             }

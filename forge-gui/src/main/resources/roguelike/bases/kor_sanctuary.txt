@@ -1,0 +1,7 @@
+Name:Kor Sanctuary
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ End of Turn | ValidPlayer$ You | TriggerZones$ Command | CheckSVar$ sanctuary_Gained | SVarCompare$ GE1 | Execute$ sanctuary_Token | TriggerDescription$ Pilgrims — At the beginning of your end step, if you gained life this turn, create a 1/1 white Kor Soldier creature token.
+SVar:sanctuary_Token:DB$ Token | TokenScript$ w_1_1_kor_soldier
+SVar:sanctuary_Gained:Count$LifeYouGainedThisTurn
+Oracle:Pilgrims — At the beginning of your end step, if you gained life this turn, create a 1/1 white Kor Soldier creature token.

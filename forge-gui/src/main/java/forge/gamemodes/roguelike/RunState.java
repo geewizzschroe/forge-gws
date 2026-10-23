@@ -54,6 +54,8 @@ public class RunState {
     /** Life when the active match was entered, restored by a retry. */
     public int lifeBeforeMatch;
     public Offer offer;
+    /** An Elite was beaten: its relic choice follows the card reward. */
+    public boolean eliteRelicPending;
     /** Nodes finished on the current floor's map, in order (the path drawn on the map). */
     public List<Integer> visited = new ArrayList<>();
     public int matchesWon;

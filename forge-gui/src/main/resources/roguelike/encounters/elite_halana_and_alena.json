@@ -1,0 +1,28 @@
+{
+  "id": "elite_halana_and_alena",
+  "name": "Halana and Alena's Hunt",
+  "elite": true,
+  "commander": "Halana and Alena, Partners",
+  "base": "hunters_lodge.txt",
+  "life": 25,
+  "hand": 7,
+  "deck": {
+    "Beast-Kin Ranger": 3,
+    "Gnarlid Colony": 3,
+    "Kujar Seedsculptor": 3,
+    "Fierce Witchstalker": 3,
+    "Hunter's Edge": 3,
+    "Duskshell Crawler": 2,
+    "Gnarlback Rhino": 3,
+    "Eager Trufflesnout": 2,
+    "Giant Cindermaw": 2,
+    "Felling Blow": 2,
+    "Garruk's Uprising": 2,
+    "Inspiring Call": 2,
+    "Ripjaw Raptor": 2,
+    "Quirion Beastcaller": 2,
+    "Colossal Dreadmaw": 2,
+    "Garruk's Packleader": 2,
+    "Hill Gigas": 2
+  }
+}
