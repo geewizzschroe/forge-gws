@@ -96,6 +96,8 @@ public class AiController {
     private SpellAbilityPicker simPicker;
     private int lastAttackAggression;
     private boolean useLivingEnd;
+    // the cycling plan came from an AICyclingPlan card, not Living End itself
+    private boolean cyclingPlanFromFlag;
     private List<SpellAbility> skipped;
 
     public AiController(final Player computerPlayer, final Game game0) {
@@ -1656,9 +1658,10 @@ public class AiController {
         //update LivingEndPlayer
         // a card with SVar AICyclingPlan (run mode's Moment of Evil Triumph) asks for the same cycle-then-reanimate play,
         // and keeps asking from the hand once drawn
-        useLivingEnd = IterableUtil.any(player.getZone(ZoneType.Library), CardPredicates.nameEquals("Living End"))
-                || IterableUtil.any(player.getZone(ZoneType.Library), c -> c.hasSVar("AICyclingPlan"))
+        cyclingPlanFromFlag = IterableUtil.any(player.getZone(ZoneType.Library), c -> c.hasSVar("AICyclingPlan"))
                 || IterableUtil.any(player.getZone(ZoneType.Hand), c -> c.hasSVar("AICyclingPlan"));
+        useLivingEnd = IterableUtil.any(player.getZone(ZoneType.Library), CardPredicates.nameEquals("Living End"))
+                || cyclingPlanFromFlag;
 
         SpellAbility chosenSa = chooseSpellAbilityToPlayFromList(saList, true);
 
@@ -1715,7 +1718,10 @@ public class AiController {
                     // TODO: generalize the implementation so that superfluous logic-specific checks for life, library size, etc. aren't needed
                     AiPlayDecision aiPlayDecision = AiPlayDecision.CantPlaySa;
                     if (useLivingEnd) {
-                        if (sa.isCycling() && sa.canCastTiming(player)
+                        // with the flag, cycle after the first main phase, so creatures (a commander above all) are cast first
+                        boolean holdForMain1 = cyclingPlanFromFlag && game.getPhaseHandler().isPlayerTurn(player)
+                                && game.getPhaseHandler().getPhase() == PhaseType.MAIN1;
+                        if (sa.isCycling() && sa.canCastTiming(player) && !holdForMain1
                                 && player.getCardsIn(ZoneType.Library).size() >= 10) {
                             if (ComputerUtilCost.canPayCost(sa, player, sa.isTrigger())) {
                                 if (sa.getPayCosts() != null && sa.getPayCosts().hasSpecificCostType(CostPayLife.class)
