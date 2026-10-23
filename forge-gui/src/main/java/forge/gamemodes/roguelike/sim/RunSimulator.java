@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,6 +13,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import forge.ai.AIOption;
 import forge.ai.LobbyPlayerAi;
 import forge.game.Game;
 import forge.game.GameEndReason;
@@ -48,6 +50,8 @@ public class RunSimulator {
     private int logCount;
     private MetaProfile profile;
     private boolean recordProgress = true;
+    private String heroProfile;
+    private AIOption heroOption;
     private MatchStatsTracker tracker;
 
     public RunSimulator(final RoguelikeContent content) {
@@ -90,6 +94,23 @@ public class RunSimulator {
         return Progression.setup(content, profile, ch, loadout);
     }
 
+    /**
+     * How the AI pilots the hero: a profile from res/ai (Default, Cautious, Reckless, Experimental; null for the
+     * built-in defaults) and an optional simulation mode (slower; it looks ahead before acting). Enemies keep the default.
+     */
+    public void setHeroAi(final String profile, final AIOption option) {
+        heroProfile = profile;
+        heroOption = option;
+    }
+
+    private LobbyPlayerAi hero() {
+        LobbyPlayerAi hero = new LobbyPlayerAi("Hero", heroOption == null ? null : Set.of(heroOption));
+        if (heroProfile != null) {
+            hero.setAiProfile(heroProfile);
+        }
+        return hero;
+    }
+
     /** Write each match's game log to a numbered file in this folder (null to stop). */
     public void setLogDir(final File dir) {
         logDir = dir;
@@ -118,7 +139,7 @@ public class RunSimulator {
                 m.floor = s.floor;
                 m.row = run.getActiveNode().row;
                 m.heroLifeBefore = s.life;
-                RunMatch match = run.createMatch(new LobbyPlayerAi("Hero", null), new LobbyPlayerAi(enc.name, null));
+                RunMatch match = run.createMatch(hero(), new LobbyPlayerAi(enc.name, null));
                 long xpBefore = s.xpEarned;
                 boolean won = run.finishMatch(match, play(match, m));
                 if (profile != null && recordProgress) {
@@ -173,7 +194,7 @@ public class RunSimulator {
         m.floor = 1;
         m.row = -1;
         m.heroLifeBefore = s.life;
-        RunMatch match = RunMatchFactory.create(content, s, enc, new LobbyPlayerAi("Hero", null), new LobbyPlayerAi(enc.name, null));
+        RunMatch match = RunMatchFactory.create(content, s, enc, hero(), new LobbyPlayerAi(enc.name, null));
         play(match, m);
         return m;
     }
