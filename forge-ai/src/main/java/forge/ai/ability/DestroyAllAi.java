@@ -59,6 +59,13 @@ public class DestroyAllAi extends SpellAbilityAi {
         if (logic.equals("Always")) {
             return new AiAbilityDecision(100, AiPlayDecision.WillPlay);
         }
+        // the wipe clears the way for a mass reanimation that follows (run mode's Moment of Evil Triumph):
+        // worth it once the AI's own graveyard holds enough creatures
+        if (logic.equals("BeforeReanimation")) {
+            int dead = CardLists.count(ai.getCardsIn(ZoneType.Graveyard), CardPredicates.CREATURES);
+            return dead >= 3 ? new AiAbilityDecision(100, AiPlayDecision.WillPlay)
+                    : new AiAbilityDecision(0, AiPlayDecision.CantPlayAi);
+        }
 
         String valid = sa.getParamOrDefault("ValidCards", "");
 

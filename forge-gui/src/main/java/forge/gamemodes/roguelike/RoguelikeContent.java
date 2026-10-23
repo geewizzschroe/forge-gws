@@ -43,6 +43,7 @@ import forge.localinstance.properties.ForgeConstants;
  * bases/*.txt        Base card scripts
  * overrides/*.txt    replacement card scripts (landless ramp) used in every match of the mode
  * cards/*.txt        the mode's own cards, added to the card database (not in any set)
+ * tokens/*.txt       the mode's own token scripts, used by TokenScript$ under their file name
  * characters/*.json  CharacterDef (meta-progression: levels, unlocks, milestones)
  * meta.json          MetaConfig (experience curves, account levels)
  * </pre>
@@ -76,6 +77,7 @@ public class RoguelikeContent {
     private final Map<String, List<String>> bases = new LinkedHashMap<>();
     private final List<CardRules> overrides = new ArrayList<>();
     private final List<CardRules> customCards = new ArrayList<>();
+    private final Map<String, CardRules> customTokens = new LinkedHashMap<>();
     private final Map<String, CharacterDef> characters = new LinkedHashMap<>();
     private MetaConfig meta = new MetaConfig();
     private final Set<String> quarantine = new HashSet<>();
@@ -141,6 +143,10 @@ public class RoguelikeContent {
             CardRules rules = CardRules.fromScript(lines(src.read(f)));
             rules.setCustom();
             c.customCards.add(rules);
+        }
+        for (String f : src.list("tokens", ".txt")) {
+            String script = f.substring(f.lastIndexOf('/') + 1, f.length() - ".txt".length());
+            c.customTokens.put(script, CardRules.fromScript(lines(src.read(f))));
         }
         c.registerCustomCards();
         for (String f : src.list("characters", ".json")) {
@@ -262,7 +268,7 @@ public class RoguelikeContent {
     public List<CardRules> getOverrides() { return overrides; }
     public List<CardRules> getCustomCards() { return customCards; }
 
-    /** Add the mode's own cards to the card database, once (as Adventure does with its custom cards). */
+    /** Add the mode's own cards and tokens to the card database, once (as Adventure does with its custom cards). */
     private void registerCustomCards() {
         if (StaticData.instance() == null) {
             return;
@@ -271,6 +277,9 @@ public class RoguelikeContent {
             if (StaticData.instance().getCommonCards().getCard(rules.getName()) == null) {
                 StaticData.instance().getCommonCards().addCard(new PaperCard(rules, CardEdition.UNKNOWN_CODE, CardRarity.Special));
             }
+        }
+        if (StaticData.instance().getAllTokens() != null) {
+            customTokens.forEach((script, rules) -> StaticData.instance().getAllTokens().addTokenRules(script, rules));
         }
     }
     /** The mode's rewritten version of a card, or null if it is played as printed. */

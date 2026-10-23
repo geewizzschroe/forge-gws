@@ -68,6 +68,11 @@ public class TokenDb implements ITokenDatabase {
         return this.rulesByName.containsKey(rule);
     }
 
+    /** A token script from outside the res folder (a game mode's own tokens), unless the name is taken. */
+    public void addTokenRules(String scriptName, CardRules rules) {
+        this.rulesByName.putIfAbsent(scriptName, rules);
+    }
+
     public void preloadTokens() {
         for (CardEdition edition : this.editions) {
             for (Map.Entry<String, Collection<CardEdition.EditionEntry>> inSet : edition.getTokens().asMap().entrySet()) {

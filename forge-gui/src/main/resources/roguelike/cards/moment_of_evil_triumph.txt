@@ -1,6 +1,7 @@
 Name:Moment of Evil Triumph
 ManaCost:8 U B
 Types:Sorcery
-A:SP$ ChangeZoneAll | ChangeType$ Creature.YouOwn | Origin$ Graveyard | Destination$ Battlefield | SpellDescription$ Return all creature cards from your graveyard to the battlefield under your control.
+A:SP$ DestroyAll | ValidCards$ Artifact | AILogic$ BeforeReanimation | SubAbility$ DBReturn | SpellDescription$ Destroy all artifacts. Then return all creature cards from your graveyard to the battlefield under your control.
+SVar:DBReturn:DB$ ChangeZoneAll | ChangeType$ Creature.YouOwn | Origin$ Graveyard | Destination$ Battlefield
 SVar:AICyclingPlan:True
-Oracle:Return all creature cards from your graveyard to the battlefield under your control.
+Oracle:Destroy all artifacts. Then return all creature cards from your graveyard to the battlefield under your control.

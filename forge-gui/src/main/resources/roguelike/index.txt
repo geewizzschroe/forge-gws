@@ -121,4 +121,5 @@ starters/jill_blue_white.json
 starters/jill_frozen_throne.json
 starters/jill_mono_blue.json
 starters/lightning_rw.json
+tokens/c_a_golbez_crystal.txt
 upgrades.json
