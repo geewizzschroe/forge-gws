@@ -40,7 +40,21 @@ public final class SimReport {
             sb.append("- Final deck size: ").append(fmt(runs.stream().mapToInt(r -> r.finalDeckSize).average().orElse(0))).append('\n');
             sb.append("- Relics per run: ").append(fmt(runs.stream().mapToInt(r -> r.relics.size()).average().orElse(0))).append('\n');
             sb.append("- Experience per run: ").append(fmt(runs.stream().mapToLong(r -> r.xpEarned).average().orElse(0))).append('\n');
-            sb.append("- Gold left at the end: ").append(fmt(runs.stream().mapToInt(r -> r.goldLeft).average().orElse(0))).append("\n\n");
+            sb.append("- Gold left at the end: ").append(fmt(runs.stream().mapToInt(r -> r.goldLeft).average().orElse(0))).append('\n');
+            Map<Integer, Integer> lastFloor = new TreeMap<>();
+            for (RunRecord r : runs) {
+                lastFloor.merge(r.floor, 1, Integer::sum);
+            }
+            sb.append("- Runs by the floor they ended on: ").append(lastFloor).append('\n');
+            Map<Integer, int[]> byFloor = new TreeMap<>(); // matches, hero wins
+            for (MatchRecord m : runMatches) {
+                int[] t = byFloor.computeIfAbsent(m.floor, k -> new int[2]);
+                t[0]++;
+                t[1] += m.won ? 1 : 0;
+            }
+            byFloor.forEach((f, t) -> sb.append("- Floor ").append(f).append(" matches: ").append(t[0])
+                    .append(", hero won ").append(pct(t[1], t[0])).append('\n'));
+            sb.append('\n');
 
             Map<String, Integer> endedBy = new TreeMap<>();
             for (RunRecord r : runs) {
