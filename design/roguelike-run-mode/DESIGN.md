@@ -54,6 +54,13 @@ What makes it different from other Forge modes:
 - **Floors** (decided and built 2026-10-23, D1): a run is **2 floors** (`floors` in `config.json`). Beating floor 1's boss gives its relic, then a **full heal** and a choice of **3 rare upgrades for the Commander** (no skip), then floor 2 begins on a new map. Beating the last floor's boss wins the run. A boss met on floor 1 isn't picked again while another boss is left.
   - **Rare upgrades** (`rare_upgrades.json`): a separate, stronger pool offered only between floors, always for the Commander, with no weak entries. Starting list: costs {1} less, costs {2} less, +4/+4 and costs {1} more, Ward 3, Prowess, Double strike, +2/+2, +1/+1 and lifelink, "Mind Rot" (when it enters, each opponent discards a card) and "Spellweaver" (your instants and sorceries cost {1} less). An upgrade that would change nothing (a keyword already there, a cost cut on a Commander with no generic mana left) isn't offered.
   - **Elites** (decided and built 2026-10-23, `proposals/elites-2026-10-23.md`): enemies led by a Commander, nearer normal enemies than bosses in power. 40 cards, 25 life. Each fight above a floor's first row becomes an Elite at 1 in 4 (`eliteChance`), at most 3 a floor, each Elite once a floor; tiers don't apply. Beating one gives the normal gold, a card reward of single cards where every creature comes upgraded, then a choice of relics. Built: Halana and Alena (RG), Tatyova (GU), Ayli (WB).
+  - **Planar interlopers** (decided and built 2026-10-24): an Easter-egg fight inside an event.
+    - **The event:** "A Tear in the Sky" (weight 0.5, PLACEHOLDER) offers a fight with a being from outside the Final Fantasy and Foundations setting. It can be refused. Accepting turns the Event node into a match.
+    - **The interlopers:** boss-sized (60 cards, a commander, 30 life). Each has its own Base, may use cards outside the card scope, and never appears on the map.
+    - **Reward:** a card reward from the interloper's own deck, in the run's colours first.
+    - **The list:** the event rolls from a named list, `encounterLists.interlopers` in `config.json`. A future run setting can carry its own list, and each entry is met at most once a run.
+    - **Built:** The War Doctor (Doctor Who, RW; Base Gallifrey Falls No More, which exiles the top card each end step so it can be played, and that exile feeds his time counters) and Iroh, Grand Lotus (Avatar, GUR; Base The Jasmine Dragon, which surveils 2 each end step and fills the graveyard his flashback uses).
+    - **Candidates for later:** Atraxa, Grand Unifier; Myrkul, Lord of Bones; Lord Xander, the Collector; a Strixhaven commander; The Swarmlord. Y'shtola waits for a setting where Final Fantasy is the outside world.
   - **Floor 2 is harder** (`floorRules` in `config.json`, numbers PLACEHOLDER): its fights start at tier 2 (`FIGHTS T2`, `STRETCH 2 T2`, `STRETCH 3 T2-3`); every enemy has **+5 life** and **2 of its creature cards carry a random upgrade** (from the normal upgrade pool, fixed per enemy and run); and every enemy's Base gains **"Veterans"**: the first creature that enters under their control each match gets a +1/+1 counter.
 - There is no manual deck editing anywhere in the mode.
 
@@ -520,6 +527,7 @@ All of this was used successfully in the design sessions.
 23. Floors (D1): 2 floors; between them a relic, a full heal and a rare Commander upgrade; floor 2 enemies get more life, upgraded cards and a shared Base ability (2.1).
 24. Rare relics: in boss relic choices like any relic, elsewhere only at a small chance (2.4). *Changed the same day by 25.*
 25. Elites: Commander-led fights that replace some normal fights and give a relic; bosses give rare relics instead (2.1, 2.4).
+26. Planar interlopers: a refusable fight inside an event, rolled from an adjustable encounter list; boss-sized decks from outside the setting (2.1).
 
 ---
 
