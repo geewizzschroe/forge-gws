@@ -23,5 +23,5 @@
 **Known:**
 - Balance is still rough. Difficulty was set from AI-vs-AI fights, where the AI hero rarely gets past floor 1.
 - Halana and Alena and Tatyova play easier than intended.
-- Iroh is the toughest of the new fights.
+- Iroh, Grand Lotus is very hard: the AI hero beat him once in 20 fights (The War Doctor: 10 in 20). You can refuse the fight.
 - *Zeromus Rising* and the Crystal token have no card art.
