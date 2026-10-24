@@ -15,7 +15,7 @@ import forge.game.phase.PhaseType;
 import forge.game.player.Player;
 import forge.game.zone.ZoneType;
 
-/** Golbez's Elite (2026-10-23): the Tower of Zot, Moment of Evil Triumph and the AI's cycling plan. */
+/** Golbez's Elite (2026-10-23): the Tower of Zot, Zeromus Rising and the AI's cycling plan. */
 public class GolbezTest extends AITest {
 
     private Game game;
@@ -46,13 +46,13 @@ public class GolbezTest extends AITest {
     public void theModesOwnCardIsInTheCardDatabase() {
         initAndCreateGame();
         RoguelikeContent.load();
-        assertNotNull(StaticData.instance().getCommonCards().getCard("Moment of Evil Triumph"));
+        assertNotNull(StaticData.instance().getCommonCards().getCard("Zeromus Rising"));
     }
 
     @Test
     public void towerOfZotMakesCyclingCheapAndLeavesCrystals() {
         setUp(true);
-        addCardToZone("Moment of Evil Triumph", ai, ZoneType.Library); // the plan: cycle, then reanimate
+        addCardToZone("Zeromus Rising", ai, ZoneType.Library); // the plan: cycle, then reanimate
         addCardToZone("Ice Flan", ai, ZoneType.Hand); // cycling {2}, {1} with the Base
         addCard("Island", ai);
         playUntilPhase(game, PhaseType.END_OF_TURN);
@@ -61,25 +61,25 @@ public class GolbezTest extends AITest {
     }
 
     @Test
-    public void crystalsPayForTheMomentAndItShattersThem() {
+    public void crystalsPayForZeromusRisingAndItShattersThem() {
         setUp(true);
         addCardToZone("Ice Flan", ai, ZoneType.Graveyard);
         addCardToZone("Malboro", ai, ZoneType.Graveyard);
         addCardToZone("Hill Gigas", ai, ZoneType.Graveyard);
         addCardToZone("Gleaming Barrier", ai, ZoneType.Battlefield); // an artifact creature: destroyed, then back
-        Card moment = addCardToZone("Moment of Evil Triumph", ai, ZoneType.Hand);
+        Card zeromus = addCardToZone("Zeromus Rising", ai, ZoneType.Hand);
         // 8 Crystals: {8}{U}{B} becomes {U}{B}
         addTokens("c_a_golbez_crystal", 8, ai);
         assertEquals(8, crystals());
         addCard("Island", ai);
         addCard("Swamp", ai);
         game.getAction().checkStateEffects(true);
-        forge.game.spellability.SpellAbility cast = moment.getFirstSpellAbility();
+        forge.game.spellability.SpellAbility cast = zeromus.getFirstSpellAbility();
         cast.setActivatingPlayer(ai);
         assertTrue("payable with two lands and eight Crystals", forge.ai.ComputerUtilMana.canPayManaCost(cast, ai, 0, false));
         playUntilPhase(game, PhaseType.END_OF_TURN);
-        assertTrue("the AI cast the Moment for two mana",
-                ai.getCardsIn(ZoneType.Graveyard).anyMatch(c -> c.getName().equals("Moment of Evil Triumph")));
+        assertTrue("the AI cast Zeromus Rising for two mana",
+                ai.getCardsIn(ZoneType.Graveyard).anyMatch(c -> c.getName().equals("Zeromus Rising")));
         assertEquals("the Crystals are gone", 0, crystals());
         for (String name : new String[] {"Malboro", "Hill Gigas", "Gleaming Barrier"}) {
             assertTrue(name + " came back", ai.getCardsIn(ZoneType.Battlefield).anyMatch(c -> c.getName().equals(name)));
@@ -87,12 +87,12 @@ public class GolbezTest extends AITest {
     }
 
     @Test
-    public void momentOfEvilTriumphRaisesTheWholeGraveyard() {
+    public void zeromusRisingRaisesTheWholeGraveyard() {
         setUp(false);
         addCardToZone("Ice Flan", ai, ZoneType.Graveyard);
         addCardToZone("Malboro", ai, ZoneType.Graveyard);
         addCardToZone("Hill Gigas", ai, ZoneType.Graveyard);
-        addCardToZone("Moment of Evil Triumph", ai, ZoneType.Hand);
+        addCardToZone("Zeromus Rising", ai, ZoneType.Hand);
         addCards("Island", 5, ai);
         addCards("Swamp", 5, ai);
         playUntilPhase(game, PhaseType.END_OF_TURN);

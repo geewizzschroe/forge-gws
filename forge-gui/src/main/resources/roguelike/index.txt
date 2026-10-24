@@ -25,7 +25,7 @@ bases/the_strahl.txt
 bases/tower_of_zot.txt
 bases/wayfarers_camp.txt
 bases/wyrm_roost.txt
-cards/moment_of_evil_triumph.txt
+cards/zeromus_rising.txt
 characters/jill.json
 characters/lightning.json
 config.json

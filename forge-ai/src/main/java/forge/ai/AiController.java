@@ -1656,7 +1656,7 @@ public class AiController {
         if (!skipped.isEmpty())
             saList.removeAll(skipped);
         //update LivingEndPlayer
-        // a card with SVar AICyclingPlan (run mode's Moment of Evil Triumph) asks for the same cycle-then-reanimate play,
+        // a card with SVar AICyclingPlan (run mode's Zeromus Rising) asks for the same cycle-then-reanimate play,
         // and keeps asking from the hand once drawn
         cyclingPlanFromFlag = IterableUtil.any(player.getZone(ZoneType.Library), c -> c.hasSVar("AICyclingPlan"))
                 || IterableUtil.any(player.getZone(ZoneType.Hand), c -> c.hasSVar("AICyclingPlan"));

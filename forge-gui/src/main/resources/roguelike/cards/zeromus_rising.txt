@@ -1,4 +1,4 @@
-Name:Moment of Evil Triumph
+Name:Zeromus Rising
 ManaCost:8 U B
 Types:Sorcery
 A:SP$ DestroyAll | ValidCards$ Artifact | AILogic$ BeforeReanimation | SubAbility$ DBReturn | SpellDescription$ Destroy all artifacts. Then return all creature cards from your graveyard to the battlefield under your control.
