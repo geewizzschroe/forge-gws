@@ -234,7 +234,7 @@ public class RunMap {
         List<String> options = new ArrayList<>();
         for (int widen = 0; options.isEmpty() && widen <= 3; widen++) {
             for (EncounterDef e : content.getEncounters().values()) {
-                if (!e.elite && e.boss == boss && (boss || (e.tier >= tier[0] - widen && e.tier <= tier[1] + widen))) {
+                if (!e.elite && !e.interloper && e.boss == boss && (boss || (e.tier >= tier[0] - widen && e.tier <= tier[1] + widen))) {
                     options.add(e.id);
                 }
             }

@@ -498,7 +498,7 @@ public class RunTest extends AITest {
         RoguelikeContent c = content();
         assertTrue(c.getEvents().size() >= 5);
         for (EventDef e : c.getEvents().values()) {
-            assertTrue(e.id + ": " + e.kind, List.of("gold", "upgrade", "card", "relicForLife", "sellRetry").contains(e.kind));
+            assertTrue(e.id + ": " + e.kind, List.of("gold", "upgrade", "card", "relicForLife", "sellRetry", "fight").contains(e.kind));
             assertNotNull(e.id, e.title);
             if (e.relic != null) {
                 assertTrue(e.id, c.getRelic(e.relic).eventOnly);

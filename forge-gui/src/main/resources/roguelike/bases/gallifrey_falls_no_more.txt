@@ -1,0 +1,9 @@
+Name:Gallifrey Falls No More
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ End of Turn | ValidPlayer$ You | TriggerZones$ Command | Execute$ gallifrey_Dig | TriggerDescription$ The Last Day of the Time War — At the beginning of your end step, exile the top card of your library. Until the end of your next turn, you may play that card.
+SVar:gallifrey_Dig:DB$ Dig | Defined$ You | DigNum$ 1 | ChangeNum$ All | DestinationZone$ Exile | RememberChanged$ True | SubAbility$ gallifrey_Effect
+SVar:gallifrey_Effect:DB$ Effect | StaticAbilities$ gallifrey_MayPlay | Duration$ UntilTheEndOfYourNextTurn | RememberObjects$ Remembered | ForgetOnMoved$ Exile | SubAbility$ gallifrey_Cleanup
+SVar:gallifrey_Cleanup:DB$ Cleanup | ClearRemembered$ True
+SVar:gallifrey_MayPlay:Mode$ Continuous | Affected$ Card.IsRemembered | AffectedZone$ Exile | MayPlay$ True | Description$ Until the end of your next turn, you may play that card.
+Oracle:The Last Day of the Time War — At the beginning of your end step, exile the top card of your library. Until the end of your next turn, you may play that card.

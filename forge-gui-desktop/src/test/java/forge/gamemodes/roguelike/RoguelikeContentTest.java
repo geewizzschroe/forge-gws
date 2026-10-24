@@ -163,8 +163,8 @@ public class RoguelikeContentTest extends AITest {
                 assertTrue(e.id + ": copies of " + card.getKey(), card.getValue() >= 2 && card.getValue() <= 4);
                 total += card.getValue();
             }
-            assertEquals(e.id + ": deck size", e.boss ? 60 : 40, total);
-            assertEquals(e.id + ": commander", e.boss || e.elite, e.commander != null);
+            assertEquals(e.id + ": deck size", e.boss || e.interloper ? 60 : 40, total);
+            assertEquals(e.id + ": commander", e.boss || e.elite || e.interloper, e.commander != null);
             assertFalse(e.id + ": a boss can't also be an Elite", e.boss && e.elite);
         }
     }

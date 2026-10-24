@@ -130,7 +130,7 @@ public class Run {
         state.activeNodeId = nodeId;
         state.log.add("Entered " + RunText.node(this, node));
         switch (node.type) {
-            case ENEMY, BOSS -> state.lifeBeforeMatch = state.life;
+            case ENEMY, BOSS, ELITE -> state.lifeBeforeMatch = state.life;
             case REST -> state.offer = makeCampfireOffer();
             case SHOP -> state.offer = makeShopOffer();
             case UPGRADE -> {
@@ -165,7 +165,11 @@ public class Run {
 
     public EncounterDef getActiveEncounter() {
         MapNode node = getActiveNode();
-        if (node == null || !node.type.isMatch() || state.offer != null) {
+        if (node == null || state.offer != null) {
+            return null;
+        }
+        // an Event node holds a match once its fight has been chosen
+        if (!node.type.isMatch() && !(node.type == NodeType.EVENT && node.encounterId != null)) {
             return null;
         }
         return content.getEncounter(node.encounterId);
@@ -284,7 +288,8 @@ public class Run {
             state.log.add("Beat " + encounter.name + " with " + endLife + " life; run life " + state.life
                     + ", +" + gold + " gold");
             state.eliteRelicPending = elite;
-            state.offer = boss ? makeBossRelicOffer() : makeCardRewardOffer(elite);
+            state.offer = boss ? makeBossRelicOffer() : node.type == NodeType.EVENT ? makeEncounterCardOffer(encounter)
+                    : makeCardRewardOffer(elite);
             if (state.offer.options.isEmpty()) {
                 state.offer = null;
                 nextMatchReward();
@@ -416,6 +421,15 @@ public class Run {
         }
         if (offer.kind == OfferKind.EVENT) {
             payEventCosts(o);
+            if (o.fightEncounter != null) { // the Event node becomes a match
+                MapNode node = getActiveNode();
+                node.encounterId = o.fightEncounter;
+                state.eventEncountersMet.add(o.fightEncounter);
+                state.lifeBeforeMatch = state.life;
+                state.offer = null;
+                state.log.add("Chose to fight " + content.getEncounter(o.fightEncounter).name);
+                return;
+            }
         }
         state.log.add("Chose " + RunText.option(this, o));
         apply(o);
@@ -778,8 +792,48 @@ public class Run {
             case "relicForLife" -> !unownedRelics(false).isEmpty() && state.life > e.lifeCost;
             case "sellRetry" -> state.retriesLeft >= 1 && e.relic != null && !state.relics.contains(e.relic);
             case "upgrade" -> !makeUpgradeOffer().options.isEmpty();
+            case "fight" -> !eventFightChoices(e).isEmpty();
             default -> true;
         };
+    }
+
+    /** A fight event's encounters: those on its list that exist and haven't been met this run. */
+    private List<String> eventFightChoices(final EventDef e) {
+        List<String> out = new ArrayList<>();
+        for (String id : content.getConfig().encounterLists.getOrDefault(e.encounterList, List.of())) {
+            if (content.getEncounters().containsKey(id) && !state.eventEncountersMet.contains(id)) {
+                out.add(id);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * The reward for an event's fight: single cards from the beaten encounter's own deck (its commander aside),
+     * in the run's colours first, then any to fill the choice.
+     */
+    private Offer makeEncounterCardOffer(final EncounterDef enc) {
+        RunConfig cfg = content.getConfig();
+        Random rnd = state.nextRandom();
+        byte colours = runColours();
+        List<String> onColour = new ArrayList<>();
+        List<String> offColour = new ArrayList<>();
+        for (String c : enc.deck.keySet()) {
+            if (c.equals(enc.commander)) {
+                continue;
+            }
+            ((colourIdentity(List.of(c)) & ~colours) == 0 ? onColour : offColour).add(c);
+        }
+        List<String> picked = pick(onColour, cfg.cardRewardChoices, rnd);
+        picked.addAll(pick(offColour, cfg.cardRewardChoices - picked.size(), rnd));
+        Offer offer = new Offer(OfferKind.CARD_REWARD, false); // rewards can't be turned down
+        for (String c : picked) {
+            OfferOption o = new OfferOption();
+            o.source = enc.name;
+            o.cards.put(c, cfg.cardRewardCopies);
+            offer.options.add(o);
+        }
+        return offer;
     }
 
     /** An event picked at random (by weight) among those the run qualifies for; null if there is none. */
@@ -842,6 +896,13 @@ public class Run {
                 o.secret = true;
                 RelicDef r = content.getRelic(e.relic);
                 o.label = (e.accept != null ? e.accept : "Hand over a retry") + ": " + r.name + " (" + r.description + ")";
+                offer.options.add(o);
+            }
+            case "fight" -> {
+                List<String> choices = eventFightChoices(e);
+                OfferOption o = new OfferOption();
+                o.fightEncounter = choices.get(rnd.nextInt(choices.size()));
+                o.label = (e.accept != null ? e.accept : "Fight") + ": " + content.getEncounter(o.fightEncounter).name;
                 offer.options.add(o);
             }
             default -> throw new IllegalStateException("Unknown event kind " + e.kind + " in " + e.id);

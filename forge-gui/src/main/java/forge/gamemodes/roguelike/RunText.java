@@ -58,7 +58,7 @@ public final class RunText {
         }
         EncounterDef enc = run.getActiveEncounter();
         if (enc != null) {
-            return (enc.boss ? "Boss: " : enc.elite ? "Elite: " : "Next fight: ") + enc.name + " (" + run.encounterLife(enc) + " life)";
+            return (enc.boss ? "Boss: " : enc.elite ? "Elite: " : enc.interloper ? "Interloper: " : "Next fight: ") + enc.name + " (" + run.encounterLife(enc) + " life)";
         }
         return "Choose where to go next.";
     }

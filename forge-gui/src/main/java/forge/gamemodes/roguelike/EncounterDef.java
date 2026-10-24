@@ -10,6 +10,11 @@ public class EncounterDef {
     public boolean boss;
     /** An Elite (decided 2026-10-23): has a commander, takes the place of some fights, and gives a relic. Ignores tiers. */
     public boolean elite;
+    /**
+     * A planar interloper (decided 2026-10-24): met only through an event that names an encounter list, never on the
+     * map. Boss-sized (60 cards, a commander) and may come from outside the card scope.
+     */
+    public boolean interloper;
     /** Difficulty tier, 1 (early) to 3 (late), for the map's ladder (proposal 1.3). Bosses ignore it. */
     public int tier = 1;
     public String commander;

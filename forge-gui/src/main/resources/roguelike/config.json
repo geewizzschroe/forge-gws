@@ -73,5 +73,8 @@
   "bossRelicChoices": 3,
   "rareRelicChance": 0.0333,
   "cardScopeSets": ["FIN", "FCA", "FIC", "RFIN", "FDN", "FDC", "J25", "PFDN"],
-  "cardScopeExceptions": ["Zeromus Rising"]
+  "cardScopeExceptions": ["Zeromus Rising"],
+  "encounterLists": {
+    "interlopers": ["interloper_war_doctor", "interloper_iroh"]
+  }
 }

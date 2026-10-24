@@ -1,0 +1,6 @@
+Name:The Jasmine Dragon
+ManaCost:no cost
+Types:Base
+T:Mode$ Phase | Phase$ End of Turn | ValidPlayer$ You | TriggerZones$ Command | Execute$ jasmine_Surveil | TriggerDescription$ A Cup of Tea — At the beginning of your end step, surveil 2.
+SVar:jasmine_Surveil:DB$ Surveil | Amount$ 2
+Oracle:A Cup of Tea — At the beginning of your end step, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)

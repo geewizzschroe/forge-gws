@@ -13,6 +13,8 @@ public class OfferOption {
     public String upgradeCard;
     public RunUpgrade upgrade;
     public String relicId;
+    /** An event's fight: the encounter to fight if this is chosen. */
+    public String fightEncounter;
     /** A card name to remove (Cut node). */
     public String cutCard;
     /** Shop price; 0 elsewhere. */

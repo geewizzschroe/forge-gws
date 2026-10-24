@@ -2,6 +2,7 @@ package forge.gamemodes.roguelike;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Tunable numbers for the run mode, loaded from {@code config.json} in the content folder.
@@ -98,6 +99,9 @@ public class RunConfig {
     // eliteMaxPerFloor a floor, each Elite once a floor.
     public double eliteChance = 0.25;
     public int eliteMaxPerFloor = 3;
+    // Named lists of encounter ids that events roll from (2026-10-24), e.g. "interlopers". A future run setting
+    // can swap a list for another.
+    public Map<String, List<String>> encounterLists = new java.util.LinkedHashMap<>();
     // PLACEHOLDER: relic choices after an Elite.
     public int eliteRelicChoices = 3;
     // PLACEHOLDER: relic choices after a boss.

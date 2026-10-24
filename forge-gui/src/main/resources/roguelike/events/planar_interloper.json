@@ -1,0 +1,9 @@
+{
+  "id": "planar_interloper",
+  "title": "A Tear in the Sky",
+  "text": "The air splits like old paper. A figure steps through who doesn't belong to this world, and the light around them is the wrong colour. They've noticed you.",
+  "kind": "fight",
+  "encounterList": "interlopers",
+  "accept": "Face them",
+  "weight": 0.5
+}

@@ -9,6 +9,7 @@ bases/chocobo_ranch.txt
 bases/crimson_court.txt
 bases/dragoon_barracks.txt
 bases/frozen_bastion.txt
+bases/gallifrey_falls_no_more.txt
 bases/goblin_warren.txt
 bases/guardian_corps_armory.txt
 bases/hunters_lodge.txt
@@ -21,6 +22,7 @@ bases/northern_crater.txt
 bases/open_graves.txt
 bases/raider_camp.txt
 bases/the_farplane.txt
+bases/the_jasmine_dragon.txt
 bases/the_strahl.txt
 bases/tower_of_zot.txt
 bases/wayfarers_camp.txt
@@ -45,6 +47,8 @@ encounters/elite_golbez.json
 encounters/elite_halana_and_alena.json
 encounters/elite_tatyova.json
 encounters/goblin_raiders.json
+encounters/interloper_iroh.json
+encounters/interloper_war_doctor.json
 encounters/malboro_marsh.json
 encounters/moogle_post.json
 encounters/restless_dead.json
@@ -55,6 +59,7 @@ encounters/vampire_court.json
 events/blood_altar.json
 events/dropped_purse.json
 events/mysterious_figure.json
+events/planar_interloper.json
 events/traveling_merchant.json
 events/wandering_smith.json
 meta.json

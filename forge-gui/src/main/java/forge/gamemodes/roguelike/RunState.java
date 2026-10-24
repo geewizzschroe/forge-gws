@@ -56,6 +56,8 @@ public class RunState {
     public Offer offer;
     /** An Elite was beaten: its relic choice follows the card reward. */
     public boolean eliteRelicPending;
+    /** Encounters met through events this run (each list entry is met at most once a run). */
+    public List<String> eventEncountersMet = new ArrayList<>();
     /** Nodes finished on the current floor's map, in order (the path drawn on the map). */
     public List<Integer> visited = new ArrayList<>();
     public int matchesWon;

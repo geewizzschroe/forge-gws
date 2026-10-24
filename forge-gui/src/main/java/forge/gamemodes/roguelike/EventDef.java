@@ -12,6 +12,9 @@ package forge.gamemodes.roguelike;
  * and more life than the cost.</li>
  * <li>{@code sellRetry}: give up a retry for the relic {@code relic}, or walk away. Needs a retry, and that relic
  * not yet owned.</li>
+ * <li>{@code fight}: fight an encounter rolled from the list {@code encounterList} in {@code config.json}'s
+ * {@code encounterLists}, or walk away. Needs one on the list not yet met this run. Winning gives a card reward from
+ * that encounter's deck.</li>
  * </ul>
  */
 public class EventDef {
@@ -23,6 +26,8 @@ public class EventDef {
     public int price;
     public int lifeCost;
     public String relic;
+    /** For {@code fight}: the name of an encounter list in {@code encounterLists}. */
+    public String encounterList;
     /** What taking the event's offer is called (for one-option events). */
     public String accept;
     public double weight = 1;
