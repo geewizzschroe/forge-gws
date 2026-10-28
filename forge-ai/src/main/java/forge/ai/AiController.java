@@ -987,6 +987,11 @@ public class AiController {
             return AiPlayDecision.WillPlay;
         }
         if (usesHybridSimulation()) {
+            // the safety check plays the spell out in a copy of the game, which is costly; skip it for what can't be
+            // paid for now (canPlayAndPayFor checks the cost right after this and rejects it anyway)
+            if (!ComputerUtilCost.canPayCost(sa, player, sa.isTrigger())) {
+                return AiPlayDecision.WillPlay;
+            }
             return OnePlaySafetyChecker.isAcceptable(player, sa) ? AiPlayDecision.WillPlay : AiPlayDecision.HybridSimRejected;
         }
 
