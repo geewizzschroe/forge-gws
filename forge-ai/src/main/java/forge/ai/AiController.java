@@ -95,6 +95,8 @@ public class AiController {
     private AIOption simMode;
     private SpellAbilityPicker simPicker;
     private int lastAttackAggression;
+    // experiment (2026-10-28): hybrid simulation adds its safety check on top of the default checks
+    public static boolean HYBRID_KEEPS_DEFAULT_CHECKS = Boolean.getBoolean("forge.ai.hybridKeepsDefaultChecks");
     private boolean useLivingEnd;
     // the cycling plan came from an AICyclingPlan card, not Living End itself
     private boolean cyclingPlanFromFlag;
@@ -992,7 +994,13 @@ public class AiController {
             if (!ComputerUtilCost.canPayCost(sa, player, sa.isTrigger())) {
                 return AiPlayDecision.WillPlay;
             }
-            return OnePlaySafetyChecker.isAcceptable(player, sa) ? AiPlayDecision.WillPlay : AiPlayDecision.HybridSimRejected;
+            if (!OnePlaySafetyChecker.isAcceptable(player, sa)) {
+                return AiPlayDecision.HybridSimRejected;
+            }
+            if (!HYBRID_KEEPS_DEFAULT_CHECKS) {
+                return AiPlayDecision.WillPlay;
+            }
+            // otherwise the usual checks below still apply: the simulation is an extra veto, not a replacement
         }
 
         int damage = 0;
